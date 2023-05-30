@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jing.librarymanagementsystem.mappers.BookShelfMapper">
+
+
+    <select id="getBookMark" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select book_id,book_name,book_author, book_type,word_count,finish,is_borrowed,bookface_name
+        from book_info where book_id in (select book_id from bookshelf where user_id=#{userId}
+        <if test="orderType=='create_time'">
+            order by ${orderType} desc
+        </if>
+        )
+        and book_name like #{searchValue}
+        <if test="orderType=='is_borrowed'">
+            and is_borrowed=0
+        </if>
+        <if test="orderType=='word_count'">
+            order by ${orderType} desc
+        </if>
+    </select>
+</mapper>

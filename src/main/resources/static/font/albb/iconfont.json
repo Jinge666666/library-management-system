@@ -1,0 +1,268 @@
+{
+  "id": "3858000",
+  "name": "01",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "673799",
+      "name": "首页",
+      "font_class": "shouye",
+      "unicode": "e6cb",
+      "unicode_decimal": 59083
+    },
+    {
+      "icon_id": "9749368",
+      "name": "借阅记录",
+      "font_class": "file-management-borrowed-record",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "958",
+      "name": "上传",
+      "font_class": "shangchuan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "435934",
+      "name": "排行榜",
+      "font_class": "paixingbang",
+      "unicode": "e7bd",
+      "unicode_decimal": 59325
+    },
+    {
+      "icon_id": "604478",
+      "name": "女性",
+      "font_class": "nvxing",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "755555",
+      "name": "清空",
+      "font_class": "delete",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "982499",
+      "name": "排行",
+      "font_class": "paixing",
+      "unicode": "e66e",
+      "unicode_decimal": 58990
+    },
+    {
+      "icon_id": "1029233",
+      "name": "叉叉",
+      "font_class": "cancel-1-copy",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "1033999",
+      "name": "女性-人物",
+      "font_class": "iconfontnvtouxiang",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "1718467",
+      "name": "资料库",
+      "font_class": "ziliaoku",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "1722953",
+      "name": "排行榜",
+      "font_class": "paihangbang",
+      "unicode": "e7bc",
+      "unicode_decimal": 59324
+    },
+    {
+      "icon_id": "1727332",
+      "name": "12库存",
+      "font_class": "kucun",
+      "unicode": "e88f",
+      "unicode_decimal": 59535
+    },
+    {
+      "icon_id": "3590950",
+      "name": "前台菜单",
+      "font_class": "qiantaicaidan",
+      "unicode": "e631",
+      "unicode_decimal": 58929
+    },
+    {
+      "icon_id": "5093332",
+      "name": "男",
+      "font_class": "nan",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "5187405",
+      "name": "书架",
+      "font_class": "shujia1",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "5905716",
+      "name": "首页",
+      "font_class": "shouye1",
+      "unicode": "e62c",
+      "unicode_decimal": 58924
+    },
+    {
+      "icon_id": "6129329",
+      "name": "283用户资料、个人信息、个人资料",
+      "font_class": "yonghuziliaogerenxinxigerenziliao",
+      "unicode": "e7ea",
+      "unicode_decimal": 59370
+    },
+    {
+      "icon_id": "6229721",
+      "name": "叉号",
+      "font_class": "chahao",
+      "unicode": "e663",
+      "unicode_decimal": 58979
+    },
+    {
+      "icon_id": "7084887",
+      "name": "个人信息编辑",
+      "font_class": "gerenxinxibianji",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "7954390",
+      "name": "错叉_块",
+      "font_class": "cuocha_kuai",
+      "unicode": "ed1e",
+      "unicode_decimal": 60702
+    },
+    {
+      "icon_id": "8392331",
+      "name": "icon_菜单",
+      "font_class": "icon_caidan",
+      "unicode": "e60c",
+      "unicode_decimal": 58892
+    },
+    {
+      "icon_id": "9097244",
+      "name": "书城",
+      "font_class": "shucheng1",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "10060844",
+      "name": "排行榜",
+      "font_class": "paihangbang1",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
+      "icon_id": "10450963",
+      "name": "refuse_bin删除",
+      "font_class": "refuse_bin",
+      "unicode": "e64a",
+      "unicode_decimal": 58954
+    },
+    {
+      "icon_id": "11441202",
+      "name": "仓库库存",
+      "font_class": "cangkukucun",
+      "unicode": "e633",
+      "unicode_decimal": 58931
+    },
+    {
+      "icon_id": "12889884",
+      "name": "系统管理-菜单管理",
+      "font_class": "xitongguanli-caidanguanli",
+      "unicode": "e628",
+      "unicode_decimal": 58920
+    },
+    {
+      "icon_id": "13636959",
+      "name": "菜单",
+      "font_class": "caidan",
+      "unicode": "e64d",
+      "unicode_decimal": 58957
+    },
+    {
+      "icon_id": "14440235",
+      "name": "基本信息",
+      "font_class": "essential-information",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "17426959",
+      "name": "个人信息",
+      "font_class": "gerenxinxi",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "17706353",
+      "name": "编辑菜单",
+      "font_class": "bianjicaidan",
+      "unicode": "e655",
+      "unicode_decimal": 58965
+    },
+    {
+      "icon_id": "18452291",
+      "name": "书架",
+      "font_class": "shujia2",
+      "unicode": "e696",
+      "unicode_decimal": 59030
+    },
+    {
+      "icon_id": "19957283",
+      "name": "菜单",
+      "font_class": "13wangluoanquan_caidan",
+      "unicode": "e611",
+      "unicode_decimal": 58897
+    },
+    {
+      "icon_id": "24091536",
+      "name": "09我的借阅",
+      "font_class": "leftfont-84",
+      "unicode": "e6dc",
+      "unicode_decimal": 59100
+    },
+    {
+      "icon_id": "25543684",
+      "name": "女生",
+      "font_class": "girl-fill",
+      "unicode": "e6aa",
+      "unicode_decimal": 59050
+    },
+    {
+      "icon_id": "5651571",
+      "name": "圆点菜单",
+      "font_class": "yuandiancaidan",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "11372726",
+      "name": "消息中心",
+      "font_class": "xiaoxizhongxin",
+      "unicode": "e8be",
+      "unicode_decimal": 59582
+    },
+    {
+      "icon_id": "15085894",
+      "name": "我的书架",
+      "font_class": "wodeshujia",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    }
+  ]
+}

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>sql监控</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <div th:include="backstage/common::commonHeader"></div>
+    <!--    <script src="../../static/js/echarts.js" ></script>-->
+    <!--    <script type="text/javascript" href="js/echarts.js" th:href="@{/js/echarts.js}"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+    <!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/common2.css}">
+    <style>
+        #content{
+            width: 1200px;
+            height: 100%;
+            margin-top: 20px;
+            /*margin-top: 90px;*/
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+
+        #sqlStats{
+            width: 1150px;
+            height: 500px;
+            margin-left: 30px;
+            border: 1px solid red;
+        }
+        #tableStats{
+            width: 1150px;
+            height: 500px;
+            margin-left: 30px;
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body onload="init()">
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+
+<div id="content">
+    <div id="sqlStats">
+
+    </div>
+    <div id="tableStats">
+
+    </div>
+</div>
+
+
+<script>
+
+    function init() {
+        sqlBar();
+        tableBar();
+    }
+
+    function randomData() {
+
+        var now = new Date();
+        return now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+    }
+
+    function transformObject(keyArr,valueArr) {
+        var obj = {};
+        keyArr.map((v, i) => {
+            obj[keyArr[i]] = valueArr[i];
+        })
+        return obj;
+
+    }
+    function sqlBar() {
+        var chartDom = document.getElementById('sqlStats');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        // const data = [];
+
+        var color=[
+            '#003580', '#ed2939', '#000', '#003897', '#f93', '#bc002d', '#024fa2','#000', '#00247d','#ef2b2d']
+        var colorObj=transformObject(Object.keys(vueDemo.sqlCountData),color)
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (param) {
+                    console.log(param)
+                    return param[0].axisValue
+                },
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            xAxis: {
+                max: 'dataMax'
+            },
+            yAxis: {
+                type: 'category',
+                data: Object.keys(vueDemo.sqlCountData),
+                inverse: true,
+                axisLabel: {
+                    formatter: function (value) {
+                        return value.substring(0,12)+"...";
+                    },
+                },
+                margin: 20,
+                animationDuration: 300,
+                animationDurationUpdate: 300,
+                max: 9 // 控制显示几个bar，+1
+            },
+            grid: { containLabel: true }, // 指定数据到坐标轴的映射
+            visualMap: {
+                orient: 'horizontal',
+                left: 'center',
+                min: 1,
+                max: 200,
+                text: ['High Score', 'Low Score'],
+                // Map the score column to color
+                dimension: 0, //若是垂直bar，就是1，水平bar，就是0
+                inRange: {
+                    color: ['#65B581', '#FFCE34', '#FD665F']
+                }
+            },
+            series: [
+                {
+                    realtimeSort: true,
+                    name: '高访sql频数统计Top10',
+                    type: 'bar',
+                    seriesLayoutBy: 'column',
+                    itemStyle: {
+                        color: function (param) {
+                            return colorObj[param.value[3]] || '#5470c6';
+                        }
+                    },
+                    encode: {
+                        x: 0,
+                        y: 3
+                    },
+                    label: {
+                        show: true,
+                        precision: 1,
+                        position: 'right',
+                        valueAnimation: true,
+                        fontFamily: 'monospace'
+                    },
+                    data: Object.values(vueDemo.sqlCountData),
+                }
+            ],
+            legend: {
+                show: true
+            },
+            animationDuration: 0,
+            animationDurationUpdate: 3000,
+            animationEasing: 'linear',
+            animationEasingUpdate: 'linear',
+            graphic: {
+                elements: [
+                    {
+                        type: 'text',
+                        right: 160,
+                        bottom: 60,
+                        style: {
+                            text: randomData(),
+                            font: 'bolder 80px monospace',
+                            fill: 'rgba(100, 100, 100, 0.25)'
+                        },
+                        z: 100
+                    }
+                ]
+            }
+        };
+        function run() {
+            axios({
+                method:"POST",
+                url:"/backstage/sqlStats",
+                dataType:"json"
+            }).then(res=>{
+                this.sqlCountData=res.data
+                myChart.setOption({
+                    series: [
+                        {
+                            type: 'bar',
+                            data:Object.values(res.data),
+
+                        }
+                    ],
+                    graphic:{
+                        elements: [
+                            {
+                                style:{
+                                    text: randomData(),
+                                    font: 'bolder 80px monospace',
+                                    fill: 'rgba(100, 100, 100, 0.25)'
+                                }
+                            }
+                        ]
+                    }
+                });
+            })
+        }
+        setTimeout(function () {
+            run();
+        }, 0);
+        setInterval(function () {
+            run();
+        }, 1000);
+
+        option && myChart.setOption(option);
+    }
+
+    function tableBar() {
+        var chartDom = document.getElementById('tableStats');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        const originalData={
+                book_info:0,book_tag:0,book_type:0,user:0,bookshelf:0,borrow:0,comments:0,permissions:0,role:0,role_permissions:0
+        }
+        Object.assign(originalData, vueDemo.tableCountData);
+        var categorys=Object.keys(originalData)
+        option = { // 解决标签太长显示不全
+            title: {
+                text: '表访问量统计',
+                left:"center"
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: '{a}<br/>{b}:{c}次'
+            },
+            xAxis: [{
+                type: 'category',
+                data:["book_info","book_tag","book_type","user","bookshelf","borrow","comments","permissions","role","role_permissions"],
+                axisLabel: {
+                    interval:0,  //让所有标签全部显示
+                    rotate:40  //让标签旋转一定的角度
+                },
+            }],
+            yAxis: [{
+                type: 'value'
+            }],
+            grid: { containLabel: true }, // 指定数据到坐标轴的映射
+            visualMap: {
+                orient: 'vertical',
+                left: 'right',
+                min: 1,
+                max: 200,
+                text: ['High Score', 'Low Score'],
+                // Map the score column to color
+                dimension: 1, //若是垂直bar，就是1，水平bar，就是0
+                inRange: {
+                    color: ['#65B581', '#FFCE34', '#FD665F']
+                }
+            },
+            series: [
+                {
+                    name:'访问次数',
+                    data: Object.values(originalData),
+                    type: 'bar',
+                    showBackground: true,
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: '#83bff6' },
+                            { offset: 0.5, color: '#188df0' },
+                            { offset: 1, color: '#188df0' }
+                        ])
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#2378f7' },
+                                { offset: 0.7, color: '#2378f7' },
+                                { offset: 1, color: '#83bff6' }
+                            ])
+                        }
+                    },
+                }
+            ]
+        };
+
+        function run() {
+            axios({
+                method:"POST",
+                url:"/backstage/tableStats",
+                dataType:"json"
+            }).then(res=>{
+                Object.assign(originalData, res.data);
+                myChart.setOption(
+                    {
+                        series: [
+                            {
+                                data: Object.values(originalData),
+                                type: 'bar'
+                            }
+                        ]
+                    }
+                )
+            })
+        }
+        setTimeout(function () {
+            run()
+        },0)
+        setInterval(function () {
+            run()
+        },2000)
+
+        option && myChart.setOption(option);
+    }
+
+    var vueDemo = new Vue({
+        el:"#content",
+        data(){
+            return{
+                sqlCountData:[],
+                tableCountData:[],
+            }
+        },
+        methods: {
+            sqlStats(){ // 获取sql执行次数统计
+                axios({
+                    method:"POST",
+                    url:"/backstage/sqlStats",
+                    dataType:"json"
+                }).then(res=>{
+                    this.sqlCountData=res.data
+                })
+            },
+            tableStats(){  // 获取表访问次数统计
+                axios({
+                    method:"POST",
+                    url:"/backstage/tableStats",
+                    dataType:"json"
+                }).then(res=>{
+                    this.tableCountData=res.data
+                    console.log(this.tableCountData)
+                })
+            }
+        },
+        created(){
+            this.sqlStats();
+            this.tableStats()
+        }
+    })
+</script>
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

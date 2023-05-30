@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--当我们传递一个 List 实例或者数组作为参数对象传给 MyBatis。当你这么做的时 候,MyBatis
+会自动将它包装在一个 Map 中,用名称在作为键。List 实例将会以“list” 作为键,而数组实例将会以“array”作为键。
+所以，当我们传递的是一个List集合时，mybatis会自动把我们的list集合包装成以list为Key值的map。
+可以将list包装成map，其所在键名就是引用处，比如在foreach的collection引用。
+若把list放入bean，或者有多个参数时，这时不能指定parameterType属性，而应该在接口mapper的方法参数上使用@Param注解。
+-->
+<mapper namespace="com.jing.librarymanagementsystem.mappers.BorrowMapper">
+
+<!--    注意mysql的as字段无法用作查询条件，那么如下过滤逾期只能用原名“timestampdiff(day,c.borrow_time,now())>3 ”-->
+    <select id="selectAllBorrowInfo" resultType="java.util.Map">
+        select a.book_name as bookName,
+        a.book_id as bookId,
+        b.user_name as userName,
+        c.borrow_time as borrowTime,
+        c.return_time as returnTime,
+        c.borrow_id as borrowId,
+        timestampdiff(day,c.borrow_time,now())&gt;3 as isOverdue
+        from book_info a inner join user b inner join borrow c
+        on a.book_id=c.book_id and b.user_id=c.user_id
+        <where>
+            book_name like #{bookName} and user_name like #{userName}
+            <if test="isOverdue==true">
+                and (timestampdiff(day,c.borrow_time,now())&gt;3) =1
+            </if>
+        </where>
+    </select>
+</mapper>

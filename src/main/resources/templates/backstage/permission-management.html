@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <style>
+        #content{
+            width: 1200px;
+            height: 600px;
+            margin-top: 20px;
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+
+        /*调整表单校验提示消息位置*/
+        .el-form-item__error{
+            left: 150px;
+            top:120%;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+<div id="content">
+    <div class="permissionInfo">
+
+        <el-table
+                :data="levelDesc"
+                border
+                style="width: 100%"
+                :stripe="true">
+            <el-table-column
+                    type="index"
+                    label="序号"
+                    width="50"
+                  >
+            </el-table-column>
+            <el-table-column
+                    label="角色"
+                    width="100">
+                <template slot-scope="scope">
+                    <p>{{scope.row.roleName}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="图书收藏上限"
+                    width="150"
+            >
+                <template slot-scope="scope">
+                    <p>{{scope.row.permission.operateAddBookPermission==2147483647?'无上限':scope.row.permission.operateAddBookPermission}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="图书借阅上限"
+                    width="150"
+            >
+                <template slot-scope="scope">
+                    <p>{{scope.row.permission.operateBorrowBookPermission==2147483647?'无上限':scope.row.permission.operateBorrowBookPermission}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="每日评论数上限"
+                    width="150"
+            >
+                <template slot-scope="scope">
+                    <p>{{scope.row.permission.operateCommentsPermission==2147483647?'无上限':scope.row.permission.operateCommentsPermission}}</p>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    label="所需经验"
+                    prop="exp"
+                    width="100"
+            >
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="180"
+            >
+                <template slot-scope="scope">
+                    <el-button
+                            size="medium"
+                            type="primary"
+                            @click="handleUpgrade(scope.row)">编辑</el-button>
+                    <el-dialog
+                            title="权限修改"
+                            :visible.sync="dialogUpdatePermission"
+                            width="40%"
+                            :append-to-body="true"
+                            center
+                    >
+                        <div style="text-align: center;height:auto;">
+<!--                            必须有:model绑定值，否则校验会出错-->
+                            <el-form  :rules="rules" ref="ruleForm" :model="fromPermissions" label-position="center">
+                                <el-form-item>
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 150px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">角色：</label>
+                                    <span style="width: 250px;float: left;height: 30px;line-height: 30px;margin-top: 1px;font-size: 20px">{{fromPermissions.role}}</span>
+                                </el-form-item>
+                                <el-form-item prop="collectCeiling">
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 150px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书收藏上限：</label>
+                                    <el-input v-model="fromPermissions.collectCeiling"   style="width: 150px;float: left;height: 20px"></el-input>
+                                </el-form-item>
+                                <br>
+                                <el-form-item prop="borrowCeiling">
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 150px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书借阅上限：</label>
+                                    <el-input v-model="fromPermissions.borrowCeiling"   style="width: 150px;float: left;height: 20px"></el-input>
+                                </el-form-item>
+                                <br>
+                                <el-form-item prop="commentsCeiling">
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 150px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">每日评论上限：</label>
+                                    <el-input v-model="fromPermissions.commentsCeiling"   style="width: 150px;float: left;height: 20px"></el-input>
+                                </el-form-item>
+                                <br>
+                                <el-form-item prop="exp">
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 150px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">所需经验：</label>
+                                    <el-input v-model="fromPermissions.exp"   style="width: 150px;float: left;height: 20px"></el-input>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogUpdatePermission = false">取 消</el-button>
+                            <el-button type="primary" @click="handleOK">保存</el-button>
+                        </div>
+                    </el-dialog>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
+<script>
+    new Vue({
+        el:".permissionInfo",
+        data(){
+
+            var isInt = (s) =>{
+                return /^[0-9]*[1-9][0-9]*$/.test(s)
+            };
+            let validateIntFormat = (rule,value,callback) =>{
+                if(value===""){
+                    callback(new Error("内容不能为空"));
+                }else if(value.length>10){
+                    callback(new Error(
+                        '只能输入正整数，且长度不能大于10位'
+                    ))
+                }else
+                if (!isInt(value)) {
+                    callback(new Error(
+                        '只能输入正整数，且长度不能大于10位'
+                    ))
+                } else {
+                    callback()
+                }
+            };
+            return{
+                levelDesc:[],
+                dialogUpdatePermission:false,
+                fromPermissions:{
+                    role:"",
+                    collectCeiling:"",
+                    borrowCeiling:"",
+                    commentsCeiling:"",
+                    exp:0
+                },
+                rules:{
+                    collectCeiling: [{validator:validateIntFormat, trigger: 'blur'}],
+                    borrowCeiling:[{validator:validateIntFormat,trigger: 'blur'}],
+                    commentsCeiling:[{validator:validateIntFormat,trigger: 'blur'}],
+                    exp:[{validator:validateIntFormat,trigger: 'blur'}],
+                }
+            }
+        },
+        methods:{
+
+            getLevelInfo(){
+                axios({
+                    method:"POST",
+                    url:"/selfInfo/levelShow",
+                    dataType: "json"
+                }).then(response=>{
+                    this.levelDesc=response.data
+                })
+            },
+            // 编辑权限
+            handleUpgrade(row){
+                // 初始化
+                this.fromPermissions.role=row.roleName.toString()
+                this.fromPermissions.collectCeiling=row.permission.operateAddBookPermission.toString()
+                this.fromPermissions.borrowCeiling=row.permission.operateBorrowBookPermission.toString()
+                this.fromPermissions.commentsCeiling=row.permission.operateCommentsPermission.toString()
+                this.fromPermissions.exp=row.exp.toString()
+
+                // 清除上次校验信息message
+                for (var formErr of document.getElementsByClassName("el-form-item__error")) {
+                    formErr.innerHTML="";
+                    // formErr.focus();
+                    // formErr.blur();
+
+                }
+               this.dialogUpdatePermission=true;
+
+
+            },
+
+            // this.$refs.ruleForm.validate((valid)=>{
+            //     if(valid){
+            //
+            //     }else {
+            //         return false
+            //     }
+            // })
+
+            handleOK(){
+                this.$refs.ruleForm.validate((valid)=>{
+                    if(valid){
+                        const loading = this.$loading({
+                            lock: true,  // 锁定屏幕的滚动
+                            text: '处理中。。。',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        var success=true
+                        axios({
+                            method:"POST",
+                            url:"/backstage/saveEditPermissions",
+                            dataType: "json",
+                            data:this.fromPermissions
+                        }).then(response=>{
+                            success=response.data
+                        })
+                        setTimeout(() => {
+                            loading.close()
+                            this.dialogUpdatePermission=false
+                            if (success) {
+                                this.$message({
+                                    type: 'success',
+                                    message: '修改成功!'
+                                });
+                                this.getLevelInfo()
+                            } else {
+                                this.$message({
+                                    type: 'error',
+                                    message: '系统繁忙，请稍后再试'
+                                });
+                            }
+                        },3000);
+                    }else {
+                        return false
+                    }
+                })
+             }
+        },
+        created(){
+            this.getLevelInfo()
+        }
+    })
+</script>
+
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

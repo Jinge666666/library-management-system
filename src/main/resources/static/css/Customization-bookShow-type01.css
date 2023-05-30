@@ -1,0 +1,382 @@
+
+#Customization-bookShow-type01 .book-list{
+    width: 100%;
+    height: auto;
+    border: 1px solid green;
+    background-color: #fcfcfa;;
+}
+
+#Customization-bookShow-type01 ul {
+    width: 100%;
+    height: 100%;
+    list-style: none;
+}
+#Customization-bookShow-type01 ul li{
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    border-top: 1px solid #e6e6e6;
+    overflow: hidden;
+    font-size: 16px;
+    position: relative;
+    text-align: -webkit-match-parent;
+}
+
+#Customization-bookShow-type01 ul li .left{
+    /*position: absolute;*/
+    display: block;
+    /*left: 0;*/
+    /*top: 0;*/
+    float: left;
+    /*宽度随内容而定，因此中间内容可以动态随着该内容*/
+    max-width: 80px;
+    height: 31px;
+    color: gray;
+    text-align: left;
+    font: 14px/32px PingFangSC-Regular,-apple-system,Simsun;
+    /*border: 1px solid blue;*/
+    font-style: normal;
+}
+#Customization-bookShow-type01 ul li .medium{
+    display: block;
+    float: left;
+    height: 31px;
+    color: #1a1a1a;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font: 14px/32px PingFangSC-Regular,-apple-system,Simsun;
+    text-align: left;
+    margin-left: 10px;
+    font-style: normal;
+    /*border: 1px solid blue;*/
+}
+#Customization-bookShow-type01 ul li .right{
+    max-width: 90px;
+    height: 31px;
+    text-align: right;
+    position: absolute;
+    display: block;
+    right: 0;
+    top: 0;
+    color: #b3b3b3;
+    font: 12px/32px PingFangSC-Regular,-apple-system,Simsun;
+    /*border: 1px solid blue;*/
+}
+
+/*    热门小说标记*/
+.hot{
+    background: url(images/mixImg/tag.4318d..png) 0 -24px no-repeat;
+    height: 9px;
+    position: absolute;
+    right: -20px;
+    top: 2px;
+    width: 17px;
+}
+
+
+/*---------------------------------------组件二-----------------------------*/
+.Customization-bookShow-type03{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+.Customization-bookShow-type03 .book-img-box{
+    /*height: 136px;*/
+    height: 100%;
+    /*line-height: 188px;*/
+    margin-right: 16px;
+    width: 102px;
+    z-index: 3;
+    float: left;
+    /*border: 1px solid saddlebrown;*/
+}
+/*有了自动适应纵横比fill的el-image组件，你无需对img再规定大小，由父级元素决定就可以*/
+.Customization-bookShow-type03 .book-img-box a{
+    height: 136px;
+    width: 102px;
+    /*display: inline-block;*/
+    /*vertical-align: middle;*/
+    display: block;
+    margin-top: 26px;
+
+
+}
+.Customization-bookShow-type03 .book-mid-info{
+    height: 136px;
+    width: 320px;
+    float: left;
+    /*border: 1px solid rebeccapurple;*/
+    margin-top: 26px;
+
+}
+.Customization-bookShow-type03 .book-mid-info>h2{
+    width: 100%;
+    height: 24px;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    outline: none;
+    overflow: hidden;
+    font:18px/24px PingFangSC-Regular,HelveticaNeue-Light,Helvetica Neue Light,Microsoft YaHei,"sans-serif";
+
+
+}
+
+.Customization-bookShow-type03 .book-mid-info> .author{
+    width: 100%;
+    height: 16px;
+    line-height: 16px;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    font-family: PingFangSC-Regular,-apple-system,Simsun,serif;
+    font-size: 12px;
+}
+
+.Customization-bookShow-type03 .book-mid-info> .intro{
+    width: 100%;
+    height: 48px;
+    line-height: 24px;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    overflow: hidden;
+    color: #666;
+    font-family: PingFangSC-Regular,-apple-system,Simsun,serif;
+    font-size: 14px;
+}
+.Customization-bookShow-type03 .book-mid-info> .update{
+    width: 100%;
+    height: 22px;
+    line-height: 22px;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+    font-family: PingFangSC-Regular,-apple-system,Simsun,serif;
+    font-size: 13px;
+}
+
+/*组件三*/
+.Customization-bookShow-type04{
+    width: 100%;
+    height: 100%;
+}
+.Customization-bookShow-type04 ul{
+    height: 100%;
+    width: 100%;
+    list-style: none;
+}
+ .Customization-bookShow-type04 ul li{
+    height: 32px;
+    line-height: 32px;
+    /*height: 122px;*/
+    /*line-height: 122px;*/
+    width: 100%;
+    border-top: 1px solid #e6e6e6;
+    overflow: hidden;
+}
+
+.Customization-bookShow-type04 ul li .num-box{
+    width: 32px;
+    height: 100%;
+    display: block;
+    margin-left: 0;
+    float: left;
+}
+ .Customization-bookShow-type04 ul li .num-box span{
+    width: 16px;
+    height: 16px;
+    background-color: brown;
+    color: white;
+    display: block;
+    font: 700 14px/16px Arial;
+    letter-spacing: -1px;
+    margin-top: 8px;
+    margin-left: 2px;
+    overflow: hidden;
+    text-align: center;
+}
+ .Customization-bookShow-type04 ul li .name-box{
+    height: 32px;
+    line-height: 32px;
+    width: 190px;
+    display: block;
+    float: left;
+
+
+}
+ .Customization-bookShow-type04 ul li .name-box a{
+    display: inline-block;
+    height: 32px;
+    font: 14px/32px PingFangSC-Regular,-apple-system,Simsun;
+    width: 113px;
+    margin-left: 0;
+
+    float: left;
+    /*border: 1px solid black;*/
+
+}
+
+ .Customization-bookShow-type04 ul li .name-box .total{
+    /*border: 1px solid red;*/
+    float: left;
+    display: inline-block;
+    color: #b3b3b3;
+    height: 32px;
+    margin-right: 0;
+    font: 12px/32px PingFangSC-Regular,-apple-system,Simsun;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: normal;
+    width: 72px;
+}
+/*    隐藏部分*/
+.Customization-bookShow-type04 ul li .book-hidden{
+    width: 100%;
+    height: 134px;
+    position: relative;
+
+}
+ .Customization-bookShow-type04 ul li .book-hidden .left{
+     position: absolute;
+     left: 2px;
+    width: auto;
+    height: 111px;
+    top: 5px;
+    float: left;
+    overflow: hidden;
+
+
+
+
+}
+ .Customization-bookShow-type04 ul li .book-hidden .left>h3{
+    display: block;
+    border: 1px solid red;
+
+    background: #bf2c24;
+    color: #fff;
+    font: 700 14px/22px Arial;
+    height: 22px;
+    margin-bottom: 1px;
+    text-align: center;
+    width: 44px;
+
+}
+ .Customization-bookShow-type04 ul li .book-hidden .left>h2{
+    height:60px;
+    width: 100%;
+    display: block;
+     color: #bf2c24;
+     margin-bottom: 4px;
+     overflow: hidden;
+     padding: 3px 0 0;
+     font-weight: bold;
+
+    font: 16px/32px PingFangSC-Regular,HelveticaNeue-Light,Helvetica Neue Light,Microsoft YaHei,"sans-serif";
+}
+.Customization-bookShow-type04 ul li .book-hidden .left>h2 a{
+    color:  #262626;
+}
+
+.Customization-bookShow-type04 ul li .book-hidden .left>h2 p em{
+    margin-right: 3px;
+    font-family: Arial, serif;
+    font-size: 18px;
+}
+ .Customization-bookShow-type04 ul li .book-hidden .left>p{
+    line-height: 16px;
+    width: 100%;
+    display: block;
+    /*border: 1px solid green;*/
+
+    font-family: PingFangSC-Regular,-apple-system,Simsun,serif;
+    font-size: 12px;
+    height: 16px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+ .Customization-bookShow-type04 ul li .book-hidden .left>p>a{
+    color: #a6a6a6;
+}
+
+ .Customization-bookShow-type04 ul li .book-hidden .right{
+    position: absolute;
+    width: 60px;
+    height: 90px;
+     right: -10px;
+     top: 10px;
+    z-index: 4;
+    background-color: #adadad;
+
+    transform: perspective(60px) rotateY(-10deg);
+}
+ .Customization-bookShow-type04 ul li .book-hidden .right>a{
+    display: inline-block;
+    position: relative;
+    z-index: 10;
+    color: #262626;
+    outline: none;
+    width: 55px;
+    height: 90px;
+    transition: color .3s,background-color .3s;
+}
+ .Customization-bookShow-type04 ul li .book-hidden .right a img{
+    height: 90px;
+    width: 55px;
+}
+ .Customization-bookShow-type04 ul li .book-hidden .right>span{
+    background-color: #efefef;
+    box-shadow: 20px 0 5px 5px #adadad;
+    content: "";
+    height: 10px;
+    left: 7px;
+    position: absolute;
+    top: 87.1%;
+    transform: perspective(74px) rotateX(-70deg) rotateY(-5deg);
+    width: 20px;
+    z-index: 1;
+    border: 3px solid red;
+}
+
+ .Customization-bookShow-type04 ul li .book-hidden{
+    display: none;
+}
+
+/* 鼠标覆盖在上时，若想只展示第一个li的隐藏区域，而后面不显示，且click不会失效，则不能给css控制元素显示隐藏，应交给js*/
+/* .Customization-bookShow-type04 ul li:hover{*/
+/*    height: 122px;*/
+/*    line-height: 122px;*/
+/*}*/
+
+/*!* 使用纯css控制元素显示隐藏*!*/
+/* .Customization-bookShow-type04 ul li:hover .num-box{*/
+/*    display: none;*/
+/*}*/
+/* .Customization-bookShow-type04 ul li:hover .name-box{*/
+/*    display: none;*/
+/*}*/
+/* .Customization-bookShow-type04 ul li:hover .book-hidden{*/
+/*    display: block;*/
+/*}*/
+
+/*控制第一个li元素的隐藏元素显示出来*/
+ .Customization-bookShow-type04 ul li:nth-child(1) .num-box{
+    display: none;
+}
+ .Customization-bookShow-type04 ul li:nth-child(1) .name-box{
+    display: none;
+}
+.Customization-bookShow-type04 ul li:nth-child(1) .book-hidden{
+    display: block;
+}
+ .Customization-bookShow-type04 ul li:nth-child(1){
+    height: 122px;
+    line-height: 122px;
+}

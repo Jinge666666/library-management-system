@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    头部url链接不要加th:,否则element-ui可能会显示不出来！！！-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <link rel="stylesheet" href="../../static/font/albb/iconfont.css">
+    <script href="../static/font/albb/iconfont.js"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="../../static/css/common.css">
+
+    <!--    自定义组件相关引入-->
+    <script src="../vue-components/js/Customization-bookShow-type01.js"></script>
+    <link rel="stylesheet" href="../vue-components/css/Customization-bookShow-type01.css">
+
+
+    <style lang="scss">
+        body{
+
+            background-image: url("images/dollar-gill-0V7_N62zZcU-unsplash.jpg");
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 100%;
+
+        }
+
+        *{
+            color: #333333;
+        }
+
+        #loginForm {
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        /*登录框居中*/
+        .login_center {
+            width: 520px;
+            height: 450px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin: -250px 0 0 -250px;
+            border-radius: 10px;
+            background-color: white;
+        }
+
+        .login_header {
+            width: 100%;
+            height: 15%;
+            background-color: steelblue;
+            text-align: center;
+            padding-top:20px
+        }
+
+        /*输入框宽度*/
+        .el-input {
+            width: 80%;
+        }
+        a{
+            text-decoration-line: none;
+        }
+
+    </style>
+</head>
+<body>
+<div id="loginForm">
+    <div class="login_center">
+        <div class="login_header">
+            <span style="font-size: 35px;font-weight: bold;color: white;">图书借阅系统</span><br>
+        </div>
+        <div>
+            <el-form style="margin-top: 7%;" :model="ruleForm"  status-icon :rules="rules" ref="ruleForm"
+                     label-width="100px" class="demo-ruleForm">
+                <el-form-item label="账号" prop="userName">
+                    <el-input v-model="ruleForm.userName" autocomplete="off" placeholder="注册用户名或电子邮箱">
+                        <i slot="prefix" class="el-input__icon el-icon-user-solid"></i>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="密码" prop="password">
+                    <el-input prefix-icon="el-icon-lock" type="password" v-model="ruleForm.password"
+                              autocomplete="off" placeholder="密码" show-password>
+                    </el-input>
+                </el-form-item>
+                <el-form-item label="验证码" prop="captcha">
+                    <el-input v-model="ruleForm.captcha"
+                              autocomplete="off" placeholder="请输入验证码" style="width: 140px;height: 50px;line-height: 50px;float: left">
+                    </el-input>
+                    <img  src="/verifyCode" v-on:click="changeCaptcha($event)" ref="captcha" style="display: block; margin-left: 45px;float: left">
+                </el-form-item>
+                <el-form-item style="text-align: center;overflow:hidden;width: 80%;height:25px;line-height:25px;margin-top: -5px;position: relative" type="primary">
+                    <div style="float: left;height: 25px;line-height: 25px;width: 90px;cursor: pointer" @click="rememberMe">
+                        <img th:src="@{/images/mixImg/未选中.svg}" v-show="!isRemember" style="width: 30px;height: 25px;display: inline-block;float: left">
+                        <img th:src="@{/images/mixImg/select.svg}" v-show="isRemember" style="width: 30px;height: 25px;display: inline-block;float: left">
+                        <span style="width: 50px;height: 25px;margin-left:5px;line-height:25px;display: inline-block;float: left">记住我</span></div>
+                    <div style="float: right;height: 25px;line-height: 25px;"><a href="javascript:;" target="_blank">忘记密码</a></div>
+                </el-form-item>
+                <el-form-item style="text-align: center;height: 40px;margin-top: -10px">
+                    <el-button style="margin-left: -80px;width: 336px;height:40px;opacity: 1;" type="primary"
+                               @click="submitForm('ruleForm',$event)">
+                        登录
+                    </el-button>
+                </el-form-item>
+                <el-form-item style="text-align: left;width: 80%;height:25px;line-height:25px;margin-top: -20px;padding-left: 5px" type="primary">
+                   还没有账号？<a style="color: #EB7350" th:href="@{/toRegister}">立即注册</a>
+                    <el-checkbox v-model="isAdmin" style="margin-left: 80px">管理员</el-checkbox>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    localStorage.setItem("activeIndex","1-1");
+
+    new Vue({
+        el: '#loginForm',
+        data() {
+            // 密码校验
+            var isPsd = (s) =>{
+                return /^(?![a-zA-Z]+$)(?!\d+$)(?![^\da-zA-Z\s]+$).{6,10}$/.test(s)
+            };
+            let validatePsd = (rule,value,callback) =>{
+                if(value===""){
+                    callback(new Error("请输入密码"));
+                }else
+                if (!isPsd(value)) {
+                    callback(new Error(
+                        '密码格式要求长度在6到10字符间，且由字母、数字、特殊字符任意2种组成'
+                    ))
+                } else {
+                    callback()
+                }
+            };
+
+            return {
+                ruleForm: {
+                    userName: '',
+                    password: '',
+                    captcha: '',
+                },
+                isRemember:false,
+                isAdmin:false,
+                rules: {
+                    // //校验用户名  // required表示必填项，blur表示失去焦点时触发方法
+                    // userName: [
+                    //     { required: true, message: "请输入用户名或电子邮箱", trigger: "blur" },
+                    //     {
+                    //         min: 2,
+                    //         max: 8,
+                    //         message: "长度在 2 到 8 个字符",
+                    //         trigger: "blur",
+                    //     },
+                    // ],
+                    // //校验密码
+                    // password: [{validator:validatePsd,trigger:'blur'}],
+                    // // 验证码校验
+                    // captcha: [{required:true,message:"验证码不能为空",trigger:"blur"}]
+                },
+
+
+            };
+        },
+        created() {
+        },
+        methods: {
+            resetLoginForm() {
+                //重置表单内容
+                this.$refs.ruleForm.resetFields();
+            },
+            //表单提交
+            submitForm(formName,event) {
+
+                // 先强制登录按钮失去焦点
+                event.target.blur();
+
+               // this.$refs[formName]得到组件el-form对象，调用组件的validate方法，该方法作用是检查所有表单项的校验情况，回调函数第一个参数是表示是否全部校验成功
+                this.$refs[formName].validate((valid) => {
+                    // 判断是否验证成功
+                    if (valid) {
+                        const data = {userName: '', password: '', captcha: ''};
+                        // Object.assign（target, source） 静态方法 将所有可枚举的自己的属性从一个或多个源对象复制到目标对象。
+                        // 它返回修改后的目标对象。相同属性会替换，且returnedTarget === target
+                        Object.assign(data, this.ruleForm);
+                        // es6中的解构赋值，将login(XXX)的data属性取出来,并赋值给res
+                        // const{data} = await login(XXX) //这种不会用
+
+                        // 添加remember
+                        data["isRemember"]=this.isRemember
+                        data["isAdmin"]=this.isAdmin
+                        var vm = this
+                        axios({
+                            //请求方法
+                            method:'POST',
+                            url:'/login',
+                            // @ResponseBody注解会把对象默认转为json格式，而ajax就算不设置dataType，只要后端响应json，ajax会自动解析为json对象
+                            // dataType:"json",
+                            data: data,
+                            // xhrFields: {withCredentials: true} // 跨域问题
+                        }).then(response=>{
+
+                            // 登录状态判断
+                            switch (response.data.state) {
+                                case "3": //验证码错误
+                                    vm.messageBox(response.data.message);
+                                    break;
+                                case "2": // 用户名不存在
+                                    vm.messageBox(response.data.message);
+                                    break;
+                                case "4": // 服务器内部错误
+                                    vm.messageBox(response.data.message);
+                                    break;
+                                case "5": // 密码错误
+                                    vm.messageBox(response.data.message);
+                                    break;
+                                case "6": // 账号被锁定
+                                    vm.messageBox(response.data.message);
+                                    break;
+                                default : // ok
+                                    if(response.data.data.isAdmin){
+                                        // 跳到管理员首页
+                                        window.location.href="/backstage/main";
+                                    }else {
+                                        window.location.href = "/home"; // 跳转到首页
+                                    }
+
+                            }
+
+
+                        })
+                        // window.alert(res)
+
+                        // login(data).then(res => {
+                        //     window.alert("???????????")
+                        //     if (res.status == 200) {
+                        //         this.$notify.success("登录成功");
+                        //         //存入token
+                        //         window.sessionStorage.setItem("access_token", res.data.access_token);
+                        //         window.sessionStorage.setItem("refresh_token", res.data.refresh_token);
+                        //         //跳转到首页
+                        //         window.location.href = "/pages/homePage";
+                        //     } else {
+                        //         this.$notify.info("登录失败");
+                        //         return false;
+                        //     }
+                        // });
+                    }
+                    else {
+                        return false;
+                    }
+                });
+            },
+            changeCaptcha(event) {
+                // 解决图片缓存问题，使img标签重新渲染
+                this.$refs.captcha.src = '/verifyCode?time=' + Date.now();
+            },
+            messageBox(message) { // 消息弹框
+                // this.$alert('<div style="width: 800px;height: 100px;border:1px red solid;line-height: 100px"><i class="el-icon-info" style="font-size:3em;color:royalblue;display: inline-block;float: left"></i><strong style="display: inline-block;float: left;width: 150px;height: 50px;line-height: 50px;margin-left: 30px;">'+message+'</strong></div>', '提示信息', {
+                 this.$alert(message,'提示信息',{
+                    dangerouslyUseHTMLString: false, // message 就会被当作 HTML 片段处理
+                    // center: true,  // 居中
+                    confirmButtonText: '确定',
+                    // roundButton:true,  //使用圆角按钮
+                    iconClass:'el-icon-info', //自定义图标的类名，会覆盖 type
+                    customClass:"msgBox",  //给弹框的自定义类名，用于css该弹窗框，注意css代码写在该js代码下方才会生效！
+                    callback: action => { // 可以有回调函数，进行后续操作的处理
+                        // 清除验证码输入框数据
+                        this.ruleForm.captcha=''
+                        // 同时刷新验证码图片
+                        this.changeCaptcha()
+                    }
+                });
+            },
+            rememberMe(){ // 记住我
+             this.isRemember = !this.isRemember;
+            }
+        }
+    })
+</script>
+<!--    弹框修饰-->
+<style>
+    .msgBox {
+        min-width:38vw!important;
+        min-height: 10vw!important;
+        background-color: #fff;
+        color: #535e66;
+        font-weight: bolder;
+
+    }
+    /*图标+message*/
+    .el-message-box__content{
+        border-top: solid 1px #eef0f1;
+        border-bottom: solid 1px #eef0f1;
+        margin-top: 2vw!important;
+        height: 80px;
+        line-height: 80px;
+        width: 100%;
+
+
+    }
+
+    /*message*/
+    .el-message-box__message{
+
+        font-size: 20px;
+        height: 30px;
+        width: 400px;
+        line-height: 30px;
+        margin-top: 30px;
+        float: left;
+        margin-left: 80px;
+
+    }
+    /*图标,这是个绝对位置元素*/
+    .el-message-box__status{
+        font-size:4em!important;
+        margin-left: 50px;
+        top:45px;
+    }
+
+    /*图标颜色要这样设置*/
+    .el-message-box__status.el-icon-info {
+        color: royalblue;
+    }
+
+    .el-message-box__btns{
+        margin-top: 2vw!important;
+        height: 50px;
+    }
+
+</style>
+</body>
+</html>

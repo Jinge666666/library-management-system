@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jing.librarymanagementsystem.mappers.PermissionsVerifyMapper">
+
+    <update id="editPermission">
+<!--&lt;!&ndash;        注意：不能先select出同一表中的某些值，再update这个表(在同一语句中)&ndash;&gt;-->
+<!--        update permissions  set resource="operate:addbook:10" where id in-->
+<!--&lt;!&ndash;        解决1：将select出的结果，通过中间表select一遍，如此就规避了该错误。&ndash;&gt;-->
+<!--        (select tt.id from-->
+<!--&lt;!&ndash;        这个括号就是一张中间表，对其select一遍，而不能不要tt，即上面这样，直接in这里的中间表的c.id是不行的&ndash;&gt;-->
+<!--        (select c.id from role a inner join role_permissions b inner join permissions c on a.id=b.role_id and b.permissions_id=c.id where a.name="青铜" and c.resource like "%addbook%")-->
+<!--        tt)-->
+
+
+<!--        这里用到了一列中多行同时修改，使用case 语法，还有同时修改多张表 permissions、role,一条sql完美解决权限的修改！！！-->
+        update permissions p,role r set
+<!--        <if test="role='青铜'">-->
+            p.resource= CASE p.id
+<!--        字符串拼接使用CONCAT函数-->
+            when ${index+0} then CONCAT(CONCAT('operate:addbook:', #{collectCeiling}))
+            when ${index+5} then CONCAT(CONCAT('operate:borrowbook:', #{borrowCeiling}))
+            when ${index+10} then CONCAT(CONCAT('operate:comments:', #{commentsCeiling}))
+            END,
+            r.exp=${exp}
+            where p.id in
+            (select tt.id from
+            (select c.id from role a inner join role_permissions b inner join permissions c on a.id=b.role_id and b.permissions_id=c.id where a.name=#{role})
+            tt)
+            and r.name=#{role}
+<!--        </if>-->
+
+    </update>
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--当我们传递一个 List 实例或者数组作为参数对象传给 MyBatis。当你这么做的时 候,MyBatis
+会自动将它包装在一个 Map 中,用名称在作为键。List 实例将会以“list” 作为键,而数组实例将会以“array”作为键。
+所以，当我们传递的是一个List集合时，mybatis会自动把我们的list集合包装成以list为Key值的map。
+可以将list包装成map，其所在键名就是引用处，比如在foreach的collection引用。
+若把list放入bean，或者有多个参数时，这时不能指定parameterType属性，而应该在接口mapper的方法参数上使用@Param注解。
+-->
+<mapper namespace="com.jing.librarymanagementsystem.mappers.UserMapper">
+    <update id="updateRoleAndExp">
+        update user
+        <set>
+            <if test="role!=null">
+                role=#{role},
+            </if>
+            <if test="exp!=-1">
+                exp=#{exp}
+            </if>
+        </set>
+    </update>
+    <delete id="deleteUsers">
+        delete from user where user_id in
+        <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectAllUser" resultType="com.jing.librarymanagementsystem.bean.User">
+        select * from user
+        <where>
+
+                user_name like #{userName}
+
+                and email like #{email}
+          <if test="isLock==true">
+              and  is_lock=1
+          </if>
+            <if test="isAdmin==true">
+                and is_admin=1
+            </if>
+            <if test="isAdmin==false">
+                and is_admin=0
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,254 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+/*自适应浏览器的宽高*/
+html,body{
+    height: 100%;
+    width: 100%;
+    margin:0;
+    padding:0;
+
+}
+/*-------------------左边部分------------*/
+#commonLeftNavMenu{
+    width: 18%;
+    height: 100%;
+    float: left;
+
+}
+
+#Logo{
+    width: 18%;
+    height: 16%;
+
+    /*滑动*/
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: scroll;
+    background: #201D50;
+}
+
+#sideBar{
+    width: 18%;
+    height: 82%;
+    top: 16%;
+
+    /*滑动*/
+    position: fixed;
+    left: 0;
+    overflow-y: scroll;
+    background: #201D50;
+}
+
+/*---------------------右上部分-----------------*/
+#commonMainHead{
+    width: 80%;
+    height: 20%;
+    float: left;
+    margin-left: 1%;
+
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*right: 0;*/
+
+}
+
+#mainHeader{
+    width: 100%;
+    height: 59%;
+    line-height: 59%;
+    border: 1px solid black;
+}
+#mainHeader > .searchBox{
+    width: 350px;
+    height: 42px;
+    line-height: 42px;
+    margin-top: 25px;
+    text-align: center;
+    padding-top: 1px;
+    float: left;
+    margin-left: 50px;
+
+}
+#mainHeader > .searchBox .search{
+    width: 350px;
+    height: 42px;
+}
+.searchResult span{
+    font-weight: normal;
+}
+
+.searchResult:hover{
+    background: lightslategrey;
+}
+/*.el-autocomplete-suggestion__list li{*/
+/*    pointer-events: none;*/
+/*}*/
+/*.searchResult{*/
+/*    pointer-events: all;*/
+/*}*/
+
+/* 改变ui组件分割线的margin*/
+.el-divider--horizontal{
+    margin: 10px 0;
+}
+
+/*修改ui组件的input的默认样式*/
+#mainHeader > .searchBox .el-input__inner {
+    border: 2px black solid;
+
+}
+/*边框渐变阴影*/
+#mainHeader > .searchBox .el-input__inner:hover{
+    -moz-box-shadow:0 0 10px #06c;
+    -webkit-box-shadow:0 0 10px #06c;
+    box-shadow:0 0 10px #06c;
+
+}
+
+/*搜索提交按钮*/
+.searchButton{
+    width: 89px;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    margin-top: 25px;
+    padding-left: 0;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    overflow: hidden;
+    float: left;
+}
+
+
+
+#mainHeader  .loginInfoFrom{
+    width: 390px;
+    height: 42px;
+    line-height: 42px;
+    margin-top: 25px;
+    text-align: center;
+    /*padding: 1px;*/
+    float: left;
+    margin-left: 200px;
+
+}
+
+#mainHeader  .loginInfoFrom .left{
+    width: 270px;
+    height: 100%;
+    line-height: 100%;
+    float: left;
+}
+
+#mainHeader > .loginInfoFrom  .left > a{
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    margin-top:4px;
+    display: inline-block;
+    float: left;
+    text-decoration-line: none;
+}
+#mainHeader > .loginInfoFrom  .left img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+#mainHeader > .loginInfoFrom  .left span{
+    width: 200px;
+    height: 42px;
+    line-height: 42px;
+    text-align: left;
+    display: inline-block;
+    float: left;
+    margin-left: 25px;
+}
+
+#mainHeader  .loginInfoFrom .right{
+    width: 110px;
+    height: 100%;
+    line-height: 100%;
+    float: left;
+    text-align: left;
+
+
+}
+
+#mainHeader  .loginInfoFrom .right>a{
+    text-decoration: none;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    margin-left: 5px;
+    margin-top: 9px;
+}
+#mainHeader  .loginInfoFrom .right img{
+    width: 24px;
+    height: 24px;
+}
+
+/*修改下拉菜单的默认背景色*/
+.el-dropdown-menu__item {
+    cursor: pointer;
+    color: black;
+}
+/*背景渐变*/
+.el-dropdown-menu__item:hover{
+    background: center center #4A54FF;
+    background-image: linear-gradient(315deg,#6772FF 0,#00F9E5 100%);
+}
+
+
+/*导航栏*/
+#topBar{
+    width: 100%;
+    height: 40%;
+    line-height: 40%;
+}
+
+/*修改ui组件导航栏el-menu-item的默认属性*/
+#topBar .el-menu-item{
+    width: 150px;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+
+}
+/*#topBar .el-menu-item:hover{*/
+/*    background-color: orangered;*/
+/*}*/
+
+#sideBar a,#topBar a{
+    text-decoration-line:none;
+    color: #fff;
+}
+
+/*    阿里图标样式修改,须自定义class*/
+.sideBarIcon{
+    font-size:16px; /*大小按文字方式定义*/
+    margin-right: 10px;
+    margin-left: 3px;
+}
+
+
+/*消息提醒标记*/
+
+.el-badge__content {
+    border-radius: 10px;
+    color: #FFF;
+    display: inline-block;
+    font-size: 5px;
+    height: 9px;
+    line-height: 9px;
+    padding: 0 1px;
+    text-align: center;
+    white-space: nowrap;
+    border: 1px solid #FFF;
+}
+.is-fixed{
+    right: 5px;
+}

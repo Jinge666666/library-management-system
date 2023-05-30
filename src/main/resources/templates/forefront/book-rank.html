@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="forefront/common::commonHeader"></div>
+<!--    &lt;!&ndash;    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js" ></script>&ndash;&gt;-->
+<!--    <script src="../../static/js/vue.js"></script>-->
+<!--    &lt;!&ndash; import element-ui CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css" >-->
+<!--    &lt;!&ndash; import element-ui JavaScript &ndash;&gt;-->
+<!--    <script  src="https://unpkg.com/element-ui@2.15.12/lib/index.js" ></script>-->
+
+<!--    &lt;!&ndash;axios引入&ndash;&gt;-->
+<!--    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>-->
+
+<!--    &lt;!&ndash;    引入vue的ajax&ndash;&gt;-->
+<!--    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>-->
+
+<!--    &lt;!&ndash;    阿里巴巴图标库引入&ndash;&gt;-->
+<!--    <link rel="stylesheet" href="../../static/font/albb/iconfont.css">-->
+<!--    <script  href="../../static/font/albb/iconfont.js"></script>-->
+
+<!--    &lt;!&ndash;    jquery引入&ndash;&gt;-->
+<!--    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>-->
+
+<!--    <link rel="stylesheet" href="../../static/css/common.css">-->
+
+<!--    &lt;!&ndash;    自定义组件相关引入&ndash;&gt;-->
+<!--    <script src="../vue-components/js/Customization-bookShow-type01.js"></script>-->
+<!--    <link rel="stylesheet" href="../vue-components/css/Customization-bookShow-type01.css">-->
+
+<style>
+    /* 以后放在公共css中去*/
+    .mainContent {
+        width: 1175px;
+        height: auto;
+        float: left;
+        margin-left: 1%;
+        border: 1px solid red;
+
+    }
+
+    .updateTime{
+        width: 1175px;
+        height: 60px;
+        margin-left: 0;
+        margin-top: 20px;
+    }
+    .updateTime h3 {
+        width: 100%;
+        height: 60px;
+        /*text-align: left;*/
+        text-align: center;
+        line-height: 60px;
+
+    }
+    .novelTypeNav{
+        width: 100%;
+        height: 60px;
+        margin-top: 20px;
+        /*border: 1px solid red;*/
+        background: #f7f6f2;
+
+
+    }
+    .novelTypeNav ul {
+        width: 100%;
+        height: 60px;
+        list-style: none;
+        padding-left: 200px;
+    }
+    .novelTypeNav ul li{
+        width: 80px;
+        height: 40px;
+        text-align: center;
+        margin-top: 10px;
+        float: left;
+        color: #a6a6a6;
+        font: 15px/40px PingFangSC-Regular,-apple-system,Simsun;
+        cursor: pointer;
+    }
+    .novelTypeNav ul li:hover{
+        color: red;
+        transition: all .3s ease;
+    }
+
+    .ranks{
+        width: 100%;
+        height: 550px;
+        margin-top: 30px;
+        padding-left: 50px;
+
+    }
+
+    .rank{
+        width: 245px;
+        height: 100%;
+        float: left;
+        margin-right: 30px;
+        background: #FFF;
+    }
+    .rank .right {
+        width: 225px;
+        height: 100%;
+        float: left;
+        margin-right: 20px;
+        background-color: #fff;
+    }
+    .genduo{
+        opacity: 0;
+    }
+    .rank .right:hover .genduo{
+        color: orangered;
+        opacity: 1;
+        transition:all .5s linear;
+    }
+
+    .rank .right a {
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .rank .right .title {
+        height: 45px;
+        line-height: 45px;
+        width: 100%;
+        color: #1a1a1a;
+        text-align: left;
+        border-bottom: 1px solid black;
+        font-size: 20px;
+        font-weight: bolder;
+
+    }
+
+</style>
+</head>
+<body>
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+<div class="mainContent">
+    <div class="updateTime">
+        <h3>最近更新时间:&nbsp;&nbsp;&nbsp;{{lastUpdatedTime}}</h3>
+    </div>
+    <div class="novelTypeNav">
+        <ul>
+            <li @click="navClick('全部分类')">全部分类</li>
+            <li @click="navClick('玄幻')">玄幻</li>
+            <li @click="navClick('奇幻')">奇幻</li>
+            <li @click="navClick('仙侠')">仙侠</li>
+            <li @click="navClick('都市')">都市</li>
+            <li @click="navClick('历史')">历史</li>
+            <li @click="navClick('游戏')">游戏</li>
+            <li @click="navClick('科幻')">科幻</li>
+            <li @click="navClick('悬疑')">悬疑</li>
+        </ul>
+    </div>
+    <div class="ranks">
+        <div class="sellRank rank">
+            <div class="right">
+                <div class="title">
+                    <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                        畅销榜单
+                    </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left;">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                    </span>
+                </div>
+                <!--            自定义组件-->
+                <third-customcomponent :is-show-book-info="true" :infos="borrowedRankData" total-desc="本周畅销书籍" :is-em-total-show="false" :is-total-show="false"></third-customcomponent>
+            </div>
+        </div>
+        <div class="clicksRank rank">
+            <div class="right">
+                <div class="title">
+                    <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                        点击榜单
+                    </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                    </span>
+                </div>
+                <!--            自定义组件-->
+                <third-customcomponent total-desc="点击数" :infos="clickRankData"></third-customcomponent>
+            </div>
+        </div>
+        <div class="bookmarkRank rank">
+            <div class="right">
+                <div class="title">
+                    <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                        收藏榜单
+                    </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                    </span>
+                </div>
+                <!--            自定义组件-->
+                <third-customcomponent total-desc="收藏数" :infos="favoriteRankData"></third-customcomponent>
+            </div>
+        </div>
+        <div class="hotReviewRank rank">
+            <div class="right">
+                <div class="title">
+                    <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                        热评榜单
+                    </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                    </span>
+                </div>
+                <!--            自定义组件-->
+                <third-customcomponent :infos="hotReviewRankData" total-desc="本周热评书籍" :is-em-total-show="false" :is-total-show="false"></third-customcomponent>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    new Vue({
+        el:".mainContent",
+        data() {
+            return{
+                rankByBookType:"全部分类",   // 基于某书籍类型排序
+                borrowedRankData:"",
+                clickRankData:"",
+                favoriteRankData:"",
+                hotReviewRankData:"",
+                lastUpdatedTime:""
+            }
+        },
+        methods:{
+            getBookRankData(){
+                axios({
+                    method:"POST",
+                    url:"/rank/bookRankShow?rankByBookType="+this.rankByBookType,
+                    dataType:"application/x-www-form-urlencoded",
+                }).then(response=>{
+                    console.log(response.data)
+                    this.borrowedRankData=response.data["borrowedRankData"]
+                    this.clickRankData=response.data.clickRankData
+                    this.favoriteRankData=response.data.favoriteRankData
+                    this.hotReviewRankData=response.data.hotReviewRankData
+                    this.lastUpdatedTime=response.data.lastUpdatedTime[0].lastUpdatedTime
+                })
+            },
+            // 更新rankByBookType并请求数据
+            navClick(bookType){
+                this.rankByBookType=bookType;
+                this.getBookRankData();
+            }
+
+        },
+        created(){
+           this.getBookRankData();
+        }
+    })
+</script>
+
+<div th:replace="forefront/common::#commonScripts"></div>
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+/*ul标签,宽高一般和图片一样*/
+.sb-slider {
+	/*margin: 10px auto;*/
+	position: relative;
+	/*大图的父节点使用hidden可能会造成刷新时图片显示不出*/
+	overflow: hidden;
+	/*width: 100%;*/
+	width: 800px;
+	list-style-type: none;
+	padding: 0;
+	height: 360px;
+	border: 1px solid;
+	margin-right: 200px;
+}
+
+.sb-slider li {
+	margin: 0;
+	padding: 0;
+	display: none;
+}
+
+.sb-slider li > a {
+	outline: none;
+}
+
+.sb-slider li > a img {
+	border: none;
+}
+
+/*图片大小*/
+.sb-slider img {
+	/*max-width: 100%;*/
+	width: 800px;
+	height: 360px;
+	display: block;
+}
+
+/*文字区域修饰，控制区域范围和大小*/
+.sb-description {
+	height: 50px;
+	width: 600px;
+	padding: 20px;
+	bottom: 10px;
+	left: 10px;
+	right: 10px;
+	z-index: 1000;
+	position: absolute;
+	background: #CBBFAE;
+	background: rgba(190,176,155, 0.4);
+	border-left: 4px solid rgba(255,255,255,0.7);
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	color: #fff;
+
+	-webkit-transition: all 200ms;
+	-moz-transition: all 200ms;
+	-o-transition: all 200ms;
+	-ms-transition: all 200ms;
+	transition: all 200ms;
+}
+
+/*这两处代码若注释了，图片的文字介绍就消失了*/
+.sb-slider li.sb-current .sb-description {
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity=80);
+	opacity: 1;
+}
+
+.sb-slider li.sb-current .sb-description:hover {
+	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=99)";
+	filter: alpha(opacity=99);
+	background: rgba(190,176,155, 0.7);
+}
+
+/*这里是负责旋转特效的，不用看*/
+.sb-perspective {
+	position: relative;
+}
+
+.sb-perspective > div {
+	position: absolute;
+
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	-o-transform-style: preserve-3d;
+	-ms-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+
+	-webkit-backface-visibility : hidden;
+	-moz-backface-visibility : hidden;
+	-o-backface-visibility : hidden;
+	-ms-backface-visibility : hidden;
+	backface-visibility : hidden;
+}
+
+.sb-side {
+	margin: 0;
+	display: block;
+	position: absolute;
+
+	-moz-backface-visibility : hidden;
+
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	-o-transform-style: preserve-3d;
+	-ms-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+
+
+/*图形底部的倒影*/
+.shadow {
+	width: 100%;
+	height: 168px;
+	position: relative;
+	margin-top: -110px;
+	background: transparent url(https://tympanus.net/Development/Slicebox/images/shadow.png) no-repeat bottom center;
+	background-size: 100% 100%; /* stretches it */
+	z-index: -1;
+	display: none;
+}
+
+.sb-description h3 {
+	font-size: 20px;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.sb-description h3 a {
+	color: #4a3c27;
+	text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+}
+
+.nav-arrows {
+	display: none;
+}
+
+/*两边按钮,若要相对于ul的父元素定位，请为父元素设置relative，因此父元素要留按钮的宽度*/
+.nav-arrows a {
+	width: 42px;
+	height: 42px;
+	background: #cbbfae url(https://tympanus.net/Development/Slicebox/images/nav.png) no-repeat top left;
+	position: absolute;
+	top: 50%;
+	left: 2px;
+	text-indent: -9000px;
+	cursor: pointer;
+	margin-top: -21px;
+	opacity: 0.9;
+	border-radius: 50%;
+	box-shadow: 0 1px 1px rgba(255,255,255,0.8);
+}
+
+.nav-arrows a:first-child{
+	left: auto;
+	right: 2px;
+	background-position: top right;
+}
+
+.nav-arrows a:hover {
+	opacity: 1;
+}
+

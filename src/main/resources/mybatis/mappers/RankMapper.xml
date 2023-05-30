@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--当我们传递一个 List 实例或者数组作为参数对象传给 MyBatis。当你这么做的时 候,MyBatis
+会自动将它包装在一个 Map 中,用名称在作为键。List 实例将会以“list” 作为键,而数组实例将会以“array”作为键。
+所以，当我们传递的是一个List集合时，mybatis会自动把我们的list集合包装成以list为Key值的map。
+可以将list包装成map，其所在键名就是引用处，比如在foreach的collection引用。
+若把list放入bean，或者有多个参数时，这时不能指定parameterType属性，而应该在接口mapper的方法参数上使用@Param注解。
+-->
+<mapper namespace="com.jing.librarymanagementsystem.mappers.RankMapper">
+
+<!--SQL_CALC_FOUND_ROWS可以统计上条sql执行的总量，并且不受limit影响，基于该原则，我们定时任务就不需要手动去算每个sql的总量了。-->
+    <select id="selectForBookRank" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select SQL_CALC_FOUND_ROWS book_id,book_name,book_author,book_type, bookface_name,clicks,word_count,borrowed_times,favorites from book_info
+        <if test="rankByBookType!='全部分类'">
+            where book_type in
+            <if test="rankByBookType=='玄幻'">
+                ("东方玄幻")
+            </if>
+            <if test="rankByBookType=='奇幻'">
+                ("转世重生","异界大陆")
+            </if>
+            <if test="rankByBookType=='仙侠'">
+                ("奇幻修真","古典仙侠")
+            </if>
+            <if test="rankByBookType=='都市'">
+                ("现实百态","爱情婚姻","商战风云","都市异能","现代修真","青春校园","穿越时空","总裁豪门")
+            </if>
+            <if test="rankByBookType=='历史'">
+                ("架空历史")
+            </if>
+            <if test="rankByBookType=='游戏'">
+                ("虚拟网游")
+            </if>
+            <if test="rankByBookType=='科幻'">
+                ("科幻灵异")
+            </if>
+            <if test="rankByBookType=='悬疑'">
+                ("悬疑推理")
+            </if>
+        </if>
+<!--        一定要注意order by后面字段不能带引号，#是不行的-->
+        order by ${rankByOrderType} desc limit #{start},#{num}
+    </select>
+
+</mapper>

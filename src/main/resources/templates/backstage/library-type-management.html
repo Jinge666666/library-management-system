@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="backstage/common::commonHeader"></div>
+
+    <style>
+        #content{
+            width: 1200px;
+            height: 600px;
+            margin-top: 20px;
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        .libraryTypeHeader{
+            width:100%;
+            height: 40px;
+
+        }
+    </style>
+</head>
+<body>
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+<div id="content">
+    <div class="libraryTypeInfo">
+        <div class="libraryTypeHeader">
+            <el-input v-model="bookTypeInput" placeholder="类型名" @keyup.enter.native="bookTypeShow"  style="width: 180px;float: left"></el-input>
+            <el-button type="primary" size="midium" icon="el-icon-search" @click="bookTypeShow">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="handleAdd">添加类型</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="batchDelete">批量删除</el-button>
+        </div>
+        <el-table
+                :data="tableData"
+                @selection-change="handleSelectionChange"
+                border
+                :fit="false"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    width="40">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    label="序号"
+                    width="50"
+                    :index="indexMethod">
+            </el-table-column>
+            <el-table-column
+                    prop="book_type_name"
+                    label="类型名称"
+                    width="460">
+            </el-table-column>
+            <el-table-column
+                    prop="book_type_desc"
+                    width="460"
+                    label="类型描述">
+            </el-table-column>
+            <el-table-column label="操作" width="180">
+                <template slot-scope="scope">
+                    <el-button
+                            size="small"
+                            style="margin-right: 15px;margin-left: 15px"
+                            @click="handleEdit">编辑</el-button>
+                    <el-dialog
+                            title="书籍类型修改"
+                            :visible.sync="dialogEditBookType"
+                            width="40%"
+                            :append-to-body="true"
+                            center
+                    >
+                        <div style="text-align: center">
+                            <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">类型名称</label>
+                            <el-input v-model="formBookType.bookType"   style="width: 250px;float: left"></el-input>
+                           <br><br><br><br>
+                            <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">类型描述</label>
+                            <el-input v-model="formBookType.bookDesc"   style="width: 250px;float: left"></el-input>
+                        </div>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogEditBookType = false">取 消</el-button>
+                            <el-button type="primary" @click="updateBookTypeOK(scope.row)">确 定</el-button>
+                        </div>
+                    </el-dialog>
+
+                    <el-button
+                            size="small"
+                            type="danger"
+                            @click="handleDelete([scope.row.book_type_id])">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @current-change="handleCurrentChange"
+                @size-change="handlePageSizeChange"
+                :current-page.sync="currentPage"
+                background
+                :page-sizes="[5, 10, 20, 50]"
+                :page-size="pageSize"
+                layout="total, sizes,slot,prev, pager, next,jumper"
+                prev-text="上一页"
+                next-text="下一页"
+                :total="total">
+            <span>当前展示{{ totalShow }}条</span>
+        </el-pagination>
+        <el-dialog
+                title="添加书籍类型"
+                :visible.sync="dialogAddBookType"
+                width="40%"
+                :append-to-body="true"
+                center
+        >
+            <div style="text-align: center">
+                <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">类型名称</label>
+                <el-input v-model="formBookType.bookType"   style="width: 250px;float: left"></el-input>
+                <br><br><br><br>
+                <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">类型描述</label>
+                <el-input v-model="formBookType.bookDesc"   style="width: 250px;float: left"></el-input>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogAddBookType = false">取 消</el-button>
+                <el-button type="primary" @click="addBookTypeOK">确 定</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el:".libraryTypeInfo",
+        data(){
+
+            var verifyHanzi=(value)=>{
+                return /^[\u4e00-\u9fa5]+$/.test(value)
+            }
+            var validateInput=(rule,value,callback)=>{
+                if(value.length===0){
+                    callback(new Error("输入内容不能为空！"))
+                }
+                if(!verifyHanzi((value))){
+                    callback(new Error("输入内容只能是中文简体或繁体！"))
+                }else {
+                    callback()
+                }
+            }
+            return{
+                tableData:[
+                    {typeName:"历史",typeDesc:"历史相关"},
+                ],
+                bookTypeInput:"",
+
+                // 分页参数
+                currentPage:1,
+                totalShow:4,
+                total:0,
+                pageSize:5, // 每页显示条数
+
+                dialogEditBookType:false,
+                dialogAddBookType:false,
+
+                multipleSelection:[],  //多行选择
+                formBookType:{  // 类型修改model
+                    bookType:"",
+                    bookDesc:""
+                }
+            }
+        },
+        methods:{
+            indexMethod(index) {
+                return index+1;
+            },
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+                this.bookTypeShow();
+
+            }, // 每页显示条数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+                this.bookTypeShow();
+            },
+
+            // 类型搜索
+            bookTypeShow(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/getAllBookType",
+                    dataType:"json",
+                    data:{searchKey:this.bookTypeInput,pageNum:this.currentPage,pageSize:this.pageSize}
+                }).then(res=>{
+                    this.tableData=res.data.bookTypes;
+                    this.totalShow=res.data.bookTypes.length;
+                    this.total=res.data.total;
+
+                })
+            },
+
+            handleEdit(){
+                // 刷新状态
+                this.formBookType={  // 类型修改model
+                    bookType:"",
+                    bookDesc:""
+                }
+              this.dialogEditBookType=true;
+            },
+
+            verifyHanzi(value){
+                return /^[\u4e00-\u9fa5]+$/.test(value)
+            },
+            // 校验输入内容
+            validateInput(row,isAdd){
+                // 校验
+                if(this.formBookType.bookDesc.length===0 || this.formBookType.bookType.length===0){
+                    this.$alert('输入内容不能为空！', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            return false;
+                        }
+                    });
+                }else {
+                    if ((!this.verifyHanzi(this.formBookType.bookDesc)) || (!this.verifyHanzi(this.formBookType.bookType))|| this.formBookType.bookType.length>10 ||this.formBookType.bookType.length<2 || this.formBookType.bookDesc.length>10 ||this.formBookType.bookDesc.length<2) {
+                        this.$alert('输入内容只能是中文简体或繁体且长度在2-10个之间！', '提示', {
+                            confirmButtonText: '确定',
+                            callback: action => {
+                                return false;
+                            }
+                        });
+                    } else {
+                        if(isAdd){
+                            return true
+                        }
+                        if (row.book_type_name.indexOf(this.formBookType.bookType) !== -1 && row.book_type_desc.indexOf(this.formBookType.bookDesc) !== -1) {
+                            this.$alert('您没有修改任何内容，无法提交！', '提示', {
+                                confirmButtonText: '确定',
+                                callback: action => {
+                                    return false;
+                                }
+                            });
+                        } else {
+                            return true;
+                        }
+                    }
+                }
+            },
+            updateBookTypeOK(row){
+               // 校验
+                if(this.validateInput(row,false)) {
+                    this.dialogEditBookType=false
+                    // 加上类型id
+                    this.formBookType.id=row.book_type_id
+                    axios({
+                        method:"POST",
+                        url:"/backstage/editBookType",
+                        dataType:"json",
+                        data:this.formBookType
+                    }).then(res=>{
+                        if(res.data){
+                            this.$message({
+                                type: 'success',
+                                message: '修改成功！！'
+                            });
+                            this.bookTypeShow();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: '修改失败，请稍后再试'
+                            });
+                        }
+                    })
+                }
+            },
+
+            handleAdd(){
+               // 刷新状态
+                this.formBookType={  // 类型修改model
+                    bookType:"",
+                    bookDesc:""
+                }
+                this.dialogAddBookType=true;
+            },
+            addBookTypeOK(){
+                // 校验
+                if(this.validateInput(null,true)) {
+                    this.dialogAddBookType=false;
+                    axios({
+                        method:"POST",
+                        url:"/backstage/addBookType",
+                        dataType:"json",
+                        data:this.formBookType
+                    }).then(res=>{
+                        if(res.data){
+                            this.$message({
+                                type: 'success',
+                                message: '添加成功！！'
+                            });
+                            this.bookTypeShow();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: '系统繁忙，请稍后再试'
+                            });
+                        }
+                    })
+                }
+            },
+            handleDelete(ids){
+                this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method:"post",
+                        url:"/backstage/deleteBookType",
+                        dataType:"json",
+                        data:{ids:ids}
+                    }).then(res=>{
+                        if(res.data){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功！！'
+                            });
+                            this.bookTypeShow();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: '系统繁忙，请稍后再试'
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            // 多行选择
+            handleSelectionChange(val) {
+
+                this.multipleSelection=val
+            },
+            // 批量删除
+            batchDelete(){
+                if(this.multipleSelection.length===0) {
+                    this.$alert('请选择要删除的行', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                        }
+                    });
+                }else {
+                    // 解析出所有id
+                    var ids=[]
+                    for (var id of this.multipleSelection) {
+                        ids.push(id.book_type_id)
+                    }
+                    // 执行删除
+                    this.handleDelete(ids)
+                }
+            }
+        },
+
+        created(){
+            this.bookTypeShow();
+        },
+        watch:{
+            bookTypeInput:{ // 当输入框清空时我们自动搜索全部数据
+                handler(newValue,oldValue){
+                    if(this.bookTypeInput===""){
+                        this.bookTypeShow();
+                    }
+                }
+            },
+            deep:true,
+            immediate:true
+        }
+    })
+</script>
+
+
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

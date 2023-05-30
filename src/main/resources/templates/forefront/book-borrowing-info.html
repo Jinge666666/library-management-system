@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <div th:include="forefront/common::commonHeader"></div>
+
+    <style>
+        /* 以后放在公共css中去*/
+        .mainContent {
+            width: 1175px;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+
+        }
+        .mainContent .borrowedManagement{
+            width: 850px;
+            height: 600px;
+            margin-left: 20px;
+            margin-top:20px;
+        }
+        .mainContent .searchByName{
+            width: 400px;
+            height: 50px;
+        }
+        .mainContent .searchByName .search{
+            width: 300px;
+            height: 50px;
+            float: left;
+        }
+        .mainContent .borrowShow{
+            width: 100%;
+            height: 500px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+    <div class="mainContent">
+        <div class="borrowedManagement">
+            <div class="searchByName">
+                <el-input class="search" type="text" v-model="input" placeholder="书籍名"
+                          maxlength="30" show-word-limit="true"
+                          prefix-icon="el-icon-search" @keyup.enter.native="searchBook" clearable></el-input>
+                <el-button type="primary" icon="el-icon-search" @click="searchBook">搜索</el-button>
+            </div>
+            <div class="borrowShow">
+                <el-table
+                        :data="tableData"
+                        border
+                        style="width: 100%"
+                        stripe="true"
+                >
+                    <el-table-column
+                            type="index"
+                            label="序号"
+                            width="50"
+                            :index="indexMethod">
+                    </el-table-column>
+                    <el-table-column
+                            label="图书封页"
+                            width="140">
+<!--                         自定义列模板-->
+                        <template slot-scope="scope">
+                            <a :href="'/book/'+scope.row.book_id"><img :src="'/images/bookface/'+scope.row.bookface_name"></a>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="图书名"
+                            width="180"
+                    >
+                        <template slot-scope="scope">
+                            <a :href="'/book/'+scope.row.book_id" style="text-decoration: none;color: #606266;">{{scope.row.book_name}}</a>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            prop="borrow_time"
+                            label="借书时间"
+                            width="180">
+                    </el-table-column>
+                    <el-table-column
+                            label="还书时间"
+                            width="180">
+                        <template slot-scope="scope">
+                            <p style="color: greenyellow">{{scope.row.return_time}}</p>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="操作"
+                            width="130">
+                        <template slot-scope="scope">
+                            <el-button
+                                    size="medium"
+                                    type="primary"
+                                    @click="handleReturnBook(scope.$index, scope.row)">归还图书</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination
+                        @current-change="handleCurrentChange"
+                        :current-page.sync="currentPage"
+                        background
+                        :page-size="2"
+                        layout="total, slot,prev, pager, next,jumper"
+                        prev-text="上一页"
+                        next-text="下一页"
+                        :total="total">
+                    <span>当前展示{{ totalShow }}条</span>
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        new Vue({
+            el:".borrowedManagement",
+            data(){
+                return{
+                    currentPage:1,
+                    totalShow:4, // 当前展示书籍数
+                    tableData: [],
+                    total:"",  // 书籍总量
+                    input:"", // 搜索词
+                }
+            },
+            methods:{
+                // 生成索引
+                indexMethod(index) {
+                    return index+1;
+                },
+                // 还书操作
+                handleReturnBook(index, row) {
+                    axios({
+                        method:"POST",
+                        url:"/borrow/returnBook",
+                        dataType:"application/json",
+                        data:{"borrowId":row.borrow_id,"bookId":row.book_id}
+                    }).then(response =>{
+                        // ui组件内容
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data+'</strong></div>'
+                        });
+                        this.showBooks(this.input);
+                    })
+                },
+                // 当前页改变触发
+                handleCurrentChange(val){
+                    this.currentPage=val;
+                    this.showBooks(this.input);
+                },
+                showBooks(searchValue) { // 获取借阅的书籍展示
+                    axios({
+                        method:"POST",
+                        url:"/borrow/showBookBorrowed",
+                        dataType:"application/json",
+                        data:{"pageNum":this.currentPage,"searchValue":searchValue.trim()}
+                    }).then(response=>{
+                        this.tableData = response.data.books;
+                        this.totalShow=response.data.books.length
+                        this.total=response.data.total
+                    })
+                },
+                searchBook(){ //搜书
+
+                   this.showBooks(this.input)
+                }
+            },
+            created() {
+               this.showBooks("");
+            },
+            watch:{ // 监听搜索条件清空时搜索全部书籍
+                input:{  // 监听排序条件
+                    handler(newValue,oldValue) {
+                        if(newValue===""){
+                            this.showBooks("");
+                        }
+                    }
+                } ,
+                deep: true,
+                immediate: true
+            }
+        })
+    </script>
+
+
+<div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

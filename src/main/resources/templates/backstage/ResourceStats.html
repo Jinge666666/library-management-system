@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>资源监控</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+    <!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/common2.css}">
+
+    <style>
+        #content{
+            width: 1200px;
+            height: 100%;
+            padding-top: 20px;
+            /*margin-top: 90px;*/
+            margin-left: 300px;
+            border: none;
+            float: left;
+
+            background-color:#F0F2F5;
+
+        }
+
+        #top{
+            width: 1110px;
+            height: 120px;
+            margin-left: 30px;
+        }
+        #top .com{
+            width: 300px;
+            height: 120px;
+            margin-right: 65px;
+            float: left;
+            background-color: #FFFFFF;
+            border: 1px solid #FFFFFF
+        }
+        #top .left{
+            width: 70px;
+            height: 70px;
+            margin-top: 25px;
+            margin-left: 25px;
+            float: left;
+        }
+        #top .right{
+            width: 130px;
+            height: 80px;
+            margin-left: 75px;
+            margin-top: 20px;
+            box-sizing: border-box;
+            float: left;
+        }
+        #top .right .title,#top .right .title .value{
+            width: 130px;
+            height: 40px;
+            display: block;
+            line-height: 40px;
+            text-align: left;
+            font-family: "microsoft yahei", "simhei", "simsun",serif;
+            font-size: 17px;
+            font-weight: 600;
+            color: dimgrey;
+        }
+        #servletStats{
+            width: 1110px;
+            height: 400px;
+            margin-top: 20px;
+            border: 1px solid red;
+            margin-left: 30px;
+        }
+
+    </style>
+</head>
+<body onload="init()">
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+
+<div id="content">
+    <div id="top">
+        <div class="visitor com">
+            <div class="left"><img src="/images/svg/访客.svg"> </div>
+            <div class="right">
+                <span class="title">访客</span>
+                <span class="value">{{customerInfo.visitorNum}}</span>
+            </div>
+        </div>
+        <div class="online com">
+            <div class="left"><img src="/images/mixImg/用户在线.svg"></div>
+            <div class="right">
+            <span class="title">在线人数</span>
+            <span class="value">{{customerInfo.userActiveNum}}</span>
+        </div>
+        </div>
+        <div class="borrow com">
+            <div class="left"><img src="/images/svg/借阅车.svg"></div>
+            <div class="right">
+                <span class="title">借阅</span>
+                <span class="value">{{customerInfo.borrowedNum}}</span>
+            </div>
+        </div>
+    </div>
+    <div id="servletStats">
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function init() {
+        servletStats();
+    }
+
+    function servletStats() {
+        var chartDom = document.getElementById('servletStats');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        let base = +new Date(1968, 9, 3);
+        let oneDay = 24 * 3600 * 1000;
+        let date = [];
+        let data = [Math.random() * 300];
+        for (let i = 1; i < 20000; i++) {
+            var now = new Date((base += oneDay));
+            date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'));
+            data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+        }
+        option = {
+            tooltip: {
+                trigger: 'axis',
+                position: function (pt) {
+                    return [pt[0], '10%'];
+                }
+            },
+            title: {
+                left: 'center',
+                text: 'Large Area Chart'
+            },
+            toolbox: {
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: date
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%']
+            },
+            dataZoom: [
+                {
+                    type: 'inside',
+                    start: 0,
+                    end: 10
+                },
+                {
+                    start: 0,
+                    end: 10
+                }
+            ],
+            series: [
+                {
+                    name: 'Fake Data',
+                    type: 'line',
+                    symbol: 'none',
+                    sampling: 'lttb',
+                    itemStyle: {
+                        color: 'rgb(255, 70, 131)'
+                    },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            {
+                                offset: 0,
+                                color: 'rgb(255, 158, 68)'
+                            },
+                            {
+                                offset: 1,
+                                color: 'rgb(255, 70, 131)'
+                            }
+                        ])
+                    },
+                    data: data
+                }
+            ]
+        };
+
+        option && myChart.setOption(option);
+    }
+
+    var vueDemo=new Vue({
+        el:"#content",
+        data(){
+            return{
+                customerInfo:{}
+            }
+        },
+        methods:{
+
+            // 访客、在线人数、借阅量
+            getCustomeerInfo(){
+
+                axios({
+                    method:"POST",
+                    url:"/backstage/getStats",
+                    dataType:"json",
+                }).then(res=>{
+                    this.customerInfo = res.data
+                })
+            }
+        },
+        created(){
+            this.getCustomeerInfo();
+        }
+    })
+</script>
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

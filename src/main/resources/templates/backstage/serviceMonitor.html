@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>服务监控</title>
+    <div th:include="backstage/common::commonHeader"></div>
+<!--    <script src="../../static/js/echarts.js" ></script>-->
+<!--    <script type="text/javascript" href="js/echarts.js" th:href="@{/js/echarts.js}"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+    <!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/common2.css}">
+
+
+    <style>
+        #content{
+            width: 1200px;
+            height: 100%;
+            margin-top: 20px;
+            /*margin-top: 90px;*/
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+
+        .serverInfo{
+            width: 100%;
+            height: 150px;
+            float: left;
+            margin-left: 30px;
+            font-size: 12px;
+
+        }
+        .jvmInfo{
+            width: 100%;
+            height: 150px;
+            margin-left: 30px;
+            font-size: 12px;
+            float: left;
+        }
+        .serverInfo h3,.jvmInfo h3{
+            height: 40px;
+            line-height: 40px;
+            width: 94%;
+            border-bottom: 1px solid #dcdfe6;;
+
+
+        }
+
+        .serverInfo ul,.jvmInfo ul{
+            list-style: none;
+            width: 96%;
+            height: 100px;
+            padding-left: 10px;
+
+
+        }
+        .serverInfo ul li,.jvmInfo ul li{
+            width: 48%;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #dcdfe6;;
+
+            float: left;
+
+        }
+        .drawing{
+            width: 96%;
+            margin-left: 30px;
+            height: 400px;
+            float: left;
+            margin-top: 20px;
+            border: 1px solid greenyellow;
+        }
+
+        .drawing #disk,.drawing #cpuGauge{
+            width: 500px;
+            height: 400px;
+            border: 1px solid black;
+            float: left;
+            margin-right: 30px;
+        }
+        .drawing #jvmMemory{
+            width: 1000px;
+            height: 400px;
+            border: 1px solid black;
+            margin-top: 20px;
+            float: left;
+        }
+    </style>
+</head>
+<body onload="init()">
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+<div id="content">
+    <div class="serverInfo">
+        <h3>服务器信息</h3>
+        <ul>
+            <li><span>服务器名称</span><span style="margin-left: 190px">{{serverAndJvmInfo.hostName}}</span></li>
+            <li><span>操作系统</span><span style="margin-left: 200px">{{serverAndJvmInfo.osName}}</span></li>
+            <li><span>服务器ip</span><span style="margin-left: 200px">{{serverAndJvmInfo.ip}}</span></li>
+            <li><span>服务器端口</span><span style="margin-left: 190px">{{serverAndJvmInfo.port}}</span></li>
+            <li><span>系统架构</span><span style="margin-left: 200px;">{{serverAndJvmInfo.osArch}}</span></li>
+            <li><span>cpu个数</span><span style="margin-left: 200px;">{{cpuInfo.cpuNum}}</span></li>
+        </ul>
+    </div>
+    <div class="jvmInfo">
+        <h3>java虚拟机信息</h3>
+        <ul>
+            <li><span>java名称</span><span style="margin-left: 100px">{{serverAndJvmInfo.jvmName}}</span></li>
+            <li><span>java版本</span><span style="margin-left: 100px">{{serverAndJvmInfo.jvmVersion}}</span></li>
+            <li><span>安装路径</span><span style="margin-left: 100px">{{serverAndJvmInfo.jvmHome}}</span></li>
+            <li><span>运行时长</span><span style="margin-left: 100px">{{serverAndJvmInfo.jvmUpTime}}</span></li>
+            <li style="width:96%"><span>项目路径</span><span style="margin-left: 100px;">{{serverAndJvmInfo.projectDir}}</span></li>
+        </ul>
+    </div>
+    <div class="drawing">
+        <div id="disk">
+
+        </div>
+        <div id="cpuGauge">
+
+        </div>
+        <div id="jvmMemory" style="position: relative">
+            <div style="position: absolute;top: 5px;left: 100px;width: 80px;height: 100px;line-height: 80px;z-index: 333"><span style="width: 10px;height: 10px;color: red;float: left"></span><span style="float: left;margin-left: 30px">已用</span><br><span style="width: 50px;height: 30px;line-height: 30px;margin-left: 15px">83 MB</span></div>
+            <div style="position: absolute;top: 5px;left: 300px;width: 80px;height: 100px;line-height: 80px;"><span style="width: 10px;height: 10px;color: red;float: left"></span><span style="float: left;margin-left: 30px">当前可用</span><br><span style="width: 50px;height: 30px;line-height: 30px;margin-left: 15px">83 MB</span></div>
+        </div>
+    </div>
+
+
+<!--    <div id="main" style="width: 600px;height:400px;"></div>-->
+</div>
+
+
+<script>
+
+    function init() {
+        cpu()
+        disk()
+        jvmMemory()
+
+    }
+
+    // cpu轮盘图
+    function cpu() {
+        var chartDom = document.getElementById('cpuGauge');
+        var myChart = echarts.init(chartDom,'dark');
+        var option;
+
+        const gaugeData = [
+            // 调用接口更新数据
+            {
+                value: vueDemo.cpuInfo.osCpuUsed,
+                name: 'System', // 代表系统cpu使用率
+                title: {
+                    offsetCenter: ['-30%', '80%']
+                },
+                detail: {
+                    offsetCenter: ['-30%', '95%']
+                }
+            },
+            {
+                value: vueDemo.cpuInfo.processCpuUsed,
+                name: 'Process',  // 代表进程cpu总使用率
+                title: {
+                    offsetCenter: ['30%', '80%']
+                },
+                detail: {
+                    offsetCenter: ['30%', '95%']
+                }
+            },
+
+        ];
+        option = {
+            tooltip: {
+                formatter: '{b} : {c}%'
+            },
+            backgroundColor: '#2c343c', // 改变背景色
+            title: {  // 标题
+                text: '系统和用户cpu消耗详情',
+                left: 'left',
+                top: 10,
+                textStyle: {
+                    color: '#ccc'
+                }
+            },
+            // 基础配置
+            series: [
+                {
+                    type: 'gauge',
+                    min: 0,
+                    max: 100,
+                    progress: {
+                        show: true,
+                        overlap: true,
+                        roundCap: true
+                    },
+                    data: gaugeData,
+                    title: {
+                        fontSize: 13
+                    },
+                    detail: {
+                        width: 30,
+                        height: 13,
+                        fontSize: 13,
+                        color: '#fff',
+                        backgroundColor: 'inherit',
+                        borderRadius: 3,
+                        formatter: '{value}%',
+                        valueAnimation: true,
+                    }
+                }
+            ]
+        };
+        setInterval(function () {
+            axios({
+                method:"POST",
+                url:"/backstage/serverCpuInfo",
+                dataType:"json"
+            }).then(response=>{
+                gaugeData[0].value=parseInt(parseFloat(response.data.osCpuUsed)*100)
+                gaugeData[1].value=parseInt(parseFloat(response.data.processCpuUsed)*100)
+                // 更新配置
+                myChart.setOption({
+                    series: [
+                        {data:  gaugeData}
+                    ]
+                });
+            });
+
+
+        }, 2000)
+        option &&  myChart.setOption(option);
+    }
+    // 磁盘消耗
+    function disk() {
+        var chartDom = document.getElementById('disk');
+        var myChart = echarts.init(chartDom,'dark');
+        var option;
+
+        option = {
+            tooltip: {
+                formatter: '{a} <br/>{b} : {c}%'
+            },
+            backgroundColor: '#2c343c', // 改变背景色
+            title: {  // 标题
+                text: '磁盘总量：'+vueDemo.serverDiskInfo.diskTotalGb+"GB",
+                left: 'left',
+                top: 10,
+                textStyle: {
+                    color: '#ccc'
+                }
+            },
+            series: [
+                {
+                    name: '磁盘消耗',
+                    type: 'gauge',
+                    progress: {
+                        show: true
+                    },
+                    detail: {
+                        valueAnimation: true,
+                        formatter: '{value}'
+                    },
+                    data: [
+                        {
+                            value:vueDemo.serverDiskInfo.percentDisk,
+                        }
+                    ]
+                }
+            ]
+        };
+
+        option && myChart.setOption(option);
+        setInterval(function () {
+            axios({
+                method:"POST",
+                url:"/backstage/serverDiskInfo",
+                dataType:"json"
+            }).then(response=>{
+                // 得到磁盘使用百分比
+                var diskFree=Number(response.data.diskFree)  // 磁盘空闲量
+                var diskTotal=Number(response.data.diskTotal)
+                var diskUsed=diskTotal-diskFree
+                vueDemo.serverDiskInfo.diskFreeGb=(diskFree/1024/1024/1024).toFixed(2); // 磁盘剩余GB
+                vueDemo.serverDiskInfo.diskTotalGb=(diskTotal/1024/1024/1024).toFixed(2);  // 磁盘总量GB
+                var percentDisk = parseInt((diskUsed/diskTotal)*100) // 使用率
+                // 更新配置
+                myChart.setOption({
+                    series: [
+                        {
+                            data: [
+                                {
+                                    value:percentDisk,
+                                    name: '磁盘消耗：'
+                                }
+                            ]
+                        }
+                    ]
+                });
+            });
+        }, 2000)
+        option &&  myChart.setOption(option);
+    }
+
+    function randomData() {
+
+        var now = new Date();
+       return now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+    }
+    function jvmMemory() {
+        var chartDom = document.getElementById('jvmMemory');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        let xAisdata = ['']; // 坐标轴
+        var s =parseInt(vueDemo.jvmMemoryInfo.jvmMemoryTotal)/1024/1024/2
+        var k =parseInt(vueDemo.jvmMemoryInfo.jvmMemoryUsed)/1024/1024
+        let yAisdata = [s.toFixed(2)]; // 设起始值为总量一半吧
+        let yAisdata2=[s.toFixed(2)*2-k.toFixed(2)]  // 当前可用
+        for (var i = 0; i < 1; i++) {
+            xAisdata.push(randomData())
+            yAisdata.push(k.toFixed(2))
+            yAisdata2.push(s.toFixed(2)*2-k.toFixed(2))
+        }
+        option = {
+            color: ['#37A2FF', '#FFBF00'],
+            backgroundColor: '#2c343c', // 改变背景色
+            title: {  // 标题
+                text: "内存使用情况",
+                left: 'left',
+                top: 10,
+                textStyle: {
+                    color: '#ccc'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) { // 格式化
+                    return (
+                        "已用内存：" + params[0].data + "MB" + "<br>总共内存：" + s.toFixed(2) * 2 + "MB"
+                    )
+
+                }
+            },
+            // legend: {
+            //     data: ['已用', '当前可用'],
+            //     icon: 'rect',
+            //
+            // },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    splitLine: {
+                        show: false
+                    },
+                    data: xAisdata
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value} MB'
+                    }
+                },
+                series: [
+                    {
+                        name: "已用",
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        label: {
+                            show: true,
+                            position: 'top'
+                        },
+                        data: yAisdata,
+                        type: 'line',
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(128, 255, 165)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(1, 191, 236)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        },
+                    },
+                    {
+                        name: "当前可用",
+                        stack: 'Total',
+                        smooth: true,
+                        lineStyle: {
+                            width: 0
+                        },
+                        showSymbol: false,
+                        label: {
+                            show: true,
+                            position: 'top'
+                        },
+                        data: yAisdata2,
+                        type: 'line',
+                        areaStyle: {
+                            opacity: 0.8,
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                {
+                                    offset: 0,
+                                    color: 'rgb(255, 191, 0)'
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgb(224, 62, 76)'
+                                }
+                            ])
+                        },
+                        emphasis: {
+                            focus: 'series'
+                        }
+                    }
+                ]
+        };
+        setInterval(function () {
+            axios({
+                method:"POST",
+                url:"/backstage/jvmMemory",
+                dataType:"json"
+            }).then(response=>{
+                vueDemo.jvmMemoryInfo=response.data
+                xAisdata.push(randomData())
+                var g=parseInt(vueDemo.jvmMemoryInfo.jvmMemoryUsed)/1024/1024
+                var e=parseInt(vueDemo.jvmMemoryInfo.jvmMemoryTotal)/1024/1024
+                yAisdata.push(g.toFixed(2))
+                yAisdata2.push(e.toFixed(2)-g.toFixed(2))
+
+                // 设置一定的密度，不要设小了，使shift看不出，而且移动时x值本来是扩大的，细粒度小的移动更高级
+                // 根据x值最高15个，可算出如果3秒一次间隔，那么若走了15的两倍次，间隔就是6秒了，总区间就是90秒
+                if(option.xAxis.data.length>100){
+                    xAisdata.shift()
+                    yAisdata.shift()
+                    yAisdata2.shift()
+                }
+
+                myChart.setOption({
+                    xAxis: {
+                        data: xAisdata
+                    },
+                    series: [
+                        {
+                            data: yAisdata
+                        },
+                        {
+                            data: yAisdata2
+                        }
+
+                    ]
+                });
+
+            })
+        }, 1000);
+
+        option && myChart.setOption(option);
+    }
+
+    var vueDemo = new Vue({
+        el:"#content",
+        data(){
+            return {
+                serverAndJvmInfo: {},  // 服务器和jvm信息
+                jvmMemoryInfo: {
+                    jvmMemoryUsed:"190",
+                    jvmMemoryTotal:"380",
+                },  // jvm内存信息
+                cpuInfo: {
+                    osCpuUsed:14,
+                    processCpuUsed:23
+                }, // cpu信息、用户(进程)cpu使用百分比、系统cpu使用百分比
+                // 磁盘信息
+                serverDiskInfo:{
+
+                }
+            }
+        },
+        methods:{
+            test(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/serviceCPUMonitor",
+                    dataType:"json",
+                }).then(response=>{
+
+                })
+            },
+            // jvm和服务器信息
+            getServerAndJvmInfo(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/serverAndJvmConfigInfo",
+                    dataType:"json"
+                }).then(response=>{
+                    this.serverAndJvmInfo = response.data;
+                })
+            },
+            // 获取jvm内存信息
+            getJvmMemoryInfo(){
+                    axios({
+                        method:"POST",
+                        url:"/backstage/jvmMemory",
+                        dataType:"json"
+                    }).then(response=>{
+                        this.jvmMemoryInfo = response.data;
+                    })
+            },
+            getCpuInfo(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/serverCpuInfo",
+                    dataType:"json"
+                }).then(response=>{
+                    this.cpuInfo=response.data;
+                })
+            },
+            getDiskInfo(){ // 磁盘信息
+                axios({
+                    method:"POST",
+                    url:"/backstage/serverDiskInfo",
+                    dataType:"json"
+                }).then(response=>{
+                    this.serverDiskInfo=response.data;
+                    var diskFree=Number(response.data.diskFree)  // 磁盘空闲量
+                    var diskTotal=Number(response.data.diskTotal)
+                    var diskUsed=diskTotal-diskFree
+                    this.serverDiskInfo.diskFreeGb=(diskFree/1024/1024/1024).toFixed(2); // 磁盘剩余GB
+                    this.serverDiskInfo.diskTotalGb=(diskTotal/1024/1024/1024).toFixed(2);  // 磁盘总量GB
+                    this.serverDiskInfo.percentDisk=parseInt((diskUsed / diskTotal) * 100)
+                })
+            }
+
+
+
+        },
+        created(){
+            // this.test();
+            this.getServerAndJvmInfo();
+            this.getJvmMemoryInfo();
+            this.getCpuInfo();
+            this.getDiskInfo();
+
+
+        }
+    })
+</script>
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

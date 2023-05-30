@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    使用公共页面抽取上面link内容-->
+    <div th:include="forefront/common::commonHeader"></div>
+
+    <style>
+        /* 以后放在公共css中去*/
+        .mainContent {
+            width: 80%;
+            height: 100%;
+            float: left;
+            margin-left: 1%;
+            border: 1px solid red;
+
+
+
+        }
+
+        /*文字超出显示省略号通用css*/
+        .line-limit-length {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /*white-space表示文本不换行，这样超出一行的部分被截取，显示...*/
+            white-space: nowrap;
+            /*    也可以给应用该类的父元素设置宽度限制 max-width*/
+            /*    或者若想多行内限制的话，可以下面这样*/
+            /*    display: -webkit-box;*/
+            /*    -webkit-line-clamp: 3; !* 限制三行内*!*/
+            /*    -webkit-box-orient: vertical;*/
+        }
+
+        #mainContent-part1 {
+            width: 100%;
+            height: 390px;
+            border: 1px solid green;
+
+        }
+
+        .carouselMap-2d {
+            width: 880px;
+            height: 380px;
+            margin-top: 0;
+            margin-left: 0;
+            border: 1px solid blue;
+            text-align: left;
+            float: left;
+        }
+
+        #carouselMap-2d {
+            width: 800px;
+            height: 360px;
+            margin-left: 10px;
+            overflow: hidden;
+            text-align: left;
+            float: left;
+            margin-top: 10px;
+        }
+
+        /*将ui的轮播图自带的索引图标隐藏*/
+        .el-carousel__indicator {
+            display: none;
+        }
+
+        #carouselMapIndex {
+            width: 53px;
+            height: 100%;
+            padding-top: 0;
+            text-align: center;
+            margin-left: 7px;
+            margin-top: 10px;
+            float: left;
+        }
+
+        #carouselMapIndex ul {
+            width: 100%;
+            height: 100%;
+
+        }
+
+        #carouselMapIndex ul li {
+            width: 53px;
+            height: 67px;
+            text-align: center;
+            margin-bottom: 5px;
+            list-style: none;
+            cursor: pointer;
+
+
+        }
+
+        #carouselMapIndex ul li img {
+            padding: 3px;
+            width: 52px;
+            height: 65px;
+            /*border: 1px solid blue;*/
+            opacity: .5;
+
+        }
+
+        #carouselMapIndex ul li img:hover {
+            background-color: red;
+            opacity: 1;
+        }
+
+        /*    -----------------hove图片悬停特效------------------------*/
+        .course_item {
+            width: 800px;
+            height: 360px;
+            /*background-image: url(../images/course_icon.png);*/
+            background-size: 100% 100%;
+            position: relative;
+            perspective: 300px;
+            /*-webkit-perspective: 500;*/
+            display: block;
+            cursor: pointer;
+
+        }
+
+        .course_item_background0 {
+            background-image: url(images/临时素材/第一序列.jpg);
+        }
+
+        .course_item_background1 {
+            background-image: url(images/临时素材/一念永恒.jpg);
+        }
+
+        .course_item_background2 {
+            background-image: url(images/临时素材/全能巨星奶爸.jpg);
+        }
+
+        .course_item_background3 {
+            background-image: url(images/临时素材/万族之劫.jpg);
+        }
+
+        .course_item_background4 {
+            background-image: url(images/临时素材/特种岁月.jpg);
+        }
+
+        .course_item_name {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 600;
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+        }
+
+        .course_item_modal {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: rotateY(0deg);
+            transform-origin: left;
+            display: none;
+        }
+
+        .course_item_inner {
+            width: 100%;
+            height: 100%;
+            color: #FFFFFF;
+            font-size: 14px;
+            padding-left: 40px;
+            padding-right: 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .course_item_modal h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 38px;
+        }
+
+        .course_item_modal.active {
+            display: block;
+            transform-origin: left;
+            animation: animate 1.5s;
+            animation-fill-mode: forwards;
+            -webkit-animation-fill-mode: forwards; /* Safari 和 Chrome */
+        }
+
+        @keyframes animate {
+            to {
+                transform: rotateY(5deg);
+            }
+        }
+
+        /*    第一部分右边部分作品推荐*/
+        .newBookRecommend {
+            width: 270px;
+            height: 380px;
+            float: left;
+            margin-top: 0;
+            margin-left: 10px;
+        }
+
+        #Customization-bookShow-type01 {
+            width: 270px;
+            /* 自定义组件，高度最好继承父类*/
+            height: 100%;
+            /*border: 1px solid blue;*/
+            overflow: hidden;
+        }
+
+        #Customization-bookShow-type01 a {
+            text-decoration: none;
+        }
+
+        #Customization-bookShow-type01 .title {
+            width: 100%;
+            height: 50px;
+            text-align: left;
+            line-height: 30px;
+            /*border: 1px solid red;*/
+            border-bottom: 1px solid #666;
+            color: #262626;
+            outline: none;
+            background-color: #e6e6e6;
+        }
+
+        #Customization-bookShow-type01 .title span {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            margin-left: 0;
+            display: block;
+            float: left;
+            /*border: 1px solid red;*/
+        }
+
+        #Customization-bookShow-type01 .title span i {
+            font-size: 25px;
+
+        }
+
+        #Customization-bookShow-type01 .title h3 {
+            width: 180px;
+            height: 50px;
+            line-height: 50px;
+            display: block;
+            float: left;
+            text-align: left;
+            /*border: 1px solid red;*/
+
+        }
+
+
+        /*    第二部分*/
+
+        #mainContent-part2 {
+            width: 1175px;
+            height: 280px;
+            border: 1px solid green;
+            margin-top: 10px;
+            margin-left: 0;
+
+        }
+
+        /*自定义组件*/
+        .novelZone {
+            width: 100%;
+            height: 100%;
+        }
+
+        .novelZone .title {
+            height: 44px;
+            width: 100%;
+            line-height: 48px;
+            border-bottom: 2px solid red;
+
+
+        }
+
+        .novelZone .title > h5 {
+            display: block;
+            width: 80px;
+            height: 44px;
+            margin: 0 15px;
+            float: left;
+            font: 20px/44px Tahoma, Helvetica, Arial, "\5b8b\4f53", sans-serif;
+            cursor: pointer;
+
+        }
+        .novelZone .title > h5:hover{
+            background-color: black;
+            color: #FFFFFF;
+        }
+
+        .novelZone .content {
+            width: 100%;
+            height: 230px;
+            margin-top: 5px;
+        }
+
+        /*.Customization-bookShow-type02 自定义组件*/
+        .novelZone .content .Customization-bookShow-type02 {
+            width: 100%;
+            height: 100%;
+            /*border: 1px solid purple;*/
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul {
+            list-style: none;
+            width: 100%;
+            height: 100%;
+            /*想要使ul的宽度根据li的总宽度自适应变化且剧中，下面两种都行，flex只需li再定义flex=1，注意子元素不能设置浮动，否则失效
+            当然，你也可以使用:nth-child(2)来手动实现平分父元素空间
+            */
+            /*display: table;*/
+            display: flex;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li {
+            width: 128px;
+            height: 160px;
+
+
+            /*border: 1px solid blue;*/
+            /*display: table-cell;*/
+            flex: 1;
+
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li > a {
+            width: 128px;
+            height: 160px;
+            line-height: 160px;
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li > a .el-image__inner {
+            /*el-image的下面属性默认是top,无法使图片垂直居中*/
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li h5 {
+            display: block;
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            color: black;
+            /*超出范围省略号*/
+            text-overflow: ellipsis;
+            overflow: hidden;
+
+            /*border: 1px solid red;*/
+            /*text-align: left;*/
+            margin-left: 6px;
+            max-width: 120px;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li h5 a:hover {
+            color: mediumvioletred;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li h5 a {
+            font-size: 14px;
+            /*不换行*/
+            white-space: nowrap;
+            font-weight: 200;
+            text-decoration: none;
+            font-family: "Microsoft YaHei", serif;
+
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li p {
+            display: block;
+            width: 100%;
+            height: 25px;
+            line-height: 25px;
+            /*超出范围省略号*/
+            text-overflow: ellipsis;
+            overflow: hidden;
+            /*border: 1px solid black;*/
+            /*text-align: left;*/
+            margin-left: 6px;
+            max-width: 120px;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li p a:hover {
+            color: mediumvioletred;
+        }
+
+        .novelZone .content .Customization-bookShow-type02 ul li p a {
+            /*不换行*/
+            white-space: nowrap;
+            font-size: 12px;
+            color: #9a9a9a;
+            text-decoration: none;
+
+
+        }
+
+        /*     第三部分*/
+        #mainContent-part3 {
+            width: 1175px;
+            height: 620px;
+            border: 1px solid red;
+            margin-top: 20px;
+            margin-left: 0;
+        }
+
+        #mainContent-part3 a {
+            text-decoration: none;
+        }
+
+        #mainContent-part3 .left {
+            width: 915px;
+            height: 100%;
+            float: left;
+            background-color: #fffdef;
+
+        }
+
+        #mainContent-part3 .left > div {
+            height: 46px;
+            line-height: 46px;
+            width: 100%;
+            text-align: left;
+            border-bottom: 2px solid red;
+        }
+
+        #mainContent-part3 .left > div span {
+            width: 46px;
+            height: 46px;
+            line-height: 46px;
+            text-align: center;
+            display: inline-block;
+
+        }
+
+        #mainContent-part3 .left > div span i {
+            font-size: 25px;
+        }
+
+        #mainContent-part3 .left ul {
+            width: 100%;
+            height: 570px;
+            list-style: none;
+        }
+
+        #mainContent-part3 .left ul li {
+            width: 452px;
+            height: 188px;
+            line-height: 188px;
+            float: left;
+            border-top: 1px solid #e6e6e6;
+            /*border-bottom: 1px solid saddlebrown;*/
+        }
+
+        /*三四部分右边排行榜*/
+
+        .rank{
+            width: 245px;
+            height: 100%;
+            float: left;
+            background: #FFF;
+        }
+        .rank .right {
+            width: 225px;
+            height: 100%;
+            float: left;
+            margin-left: 20px;
+            background-color: #fff;
+        }
+        .genduo{
+            opacity: 0;
+        }
+        .rank .right:hover .genduo{
+            color: orangered;
+            opacity: 1;
+            transition:all .5s linear;
+        }
+
+        .rank .right a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .rank .right .title {
+            height: 45px;
+            line-height: 45px;
+            width: 100%;
+            color: #1a1a1a;
+            text-align: left;
+            border-bottom: 1px solid black;
+            font-size: 20px;
+            font-weight: bolder;
+
+        }
+
+
+
+
+
+
+
+
+        /*    中间长条*/
+        .longImg {
+            width: 1175px;
+            height: 90px;
+            line-height: 90px;
+            margin-top: 20px;
+            margin-left: 0;
+            overflow: hidden;
+        }
+
+        .longImg a {
+            text-decoration: none;
+        }
+
+        .longImg img {
+            width: 1175px;
+            height: 90px;
+
+        }
+
+        /*    第四部分*/
+        #mainContent-part4 {
+            width: 1175px;
+            height: 620px;
+            border: 1px solid red;
+            margin-top: 20px;
+            margin-left: 0;
+        }
+
+        #mainContent-part4 a {
+            text-decoration: none;
+        }
+
+        #mainContent-part4 .left {
+            width: 915px;
+            height: 100%;
+            float: left;
+            background-color: #fffdef;
+
+        }
+
+        #mainContent-part4 .left > div {
+            height: 46px;
+            line-height: 46px;
+            width: 100%;
+            text-align: left;
+            border-bottom: 2px solid red;
+        }
+
+        #mainContent-part4 .left > div span {
+            width: 46px;
+            height: 46px;
+            line-height: 46px;
+            text-align: center;
+            display: inline-block;
+
+        }
+
+        #mainContent-part4 .left > div span i {
+            font-size: 25px;
+        }
+
+        #mainContent-part4 .left ul {
+            width: 100%;
+            height: 570px;
+            list-style: none;
+        }
+
+        #mainContent-part4 .left ul li {
+            width: 452px;
+            height: 188px;
+            line-height: 188px;
+            float: left;
+            border-top: 1px solid #e6e6e6;
+            /*border-bottom: 1px solid saddlebrown;*/
+        }
+
+
+
+    </style>
+</head>
+<body onload='init()'>
+<!--    抽取公共侧栏-->
+<!--<div th:replace="~{common :: #commonLeftNavMenu}"></div>-->
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<!--    公共顶栏-->
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+<!--首页内容-->
+<div class="mainContent">
+    <div id="mainContent-part1">
+        <!--普通平面轮播图-->
+        <div class="carouselMap-2d">
+            <div id="carouselMap-2d">
+                <template>
+                    <el-carousel height="358px" direction="vertical" ref="carousel" @change="carouselChange">
+                        <el-carousel-item v-for="(item,index) in items" :key="item.id">
+                            <!--                                <img :src="item.url" class="medium" style="width: 800px;height: 360px;">-->
+                            <a :href="item.bigImgDetailUrl" class="course_item medium"
+                               :class="carouselBgImg[index]">
+<!--                                <p class="course_item_name">标题说明</p>-->
+                                <div class="course_item_modal">
+                                    <div class="course_item_inner" v-html="item.bigImgDesc">
+
+                                    </div>
+                                </div>
+                            </a>
+                        </el-carousel-item>
+                    </el-carousel>
+                </template>
+            </div>
+            <div id="carouselMapIndex">
+                <ul class="mainContent-part1-carousel">
+                    <li v-for="(item,index) in items2" :key="item.id">
+                        <img :src="item.url" @mouseover="mouseoverCarouselMapIndex(index)"
+                             @mouseleave="mouseleaveCarouselMapIndex">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!--            右边部分 新书推荐-->
+        <div class="newBookRecommend">
+            <div id="Customization-bookShow-type01">
+                <div class="title">
+                    <span><i class="iconfont icon-shucheng1"></i></span>
+                    <h3>新书推荐</h3>
+                </div>
+                <first-customcomponent :new-book-recommend="newBookRecommend"></first-customcomponent>
+            </div>
+        </div>
+
+    </div>
+    <div class="longImg">
+        <a><img th:src="@{/images/mixImg/男频横条1.jpg}"></a>
+    </div>
+    <!--        第二部分-->
+    <div id="mainContent-part2">
+        <!--            小说专区-->
+        <div class="novelZone">
+            <div class="title">
+                <h5 @mouseover="zoneClick('大神专区')">大神专区</h5>
+                <h5 @mouseover="zoneClick('完本专区')">完本专区</h5>
+            </div>
+            <div class="content">
+                <!--                    自定义组件-->
+                <div class="Customization-bookShow-type02">
+                    <ul>
+                        <li v-for="(book,index) in bookList" :key="index">
+                            <a :href="book.bookDetailUrl" target="_blank" :title="book.bookName">
+                                <el-image
+                                        style="width: 120px; height: 150px"
+                                        :alt="book.bookName"
+                                        :src="book.imgUrl"
+                                        fit="fill"></el-image>
+                            </a>
+                            <h5>
+                                <a :href="book.bookDetailUrl" target="_blank" :title="book.bookName">{{book.bookName}}</a>
+                            </h5>
+                            <p>
+                                <a :href="book.searchAuthorUrl"
+                                   target="_blank" :title="book.author">作者：{{book.author}}</a>
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="longImg">
+        <a><img th:src="@{/images/mixImg/男频横条2.jpg}"></a>
+    </div>
+
+    <!--        第三部分-->
+    <div id="mainContent-part3">
+        <div class="left">
+            <div>
+                <span><i class="iconfont icon-shucheng1"></i></span>
+                男生频道
+            </div>
+            <ul>
+                <li v-for="(book,index) in bookInfo" :key="index">
+                    <!--                        自定义组件-->
+                   <second-customcomponent :book-info="book" imgPreUrl="images/bookface/"></second-customcomponent>
+                </li>
+            </ul>
+        </div>
+        <div class="rank">
+            <div class="right">
+                <div class="title">
+                <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                    男生强推
+                </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left;">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                </span>
+                </div>
+                <third-customcomponent :infos="infos" :is-em-total-show="false" total-desc="强力推荐" :is-show-book-info="false" :is-total-show="false"></third-customcomponent>
+            </div>
+        </div>
+
+    </div>
+    <!--        长条-->
+    <div class="longImg">
+        <a><img th:src="@{/images/mixImg/女频横条3.jpg}"></a>
+    </div>
+
+    <!--         第四部分-->
+    <div id="mainContent-part4">
+        <div class="left">
+            <div>
+                <span><i class="iconfont icon-shucheng1"></i></span>
+                女生频道
+            </div>
+            <ul>
+                <li v-for="(book,index) in bookInfo" :key="index">
+                    <!--                        自定义组件-->
+                    <second-customcomponent :book-info="book" imgPreUrl="images/bookface/"></second-customcomponent>
+                </li>
+            </ul>
+        </div>
+        <div class="rank">
+            <div class="right">
+                <div class="title">
+                <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                    女生强推
+                </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left;">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                </span>
+                </div>
+                <third-customcomponent :infos="infos" :is-em-total-show="false" total-desc="强力推荐!!!" :is-show-book-info="false" :is-total-show="false"></third-customcomponent>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+
+        // // 轮播图部分初始化
+        // Caroursel.init($('.caroursel'));
+
+        // 页面初始化相关内容，如轮播图相关初始化
+        function init() {
+            var firstCarouselImg = document.getElementsByClassName('mainContent-part1-carousel')[0].getElementsByTagName("img")[0]
+            firstCarouselImg.style.opacity = "1";
+            firstCarouselImg.style.backgroundColor = "red";
+        }
+
+        //    平面轮播图
+        new Vue({
+            el: ".carouselMap-2d",
+            data() {
+                return {
+                    // 大图url
+                    items: [
+                        {id: "1",
+                            bigImgDetailUrl: "/book/00009936",
+                            bigImgDesc:"<h4>点击查看详情</h4><p> 重生过去、畅想未来、梦幻现实，再塑传奇人生 </p>"
+                        },
+                        {id: "2",
+                            bigImgDetailUrl: "/book/39368291",
+                            bigImgDesc:"<h4>点击查看详情</h4><p> 一念成沧海，一念化桑田。一念斩千魔，一念诛万仙。<br>　　唯我念……永恒<br>　　这是耳根继《仙逆》《求魔》《我欲封天》后，创作的第四部长篇小说《一念永恒》  </p>"
+                        },
+                        {id: "3",
+                            bigImgDetailUrl: "/book/50801082",
+                            bigImgDesc:"<h4>点击查看详情</h4><p> 重生过去、畅想未来、梦幻现实，再塑传奇人生！ </p>"
+                        },
+                        {id: "4",
+                            bigImgDetailUrl: "/book/31150980",
+                            bigImgDesc:"<h4>点击查看详情</h4><p>重生过去、畅想未来、梦幻现实，再塑传奇人生！</p>"
+                        },
+                        {id: "5",
+                            bigImgDetailUrl: "/book/72701791",
+                            bigImgDesc:"<h4>点击查看详情</h4><p> 热血战斗，保家卫国，誓死守护，傲骨无双铸军魂！  </p>"
+                        },
+
+                    ],
+                    items2: [
+                        {id: "1", url: "images/bookface/0c401bfbf2b34a19828e853d15efe232.jpg"},
+                        {id: "2", url: "images/bookface/9bb42684c9634daa8ab2a6e26a21c6bd.jpg"},
+                        {id: "3", url: "images/bookface/3c3394971b6448fd83fc2f6155948764.jpg"},
+                        {id: "4", url: "images/bookface/fe4fa61c9ea94cde9da239c75a26bb62.jpg"},
+                        {id: "5", url: "images/bookface/0a0df629adb44e7abad50c9c950509d9.jpg"},
+                    ],
+                    // 小说背景大图，用于轮播图
+                    carouselBgImg: [
+                        'course_item_background0', 'course_item_background1', 'course_item_background2',
+                        'course_item_background3', 'course_item_background4'
+                    ]
+
+                }
+            },
+            methods: {
+                // 控制轮播图的暂停
+                mouseoverCarouselMapIndex(index) {
+                    this.$refs.carousel.setActiveItem(index)
+                    this.$refs.carousel.autoplay = false
+
+                },
+                mouseleaveCarouselMapIndex() {
+                    this.$refs.carousel.autoplay = true
+                },
+                // 轮播图切换的监听事件 参数表示当前索引和原幻灯片索引
+                carouselChange(currentIndex, prevIndex) {
+                    var carouselImgs = document.getElementsByClassName('mainContent-part1-carousel')[0].getElementsByTagName("img")
+                    carouselImgs[currentIndex].style.opacity = "1";
+                    carouselImgs[currentIndex].style.backgroundColor = "red";
+                    carouselImgs[prevIndex].style.opacity = ".5";
+                    carouselImgs[prevIndex].style.backgroundColor = "transparent";
+
+                },
+
+            }
+        })
+
+        // 新书推荐
+        new Vue({
+            el: "#Customization-bookShow-type01",
+            data() {
+                return {
+                    newBookRecommend:[
+                        {
+                            searchByType:"", // 类型搜索url
+                            bookType:"",  // 书籍类型
+                            bookDetail:"",  // 书籍详情url
+                            bookName:"",  // 书名
+                            searchByAuthor:"",  // 作者名搜索url
+                            bookAuthor:""   // 作者
+                        }
+                    ]
+                }
+            },
+            methods: {},
+            created(){ // html渲染前初始化数据钩子
+                    axios({
+                        method:'POST',
+                        url:'/home/mainPageBookCommend',
+                        dataType:"application/x-www-form-urlencoded",
+                        // 书籍名和作者名都传，表示全都搜索
+                        data:{}
+                    }).then(response=>{
+                        this.newBookRecommend = response.data
+
+                })
+            },
+            mounted(){
+
+            }
+        })
+
+        //    鼠标接触轮播图的倾斜遮罩层特效
+        $(function () {
+            $('.course_item').mouseenter(function () {
+                $(this).find('.course_item_name').hide();
+                $(this).find('.course_item_modal').addClass('active')
+            }).mouseleave(function () {
+                $(this).find('.course_item_name').show();
+                $(this).find('.course_item_modal').removeClass('active')
+            })
+        })
+
+        //    第二部分
+        new Vue({
+            el: ".novelZone",
+            data() {
+
+                return {
+                    bookList:''
+
+                }
+            },
+            methods: {
+
+                zoneClick(zoneType){
+                    axios({
+                        method:'POST',
+                        url: '/home/mainPageBookZone',
+                        dataType:"application/x-www-form-urlencoded",
+                        // 书籍名和作者名都传，表示全都搜索
+                        data:{"zoneType":zoneType}
+                    }).then(response=>{
+                        this.bookList = response.data
+                    })
+                }
+
+            },
+            created() {
+               this.zoneClick("大神专区");
+            }
+        })
+
+        //   第三部分
+
+        new Vue({
+            el: "#mainContent-part3 .left",
+            data() {
+                return {
+                    bookInfo:[]
+                }
+            },
+            methods: {
+
+            },
+            created() {
+                axios({
+                    method:"POST",
+                    url:"/home/mainPageBookMaleChannel",
+                    dataType:"application/x-www-form-urlencoded",
+                }).then(response=>{
+                    this.bookInfo=response.data
+                })
+            }
+        })
+
+        // new Vue({
+        //     el:".Customization-bookShow-type03",
+        //     data(){
+        //         return{
+        //
+        //         }
+        //     },
+        //     methods:{
+        //
+        //     }
+        // })
+
+        new Vue({
+            el: "#mainContent-part3 .right",
+            data() {
+                return {
+                    infos:[]
+                }
+            },
+            methods: {
+
+            },
+            created() {
+                axios({
+                    method:"GET",
+                    url:"/home/mainPageBookStrongPush?type=男生强推",
+                    dataType:"application/x-www-form-urlencoded",
+                }).then(response=>{
+                    this.infos=response.data
+                })
+            }
+        })
+
+
+        //    第四部分
+        new Vue({
+            el: "#mainContent-part4 .left",
+            data() {
+                return {
+                    bookInfo:[]
+                }
+            },
+            methods: {
+
+            },
+            created() {
+                axios({
+                    method:"POST",
+                    url:"/home/mainPageBookWomanChannel",
+                    dataType:"application/x-www-form-urlencoded",
+                }).then(response=>{
+                    this.bookInfo=response.data
+                })
+            }
+        })
+        //    右侧
+        new Vue({
+            el: "#mainContent-part4 .right",
+            data() {
+                return {
+                    infos:[]
+                }
+            },
+            methods: {
+
+            },
+            created() {
+                axios({
+                    method:"GET",
+                    url:"/home/mainPageBookStrongPush?type=女生强推",
+                    dataType:"application/x-www-form-urlencoded",
+                }).then(response=>{
+                    this.infos=response.data
+                })
+            }
+        })
+    </script>
+</div>
+
+
+<!--抽取JavaScript部分-->
+<div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

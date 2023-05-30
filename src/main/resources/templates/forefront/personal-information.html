@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="forefront/common::commonHeader"></div>
+
+    <style>
+        /* 以后放在公共css中去*/
+        .mainContent {
+            width: 1175px;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+
+        }
+        #personalInfo{
+            width: 1000px;
+            /*height: 750px;*/
+            height: auto;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        #personalInfo .header{
+            width: 100%;
+            height: 200px;
+            border: 1px solid red;
+            position: relative;
+        }
+        #personalInfo .header .bgImage{
+            width: 100%;
+            height: 100%;
+        }
+        #personalInfo .header .avatar{
+            width: 110px;
+            height: 110px;
+            left: 35px;
+            top: 45px;
+            position: absolute;
+        }
+        #personalInfo .header .headerInfo{
+            position: absolute;
+            width: 570px;
+            height: 100px;
+            left: 180px;
+            bottom: 25px;
+            color: #fffdef;
+        }
+        #personalInfo .header .headerInfo .top{
+            width: 100%;
+            height: 30px;
+        }
+        #personalInfo .header .headerInfo .top .span1{
+            width: auto;
+            height: 30px;
+            font-size: 24px;
+            float: left;
+            display: block;
+        }
+        #personalInfo .header .headerInfo .top .span2{
+            width: 170px;
+            height: 30px;
+            display: block;
+            line-height: 30px;
+            float: left;
+            margin-left: 30px;
+            font-size: 14px;
+
+        }
+        #personalInfo .header .headerInfo .top .span2:hover{
+            color:#ff2c2c;
+        }
+        #personalInfo .header .headerInfo .bottom{
+                margin-top: 20px;
+            width: 500px;
+            height: 30px;
+        }
+        #personalInfo .updateInfo{
+            width: 100%;
+            height: auto;
+            border: 1px solid red;
+            font: 12px/1 Tahoma,Helvetica,Arial,"\5b8b\4f53",sans-serif;
+        }
+        #personalInfo .updateInfo .account{
+            width: 100%;
+            height: 42px;
+            border: 1px solid red;
+            margin-top: 20px;
+
+        }
+        #personalInfo .updateInfo .account input{
+            background-color: #e0e0e0;
+            border: 1px solid #e0e0e0;
+            color: #909090;
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: .65;
+            width: 380px;
+            height: 42px;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+        .labelInfo{
+            width: 80px;
+            height: 40px;
+            font-size: 16px;
+            text-align: left;
+            margin-right: 20px;
+            color: #404040;
+            margin-left: 50px;
+        }
+        .spanInfo{
+            width: auto;
+            height: 42px;
+            line-height: 20px;
+            font-size:13px;
+            color: #909090;
+            margin-left: 20px;
+            vertical-align: middle;
+        }
+        #personalInfo .updateInfo .userName{
+            width: 100%;
+            height: 42px;
+            border: 1px solid red;
+            margin-top: 30px;
+        }
+        #personalInfo .updateInfo .userName input{
+            border: 1px solid #e0e0e0;
+            color: #909090;
+            /*cursor: not-allowed;*/
+            /*background-color: #e0e0e0;*/
+            /*opacity: .65;*/
+            box-shadow: none;
+            width: 380px;
+            height: 42px;
+            font-size: 14px;
+            padding-left: 20px;
+        }
+        /*修改过名字的使用*/
+        .userNameStyle{
+            cursor: not-allowed;
+            background-color: #e0e0e0;
+            opacity: .65;
+        }
+        #personalInfo .updateInfo .avatar{
+            width: 100%;
+            height: 210px;
+            border: 1px solid red;
+            margin-top: 30px;
+        }
+        #personalInfo .updateInfo .avatar .userAvatar{
+            width: 150px;
+            height: 180px;
+            float: left;
+        }
+        #personalInfo .updateInfo .avatar .userAvatar .avatarBox{
+            width: 150px;
+            height: 190px;
+            border: 1px solid red;
+            overflow: hidden;
+        }
+
+        #personalInfo .updateInfo .avatar .userAvatar .avatarBox .upload-demo{
+            width: 150px;
+            height: 200px;
+            position: relative;
+        }
+        #personalInfo .updateInfo .avatar .userAvatar .avatarBox .upload-demo img{
+            width: 150px;
+            height: 150px;
+            display: block;
+            top: 0;
+            float: left;
+            position: absolute;
+            left: 0;
+        }
+        #personalInfo .updateInfo .avatar .userAvatar .avatarBox .upload-demo .cropper-btn{
+            width: 150px;
+            height: 30px;
+            display: block;
+            color: #fff;
+            background: rgb(191, 4, 10);
+            box-shadow: 0 0 2px #791b1b;
+            border: none;
+            top: 160px;
+            left: 0;
+            float: left;
+            position: absolute;
+        }
+
+        /*.avatar-uploader .el-upload {*/
+        /*    border: 1px dashed #d9d9d9;*/
+        /*    border-radius: 6px;*/
+        /*    cursor: pointer;*/
+        /*    position: relative;*/
+        /*    overflow: hidden;*/
+        /*}*/
+        /*.avatar-uploader .el-upload:hover {*/
+        /*    border-color: #409EFF;*/
+        /*}*/
+        #personalInfo .updateInfo .motto{
+            width: 100%;
+            height: 80px;
+            border: 1px solid red;
+            margin-top: 20px;
+        }
+        #personalInfo .updateInfo .bgImage{
+            width: 100%;
+            height: 725px;
+            border: 1px solid red;
+            margin-top: 10px;
+        }
+        #personalInfo .updateInfo .bgImage ul{
+            list-style: none;
+            width: 700px;
+            height: 725px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        #personalInfo .updateInfo .bgImage ul li{
+            width: 110px;
+            height: 110px;
+            margin-right: 20px;
+            margin-bottom: 30px;
+            border: 1px solid red;
+            float: left;
+            /*box-shadow: 0 0 10px red;*/
+        }
+        #personalInfo .updateInfo .submit{
+            width: 100%;
+            height: 50px;
+            border: 1px solid red;
+            margin-top: 30px;
+        }
+        #personalInfo .updateInfo .submit .submitbtn{
+            height: 50px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #bf040a;
+            text-align: center;
+            width: 400px;
+            border: 1px solid #bf040a;
+            cursor: pointer;
+            margin-left:150px;
+        }
+        #personalInfo .content{
+            width: 100%;
+            height: 100%;
+            border: 1px solid red;
+            margin-top: 20px;
+
+        }
+        #personalInfo .content .navList{
+            width: 200px;
+            height: 100%;
+            float: left;
+        }
+        #personalInfo .content .navList div{
+            width: 100%;
+            height: 54px;
+            font-size: 20px;
+            line-height: 54px;
+            display: inline-block;
+            border-left: 3px solid #fff;
+            font-weight: bold;
+            padding-left: 25px;
+            border-bottom: 1px solid gray;
+
+        }
+        #personalInfo .content .navList div a{
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #personalInfo .content .detail{
+            width: 745px;
+            height: 100%;
+            border: 1px solid red;
+            margin-left: 50px;
+            float: left;
+        }
+        h3{
+            margin-top: 20px;
+        }
+        h4{
+            margin-top: 20px;
+        }
+        p{
+            margin-top: 10px;
+        }
+
+    /*    书评区*/
+        .myComments .myCommentsHeader{
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .myComments .myCommentsHeader .searchByName{
+            width: 400px;
+            height: 50px;
+            margin-bottom: 20px;
+            float: left;
+        }
+        .myComments .myCommentsHeader .searchByName .search{
+            width: 300px;
+            height: 50px;
+            float: left;
+        }
+
+        .myComments .myCommentsHeader .block{
+            width: 500px;
+            height: 40px;
+           margin-left: 290px;
+            margin-bottom: 20px;
+            float: left;
+        }
+    </style>
+</head>
+<body onload="init()">
+
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+    <div class="mainContent">
+        <div id="personalInfo">
+            <div class="header">
+                <img class="bgImage" :src="personalInfo.backgroundImageUrl==null?'/images/backgroundImg/1.jpg':'/images/backgroundImg/'+personalInfo.backgroundImageUrl">
+                <img class="avatar" :src="personalInfo.avatarUrl==null?'/images/avatar/default.gif':'/images/avatar/'+personalInfo.avatarUrl">
+                <div class="headerInfo">
+                    <div class="top">
+                        <span class="span1">{{personalInfo.userName}}</span>
+                        <span class="span2" @click="showEditPersonalInfo" style="cursor: pointer"><i class="iconfont icon-qianbi"></i> 设置个人资料和背景墙</span>
+                    </div>
+                    <div class="bottom">
+                        <span>ID ：{{personalInfo.userId}}</span><span style="margin-left: 30px">IP属地：{{personalInfo.adress}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="updateInfo" style="display: none">
+                <div class="account">
+                    <label class="labelInfo">注册账号：</label>
+                    <input type="text" placeholder="账号名" :value="personalInfo.userId" readonly="readonly">
+                    <span class="spanInfo">账号来自第三方不能修改</span>
+                </div>
+                <div class="userName">
+                    <label class="labelInfo">用户昵称：</label>
+                    <input type="text" :class="{'userNameStyle':personalInfo.isUpdateName}" :readonly="personalInfo.isUpdateName?'readonly':'none'"     v-model="newUserName" @blur="blurUserName">
+                    <span class="spanInfo" v-text="personalInfo.isUpdateName?'您已经修改过昵称，无法再次修改！！！':'昵称只能修改一次,请慎重,新昵称不能和其他用户的昵称重复'"></span>
+                    <p style="color: red;opacity:0;margin-left: 150px" ref="verifyName">昵称已存在</p>
+                </div>
+                <div class="avatar">
+                    <label class="labelInfo" style="float: left;margin-top: 20px">用户头像：</label>
+                    <div class="userAvatar" style="display: inline-block">
+                        <div class="avatarBox">
+                            <el-upload
+                                    class="upload-demo"
+                                    action
+                                    :name="avatar"
+                                    :http-request="uploadFile"
+                                    :on-change="handleAvatarChange"
+                                    :show-file-list="false"
+                                    ref="upload"
+                                    :auto-upload="false"
+                                    :on-success="handleAvatarSuccess"
+                                    :headers="headers"
+                                    :before-upload="beforeAvatarUpload">
+                                <img v-if="imageUrl" :src="imageUrl" style="width: 150px;height: 150px;">
+<!--                                没上传时的默认图片-->
+                                <img v-else th:src="@{/images/avatar/default.gif}" style="width: 150px;height: 150px;">
+<!--                                如果el-upload中存在el-button，那么只会点击button才会选取图片，若选取后不自动上传到服务器，须设置auto-upload,submit方法可手动上传服务器-->
+                                <el-button slot="trigger"  type="primary" class="cropper-btn">上传新头像</el-button>
+                                <div id="avatarDiv" style="display: none;width: 150px;height: 30px;position: absolute;top: 160px;left: 0;">
+                                    <button slot="trigger"  type="primary" style="width: 70px;height: 27px;background: #F2F2F2;display: block;position: absolute;left: 0;bottom: 0;color: #353535;text-align: center;line-height: 27px;font-size: 13px;border: none" @click="reUpload">重新上传</button>
+                                    <span @click="uploadAvatar" style="width: 70px;height: 27px;background: #F2F2F2;display: block;position: absolute;right: 0;bottom: 0;color: #353535;text-align: center;font: 13px/27px Arial;cursor: pointer">点击上传</span></div>
+                            </el-upload>
+                        </div>
+                    </div>
+                    <span class="spanInfo" style="color: #f60;margin-top: 50px;display: inline-block;">注意：新的头像会替代现有的头像，仅支持文件大小为2MB以内的jpg图片上传，上传后如果图片无法显示，请刷新页面</span>
+
+                </div>
+                <div class="motto">
+                    <label class="labelInfo" style="float: left;margin-top: 30px">个人签名：</label>
+                    <el-input
+                            type="textarea"
+                            v-model="textarea"
+                            maxlength="100"
+                            show-word-limit
+                            style="width: 300px;height: 50px;float: left;margin-top: 10px"
+                    >
+                    </el-input>
+                </div>
+                <div class="bgImage">
+                    <label class="labelInfo" style="float: left;margin-top: 30px">主页背景图：</label>
+                    <ul>
+                        <li v-for="index in 21" :key="index" @click="bgImgSelect(index,$event)" class="bgImgLi">
+                            <img :src="'/images/backgroundImg/'+index+'_small.jpg'">
+                        </li>
+                    </ul>
+                </div>
+                <div class="submit">
+                    <input type="button" value="保存设置" class="submitbtn" @click="saveEdit">
+                </div>
+            </div>
+            <div class="content" style="display: block">
+                <div class="navList">
+                    <div @click="bindClickForNav(1)" style="border-left: 3px solid firebrick;"><a href="#">个人中心概览</a></div>
+                    <div @click="bindClickForNav(2)"><a href="#">提升等级</a></div>
+                    <div @click="bindClickForNav(3)"><a href="#">我的书评</a></div>
+                </div>
+                <div class="detail" >
+                    <div class="introduce">
+                        <h4>{{personalInfo.userName}}，您好！</h4>
+                        <h4>您的等级：{{personalInfo.role}}</h4>
+                        <h4>您的经验值:{{personalInfo.exp}}点</h4>
+                        <h4>个人签名:{{personalInfo.motto}}</h4>
+                        <h4>上次登录时间是：18分钟前</h4>
+                    </div>
+                    <div class="levelUp" style="display: none">
+                        <div class="descRule">
+                            <h3 style="margin-top: 5px;">您当前经验值：{{personalInfo.exp}}</h3>
+                            <h3>经验值获取攻略：</h3>
+                            <p>1，每日登录 +2</p>
+                            <p>2，每次评论 +1</p>
+                        </div>
+                        <h4 style="margin-top: 20px;margin-bottom: 10px;">段位介绍：</h4>
+                        <div class="levelDesc">
+                            <el-table
+                                    :data="levelDesc"
+                                    border
+                                    style="width: 100%"
+                                    stripe="true">
+                                <el-table-column
+                                        label="段位"
+                                        width="100">
+                                    <template slot-scope="scope">
+                                        <p>{{scope.row.roleName}}</p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="图书收藏上限"
+                                        width="100"
+                                >
+                                    <template slot-scope="scope">
+                                        <p>{{scope.row.permission.operateAddBookPermission==2147483647?'无上限':scope.row.permission.operateAddBookPermission}}</p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="图书借阅上限"
+                                        prop="permission.operateBorrowBookPermission"
+                                        width="100"
+                                >
+                                    <template slot-scope="scope">
+                                        <p>{{scope.row.permission.operateBorrowBookPermission==2147483647?'无上限':scope.row.permission.operateBorrowBookPermission}}</p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="每日评论数上限"
+                                        prop="permission.operateCommentsPermission"
+                                        width="100"
+                                >
+                                    <template slot-scope="scope">
+                                        <p>{{scope.row.permission.operateCommentsPermission==2147483647?'无上限':scope.row.permission.operateCommentsPermission}}</p>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="所需经验"
+                                        prop="exp"
+                                        width="100"
+                                >
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        width="180"
+                                >
+                                    <template slot-scope="scope">
+                                        <el-button
+                                                size="medium"
+                                                type="primary"
+                                                :style="{'background':parseInt(scope.row.exp)<=parseInt(currentRoleExp)? 'grey':'green','cursor':parseInt(scope.row.exp)<=parseInt(currentRoleExp)? 'text':'pointer','pointer-events':parseInt(scope.row.exp)<=parseInt(currentRoleExp)? 'none':'all'}"
+                                                @click="handleUpgrade(scope.$index, scope.row)">升级到此段位</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                    </div>
+                    <div class="myComments" style="display: none">
+                        <div class="myCommentsHeader">
+                            <div class="searchByName">
+                                <el-input class="search" type="text" v-model="input" placeholder="书评区"
+                                          maxlength="30" show-word-limit="true"
+                                          prefix-icon="el-icon-search" @keyup.enter.native="searchComments" clearable></el-input>
+                                <el-button type="primary" icon="el-icon-search" @click="searchComments">搜索</el-button>
+                            </div>
+                            <div class="block">
+                                <span>按日期过滤：</span>
+                                <el-date-picker
+                                        v-model="blockValue"
+                                        type="daterange"
+                                        align="right"
+                                        range-separator="至"
+                                        start-placeholder="开始日期"
+                                        end-placeholder="结束日期"
+                                        @change="selectDate"
+                                        :picker-options="pickerOptions">
+                                </el-date-picker>
+                            </div>
+                        </div>
+                        <el-table
+                                :data="bookCommentsData"
+                                border
+                                style="width: 100%"
+                                stripe="true"
+                        >
+                            <el-table-column
+                                    type="index"
+                                    label="序号"
+                                    width="50"
+                                    :index="indexMethod">
+                            </el-table-column>
+                            <el-table-column
+                                    label="主题"
+                                    prop="content"
+                                    width="330">
+                            </el-table-column>
+                            <el-table-column
+                                    label="发布时间"
+                                    prop="publish_time"
+                                    width="180">
+                            </el-table-column>
+                            <el-table-column
+                                    label="书评区"
+                                    width="180">
+                                <template slot-scope="scope">
+                                    <a :href="'/book/'+scope.row.book_id" style="text-decoration: none;color: #791b1b;cursor: pointer"> <p>《{{scope.row.book_name}}》</p></a>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <el-pagination
+                                @current-change="handleCurrentChange"
+                                @size-change="handlePageSizeChange"
+                                :current-page.sync="currentPage"
+                                background
+                                :page-sizes="[5, 10, 20, 50]"
+                                :page-size="pageSize"
+                                layout="total, sizes,slot,prev, pager, next,jumper"
+                                prev-text="上一页"
+                                next-text="下一页"
+                                :total="total">
+                            <span>当前展示{{ totalShow }}条</span>
+                        </el-pagination>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<!--inline是thymeleaf内联JavaScript表达式，注意JavaScript不能写在外部去引用，这样是没效的-->
+<script th:inline="javascript">
+
+    // 初始化
+    function init() {
+    }
+
+    new Vue({
+        el:"#personalInfo",
+        data(){
+            return{
+                //--------------------  我的书评 -------------------
+                currentPage:1,
+                totalShow:4,
+                total:"",
+                pageSize:5, // 每页显示条数
+                input:"", // 搜索绑定值
+
+                // imageUrl: '../../static/images/bookface/1330010.jpg',
+                imageUrl:'',  // 上传头像
+                newUserName:null, // 个人名称
+                textarea:null, // 个性签名
+                headers: { "Content-Type": "multipart/form-data" },
+                choiceBgImg:null, // 背景图选取时绑定的图片名称
+
+
+                bookCommentsData: [ //评论信息
+                    {
+                    comment:"哈哈哈",
+                    publishTime:"2016-05-02 16:52:05",
+                    bookViewArea:"《特种兵王在山村》"
+                },
+                ],
+                levelDesc:[ // 等级信息
+                ],
+                currentRoleExp:'',//  当前用户角色所属经验
+
+                // 日期选择器相关参数
+                pickerOptions: {
+                    shortcuts: [{
+                        text: '最近一周',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近一个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }, {
+                        text: '最近三个月',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    }]
+                },
+                blockValue: '', // 日期绑定值
+                startTime:"", // 开始日期
+                endTime:"",  //结束日期
+
+
+                // 个人中心概览-----------------------------------------
+                personalInfo:{},   // 用户信息
+            }
+        },
+        methods:{
+            // 个人中心概览
+            // 获取用户信息
+            getPersonalInfo(){
+              axios({
+                  method:"POST",
+                  url:"/selfInfo/personalInfo",
+                  dataType:"json"
+              }).then(response=>{
+                this.personalInfo=response.data
+                  this.newUserName=response.data.userName
+              })
+            },
+            showEditPersonalInfo(){  //展示设置个人资料页面
+                document.getElementsByClassName("updateInfo")[0].style.display="block"
+                document.getElementsByClassName("content")[0].style.display="none"
+            },
+
+
+
+
+            // -------------------  我的书评  ---------------------------------------------
+            // 获得评论信息
+            getComments(searchBookName,startTime,endTime){
+                axios({
+                    method:"POST",
+                    url:"/selfInfo/myBookComments",
+                    dataType:"json",
+                    data: {"bookName":searchBookName.trim(),"startTime":startTime,"endTime":endTime,"pageSize":this.pageSize,"pageNum":this.currentPage}
+                }).then(response => {
+
+                    this.bookCommentsData=response.data.bookCommentsData
+                    this.totalShow = response.data.bookCommentsData.length;
+                    this.total = response.data.total;
+                })
+            },
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+                this.getComments(this.input,this.startTime,this.endTime)
+            },
+            // 每页显示条(pageSize)数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+                this.getComments(this.input,this.startTime,this.endTime);
+            },
+            // 日期选择后触发，
+            selectDate(val){
+                // val是Object类型，且是中国标准时间，须格式化
+                var dates = val.toString().split(",")
+                dates[0] = new Date(dates[0])
+                dates[1] = new Date(dates[1])
+                this.startTime=dates[0].getFullYear() + '-' + (dates[0].getMonth() + 1) + '-' + dates[0].getDate() + ' ' + dates[0].getHours() + ':' + dates[0].getMinutes() + ':' + dates[0].getSeconds();
+                this.endTime=dates[1].getFullYear() + '-' + (dates[1].getMonth() + 1) + '-' + dates[1].getDate() + ' ' + dates[1].getHours() + ':' + dates[1].getMinutes() + ':' + dates[1].getSeconds();
+                this.getComments(this.input,this.startTime,this.endTime)
+            },
+            // 搜索 只有搜索会清除日期选择
+            searchComments(){
+                this.getComments(this.input,"","")
+                this.blockValue =""; // 清除日期
+            },
+            // 生成表序号
+            indexMethod(index) {
+                return index +1;
+            },
+
+
+            // ------------等级信息-------------------------------------------
+            getLevelInfo(){
+                axios({
+                    method:"POST",
+                    url:"/selfInfo/levelShow",
+                    dataType: "json"
+                }).then(response=>{
+                    this.levelDesc=response.data
+                    // 升级按钮相关逻辑
+                    for (var level  of this.levelDesc){
+                        if(level.roleName=== this.personalInfo.role){
+                            this.currentRoleExp=level.exp;
+                            break
+                        }
+                    }
+                })
+            },
+
+            // 点击升级
+            handleUpgrade(index, row) {
+                if(row.exp>this.personalInfo.exp){
+                    // ui组件内容
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 400px;height: 50px;line-height: 50px;text-align: center;"><strong>经验值不足无法升级，快去做任务拿经验吧。。。</strong></div>'
+                    });
+                }else {
+                    // 设置loading加载
+                    const loading = this.$loading({
+                        lock: true,  // 锁定屏幕的滚动
+                        text: '请稍等......',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    setTimeout(() => {
+                        loading.close();
+
+                        axios({
+                            method:"POST",
+                            url:"/selfInfo/levelUp",
+                            dataType:"json",
+                            data: {"roleName":row.roleName}
+
+                        }).then(response=>{
+
+                            if(response.data.msg.indexOf("失败")!==-1){
+                                this.$message({
+                                    dangerouslyUseHTMLString: true,
+                                    message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data.msg+'</strong></div>'
+                                });
+                            }else {
+                                // ui组件内容
+                                this.$message({
+                                    dangerouslyUseHTMLString: true,
+                                    message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>恭喜您：'+this.personalInfo.userName+' 您已成功晋级到'+row.roleName+'段位！！！</strong></div>'
+                                });
+                                setTimeout(()=>{
+                                    window.location.href="/selfInfo"
+                                },1000)
+                            }
+                        })
+                    }, 2000);
+                }
+            },
+
+
+            // 控制nva切换隐藏显示，如果菜单非“提升等级”、“我的书评”，则不能在created调用方法初始化，应该在这里
+           bindClickForNav(tag) {
+                var divs = document.getElementsByClassName("navList")[0].children
+               var divs2 = document.getElementsByClassName("detail")[0].children
+               for (var i = 0; i < divs.length; i++) {
+                   divs[i].style.borderLeft="0"
+                   divs2[i].style.display="none"
+               }
+               divs[tag-1].style.borderLeft="3px solid firebrick"
+               divs2[tag-1].style.display="block"
+
+               // 初始化我的书评栏
+               this.getComments("","","")
+            },
+
+            // 头像上传----------------------------------
+            // 上传前的校验
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            // 如果设置了不自动上传，先图片选择后想展示图片，然后再点击手动上传时，需要该钩子方法 添加文件、上传成功和上传失败时都会被调用
+            handleAvatarChange(file,filelist){
+                // 没上传时图像的展示
+                this.imageUrl=URL.createObjectURL(file.raw);
+                // 切换隐藏
+                document.getElementsByClassName("cropper-btn")[0].style.opacity="0";
+                document.getElementById("avatarDiv").style.display="block";
+            },
+            // 重新上传 ui没有提供重新上传的方法，取巧，模拟再次点击按钮就行。
+            reUpload(){
+              this.$refs.upload.clearFiles();  //清除文件列表
+                document.getElementsByClassName("cropper-btn")[0].click();
+            },
+            // 手动上传 让组件自己去触发uploadFile，这样item才能传过来
+            uploadAvatar(){
+              // 设置loading加载
+                const loading = this.$loading({
+                    lock: true,  // 锁定屏幕的滚动
+                    text: '正在上传中，请稍等。。。',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                setTimeout(() => {
+                    loading.close();
+                    // 不要放在外面，否则延迟将对submit不起作用，因为setTime只对你写在内的代码起作用！！
+                    this.$refs.upload.submit();
+                }, 2000);
+            },
+            //上传文件的事件 如果设置了自动上传，选中图片后会马上调用该方法
+            uploadFile(item){
+
+
+                //上传文件的需要formdata类型;
+                let FormDatas = new FormData()
+                // key一定要和后端@RequestPart("avatar")对应
+                FormDatas.append('avatar',item.file);
+                axios({
+                    method: 'POST',
+                    url: '/selfInfo/avatarUpload',
+                    headers:this.headers,
+                    timeout: 30000,
+                    data:FormDatas
+                }).then(response=>{
+
+                    if(response.data.msg.indexOf("上传成功")===-1){
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data.msg+'</strong></div>'
+                        });
+                    }else { // 上传成功，使用loading加载
+                        const loading = this.$loading({
+                            lock: true,  // 锁定屏幕的滚动
+                        text: '图像上传成功,2秒后即将刷新。。。',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        setTimeout(()=>{
+                            // 刷新页面
+                            window.location.href="/selfInfo"
+                        },2000)
+                    }
+
+                })
+            },
+            // 上传成功后钩子
+            // handleAvatarSuccess(response, file) {
+            //     // this.imageUrl = URL.createObjectURL(file.raw);
+            // },
+
+
+
+
+
+            // 校验昵称是否重名
+            blurUserName(){
+                axios({
+                    method: 'POST',
+                    url:"/selfInfo/verifyName",
+                    dataType: 'json',
+                    data:this.newUserName
+                }).then(response=>{
+                    var event = this.$refs.verifyName
+                    if(response.data){ // true表示昵称已存在
+                        event.style.opacity="1"; // 不能使其display，否则拿不到元素。
+                    }else {
+                        event.style.display="0";
+                    }
+                })
+            },
+            // 背景图选择
+            bgImgSelect(index,event){
+                this.choiceBgImg=index+".jpg";
+                for (var a of document.getElementsByClassName("bgImgLi")) {
+                    a.style.boxShadow="none"
+                }
+                event.currentTarget.style.boxShadow="0 0 10px red"
+
+            },
+
+            // 保存设置
+            saveEdit(){
+                if(!(this.newUserName.indexOf(this.personalInfo.userName)===-1||this.textarea||this.choiceBgImg)){
+                    this.$alert('未修改任何数据，无法提交', '通知', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+
+                        }
+                    });
+                    return
+                }
+
+                axios({
+                    method:"POST",
+                    url:"/selfInfo/saveUserInfo",
+                    dataType:"json", //不需要图像绑定值
+                    data:{"newUserName":this.newUserName,"textarea":this.textarea,"choiceBgImg":this.choiceBgImg}
+                }).then(response=>{
+                    if(response.data.msg.indexOf("成功")===-1){
+                        // ui组件内容
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 400px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data.msg+'</strong></div>'
+                        });
+                    }else {
+                        const loading = this.$loading({
+                            lock: true,  // 锁定屏幕的滚动
+                            text: '信息保存成功,2秒后将刷新。。。',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        setTimeout(()=>{
+                            // 刷新页面
+                            window.location.href="/selfInfo"
+                        },2000)
+                    }
+
+                })
+            },
+        },
+        created(){
+
+            // 得到用户信息
+            this.getPersonalInfo()
+            // 评论等级初始化
+           this.getLevelInfo()
+            // 评论不在这里获取，点击到该栏才获取，减小缓存压力
+            // this.getComments("","","")
+
+            // 由于thymeleaf有了JavaScript内联表达式，可以在js代码拿到request域的值拉
+            // 我们使用内联JavaScript表达式，实现点击头像能直接跳到修改页面
+            var updateAvatar = [[${updateAvatar}]]; // 有时候要注意若这种不行，换[(${updateAvatar})]试试
+            if(updateAvatar){
+                this.showEditPersonalInfo();
+            }
+
+            // 点击升级跳到提升等级部分
+            var upLevel = [[${toLevelUp}]];
+            if(upLevel){
+                this.bindClickForNav(2)
+            }
+
+        },
+        watch:{
+            input:{  // 监听清空搜索词，触发搜书
+                handler(newValue,oldValue) {
+                    if(newValue===""){
+                        this.getComments("",this.startTime,this.endTime);
+                    }
+                }
+            },
+            deep: true,
+            immediate: true
+            }
+
+    })
+
+</script>
+    <div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

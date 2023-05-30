@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="commonHeader">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--    头部url链接不要加th:,否则element-ui可能会显示不出来！！！-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+<!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+<!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+<!--    <link rel="stylesheet" href="../static/css/common.css">-->
+    <link rel="stylesheet" href="css/common.css" th:href="@{/css/common.css}">
+
+    <!--    自定义组件相关引入，注意，无法在template或js/css的下级目录下引用-->
+    <link rel="stylesheet" href="css/Customization-bookShow-type01.css" th:href="@{/css/Customization-bookShow-type01.css}">
+    <script src="js/Customization-bookShow-type01.js" th:src="@{/js/Customization-bookShow-type01.js}"></script>
+
+    <!--    主体部分-->
+    <!--&lt;!&ndash;    轮播图样式和js&ndash;&gt;-->
+    <!--    <link href="../static/css/img-Carousel%20.css" rel="stylesheet" type="text/css">-->
+    <!--    <script src="../static/js/img-carousel.js"></script>-->
+
+
+</head>
+<body onload="init()">
+<!--    左边侧栏-->
+<div id="commonLeftNavMenu">
+    <!--    logo-->
+    <div id="Logo">
+        <!--            <img th:src="@{/images/logo/logo.png}" style="width: 90%;height: 100px;margin-left: 5%" alt="网上书店借阅系统">-->
+        <img th:src="@{/images/logo/logo.png}" style="width: 90%;height: 100%;margin-left: 5%" title="网上书店借阅系统">
+    </div>
+    <!--        侧边栏-->
+    <div id="sideBar">
+        <el-menu
+                :default-active="activeIndex"
+                class="el-menu-vertical-demo"
+                @open="handleOpen"
+                @close="handleClose"
+                @select="sideBarMenuClick"
+                :default-openeds="['1']"
+                background-color="#201D50"
+                text-color="#fff"
+                active-text-color="#65cea7">
+            <!--                submenu：二级菜单-->
+            <el-submenu index="1">
+                <template slot="title">
+                    <i class="iconfont icon-shucheng1 sideBarIcon"></i>
+                    <span>书城</span>
+                </template>
+                <el-menu-item index="1-1">
+                    <i class="iconfont icon-shouye sideBarIcon"></i>
+                    <span slot="title">首页</span>
+                </el-menu-item>
+                <el-menu-item index="1-2">
+                    <i class="iconfont icon-nan sideBarIcon"></i>
+                    <span slot="title">男频</span>
+                </el-menu-item>
+                <el-menu-item index="1-3">
+                    <i class="iconfont icon-girl-fill sideBarIcon"></i>
+                    <span slot="title">女频</span>
+                </el-menu-item>
+                <el-menu-item index="1-4">
+                    <i class="iconfont icon-paihangbang1 sideBarIcon"></i>
+                    <span slot="title">排行榜</span>
+                </el-menu-item>
+                <el-menu-item index="1-5">
+                    <i class="iconfont icon-kucun sideBarIcon"></i>
+                    <span slot="title">书库</span>
+                </el-menu-item>
+            </el-submenu>
+            <el-menu-item index="2" active>
+                <i class="iconfont icon-file-management-borrowed-record sideBarIcon"></i>
+                <span slot="title">我的借阅</span>
+            </el-menu-item>
+            <el-menu-item index="3">
+                <i class="iconfont icon-wodeshujia sideBarIcon"></i>
+                <span slot="title">我的书架</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+                <i class="iconfont icon-gerenxinxi sideBarIcon"></i>
+                <span slot="title">个人信息</span>
+            </el-menu-item>
+        </el-menu>
+    </div>
+</div>
+<!--头部-->
+<div id="commonMainHead">
+    <div id="mainHeader">
+        <!--        搜索框-->
+        <div class="searchBox" id="searchBox">
+<!--            <el-input class="search" type="text" v-model="input" placeholder="请输入书名或者作者名"-->
+<!--                      maxlength="30" show-word-limit="true"-->
+<!--                      prefix-icon="el-icon-search" clearable></el-input>-->
+<!--            bookName.slice(0,bookName.indexOf(input))+input+bookName.slice(bookName.indexOf(input)+input.length)-->
+            <el-autocomplete
+                    class="search"
+                    v-model="input"
+                    prefix-icon="el-icon-search"
+                    clearable
+                    @clear="clearSelect"
+                    ref="el_auto"
+                    maxlength="30" show-word-limit="true"
+                    :fetch-suggestions="querySearchAsync"
+                    placeholder="请输入书名或者作者名"
+                    debounce="0"
+                    @keyup.enter.native="handleSubmit"
+            >
+<!--                 自定义输入建议模板，item表示当前建议对象-->
+<!--                 若想不出现下拉框，比如输入一个单词时不触发任何下拉数据，则不能将下面template隐藏，直接在js中的cb返回一个空数组就可以。-->
+                <template slot-scope="{ item }">
+                    <div v-if="input" style="width: 100%;height: 100%;">
+                        <div style="background: #F5F5F5"><span style="height:30px;">"{{input}}"相关作品:</span></div>
+<!--                    @click.stop可阻止冒泡，即阻止该组件内部li绑定的click触发。    -->
+                        <div class="searchResult" @click.stop="searchWordSelect(bookName)" v-for="bookName in item.value" style="height: 30px;font-weight: bolder" v-html="bookName.replace(input,'<'+'span'+'>'+input+'<'+'/span'+'>')"></div>
+<!--                        对数组或对象取反!的结果是false，因此，你不能!item.value-->
+                        <div v-if="item.value.length===0"><b>暂无相关作品</b></div>
+                        <el-divider></el-divider>
+                        <div style="background: #F5F5F5"><span style="height:30px;">"{{input}}"相关作者：</span></div>
+                        <div class="searchResult" @click.stop="searchWordSelect(author)" v-for="author in item.authors" style="height: 30px;font-weight: bolder" v-html="author.replace(input,'<'+'span'+'>'+input+'<'+'/span'+'>')"></div>
+                        <div v-if="item.authors.length===0"><b>暂无相关作者</b></div>
+                    </div>
+                    <div v-else style="width: 100%;height: 100%">
+                        <div style="background: #F5F5F5"><span>大家都在搜</span></div>
+                        <div class="searchResult" @click.stop="searchWordSelect(bookName)" v-for="bookName in item.value" style="height: 30px">{{bookName}}</div>
+                    </div>
+                </template>
+
+            </el-autocomplete>
+        </div>
+        <div class="searchButton" id="searchButton" @click="buttonClick">
+            <el-button type="primary" icon="el-icon-search">搜索</el-button>
+        </div>
+        <div class="loginInfoFrom">
+            <div class="left">
+<!--                传参数不能写？，须这种格式-->
+                <a th:href="@{'/selfInfo'(toUpdateInfo=updateAvatar)}"  title="点击修改头像">
+                    <img th:src="${session.user.avatarUrl}==null?'/font/svg/男头像.svg':'/images/avatar/'+${session.user.avatarUrl}" alt="头像">
+                </a>
+                <span><a th:href="@{/selfInfo}" title="进入个人中心" style="text-decoration-line: none" th:text="${session.user.userName}">
+                </a></span>
+            </div>
+            <div class="right">
+                <a th:href="@{/bookmark}" title="我的书架">
+                    <img th:src="@{/font/svg/书架.svg}">
+                </a>
+                <!--                        消息弹出框-->
+                <a href="javascript:void(0);" title="我的消息" id="newsPopover" style="margin-top: 0">
+                    <el-badge :value="12" class="item">
+                    <el-popover
+                            placement="bottom"
+                            width="400"
+                            trigger="click">
+                        <div>暂无消息</div>
+
+                            <img slot="reference" th:src="@{/font/svg/消息提醒_1.svg}">
+                    </el-popover>
+                    </el-badge>
+                </a>
+                <!--                下拉菜单-->
+                <a href="javascript:void(0);" title="菜单" id="dropDown">
+                    <el-dropdown  trigger="click" @command="handleCommand"
+                                 placement="bottom">
+                                <span class="el-dropdown-link">
+                                    <img th:src="@{/font/svg/菜单-4.svg}">
+                                </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="a">资料设置</el-dropdown-item>
+                            <el-dropdown-item command="b">退出登录</el-dropdown-item>
+                            <el-dropdown-item command="c"  @click="zhuxiao">账号注销</el-dropdown-item>
+
+                            <el-dialog
+                                    title="账号注销申请"
+                                    :visible.sync="dialogVisible"
+                                    width="40%"
+                                    :append-to-body="true"
+                                    center
+                                   >
+                                <div style="text-align: center;background: #E6A23C">
+                                    <h4 style="color: red;font-weight: bolder">账号注销申请提交后，您当前账号会自动下线，且您的账号将会被锁定，待管理员处理后，您的账号所有数据都会被清空，且会被永久删除，请慎重考虑！！！</h4>
+                                </div>
+                                <div slot="footer" class="dialog-footer">
+                                    <el-button @click="dialogVisible = false">取 消</el-button>
+                                    <el-button type="primary" @click="zhuxiaoOK">确 定</el-button>
+                                </div>
+                            </el-dialog>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!--            顶栏-->
+    <div id="topBar">
+        <el-menu
+                ref="topBar"
+                :default-active="activeIndex"
+                class="el-menu-demo"
+                mode="horizontal"
+                @select="topBarMenuClick"
+                background-color="#545c64"
+                text-color="#fff"
+                active-text-color="#000000">
+            <el-menu-item index="1-1">首页</el-menu-item>
+            <el-menu-item index="1-2">男频</el-menu-item>
+            <el-menu-item index="1-3">女频</el-menu-item>
+            <el-menu-item index="1-4">排行榜</el-menu-item>
+            <el-menu-item index="1-5">书库</el-menu-item>
+            <el-menu-item index="1-6">升级</el-menu-item>
+        </el-menu>
+    </div>
+</div>
+
+<script>
+
+</script>
+<!--vue的js引用必须在最后面-->
+<div id="commonScripts">
+    <!--    <script src="js/common.js"></script>-->
+    <script src="js/common.js" th:src="@{/js/common.js}"></script>
+</div>
+</body>
+</html>

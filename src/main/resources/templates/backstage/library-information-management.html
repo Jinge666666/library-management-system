@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>图书信息管理</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <style>
+        #content{
+            width: 1200px;
+            height: auto;
+            margin-top: 20px;
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        .libraryInfoHeader{
+            width:100%;
+            height: 40px;
+        }
+
+        /*解决tag不对齐的问题*/
+        .el-button+.el-button, .el-checkbox.is-bordered+.el-checkbox.is-bordered{
+            margin-left: 0;
+        }
+
+        /*下面两行解决弹框无法调整高度，使设置个自适应的高度，固定头尾,注意dialog有浮动时不能设置为center模式*/
+        .el-dialog {
+            margin: 5vh auto !important;
+        }
+
+        /*高度在在这里调整*/
+        .el-dialog__body {
+            height: 60vh;
+            overflow: auto;
+        }
+
+
+    </style>
+</head>
+<body>
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+    <div id="content">
+        <div class="libraryInfo">
+            <div class="libraryInfoHeader">
+                <el-input v-model="bookNameInput" placeholder="书名" @keyup.enter.native="clickSearch" style="width: 180px;float: left"></el-input>
+                <el-input v-model="bookAuthorInput" placeholder="作者" @keyup.enter.native="clickSearch" style="width: 180px;float: left"></el-input>
+                <el-select v-model="bookTypeInput" clearable  style="width: 180px;float: left" @keyup.enter.native="clickSearch" placeholder="类型">
+                    <el-option
+                            v-for="item in bookTypesAndDesc"
+                            :key="item.book_type_name"
+                            :label="item.book_type_name"
+                            :value="item.book_type_name">
+                    </el-option>
+                </el-select>
+                <el-button type="primary" size="midium" icon="el-icon-search" @click="clickSearch">搜索</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="handleAdd">添加图书</el-button>
+                <el-button type="primary" icon="el-icon-search" @click="multipleDelete">批量删除</el-button>
+            </div>
+            <el-table
+                    :data="tableData"
+                    border
+                    :fit="false"
+                    @selection-change="handleSelectionChange"
+                    style="width: 100%">
+                <el-table-column
+                        type="selection"
+                        width="40">
+                </el-table-column>
+                <el-table-column
+                        type="index"
+                        label="序号"
+                        width="50"
+                        :index="indexMethod">
+                </el-table-column>
+                <el-table-column
+                        prop="bookName"
+                        label="图书名称"
+                        width="180">
+                </el-table-column>
+                <el-table-column
+                        prop="bookAuthor"
+                        width="120"
+                        label="图书作者">
+                </el-table-column>
+                <el-table-column
+                        prop="bookType"
+                        width="120"
+                        label="图书类型">
+                </el-table-column>
+                <el-table-column
+                        width="400"
+                        label="图书描述">
+                    <template slot-scope="scope">
+                        <p v-html="scope.row.bookDesc"  style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;"></p>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="70"
+                        label="状态">
+                    <template slot-scope="scope">
+                        <span v-text="scope.row.isBorrowed?'已借出':'未借出'"></span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" width="180">
+                    <template slot-scope="scope">
+                        <el-button
+                                size="small"
+                                style="margin-right: 15px;margin-left: 15px"
+                                @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                        <!--            编辑-->
+                        <el-dialog
+                                title="修改图书"
+                                :visible.sync="dialogEditBook"
+                                width="44%"
+                                :append-to-body="true"
+                                center>
+                            <div style="text-align: left;height:auto;width: 340px;float:left;border: 1px solid red;">
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书类型</label>
+                                    <el-select v-model="selectedEditBookType" clearable  style="width: 180px;float: left" placeholder="图书类型">
+                                        <el-option
+                                                v-for="item in bookTypesAndDesc"
+                                                :key="item.book_type_name"
+                                                :label="item.book_type_name"
+                                                :value="item.book_type_name">
+                                        </el-option>
+                                    </el-select>
+                                    <br><br><br><br>
+                                    <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书标签</label>
+                                    <el-checkbox border :indeterminate="isIndeterminate" v-model="tags" @change="handleCheckAllChange" style="float: left">全选</el-checkbox>
+
+<!--                                    <div style="text-align: center;height: 300px;width: 180px;float:left;border: 1px solid blue"></div>-->
+
+                                    <br><br><br>
+                                    <div style="border: 1px solid red;margin-left:10px;width: 330px;height: auto;overflow: hidden;">
+                                        <el-checkbox-group v-model="checkedTags" @change="handleCheckedTagsChange" >
+                                            <el-checkbox style="padding-right: 15px;margin-bottom: 10px;margin-right: 15px" size="small" v-for="tag in tags" :label="tag" :key="tag" border>{{tag}}</el-checkbox>
+                                        </el-checkbox-group>
+                                    </div>
+                                </div>
+                            <div style="text-align: center;height: 270px;width: 200px;float: left;margin-left: 20px;border: 1px solid blue">
+                                <h3>点击下方图片修改封面</h3>
+                                <el-upload
+                                        class="upload-demo"
+                                        action
+                                        :name="bookface"
+                                        :http-request="uploadFile"
+                                        :on-change="handleBookfaceChange"
+                                        :show-file-list="false"
+                                        ref="editUpload"
+                                        :auto-upload="false"
+                                        :headers="headers">
+                                    <img v-if="selectBookface" :src="selectBookface" style="width: 150px;height: 200px;">
+                                    <!--                                没上传时的图片 这里图片路径不会加backstage，而下面添加的上传这里会加上，导致图片显示不出-->
+                                    <img v-else :src="'/images/bookface/'+oldBookfaceName" style="width: 150px;height: 200px;">
+                                </el-upload>
+                            </div>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogEditBook = false">取 消</el-button>
+<!--                                注意：这里的scope.row永远是最后一条的row，而其他页面也是同样的位置的el-dialog，但他们的row都与之对应，我也搞不懂这里为啥总是获取的最后一行的row，-->
+                                <el-button type="primary" @click="editBookOK(scope.$index,scope.row)">提交</el-button>
+                            </div>
+                        </el-dialog>
+                        <el-button
+                                size="small"
+                                type="danger"
+                                @click="handleDelete([scope.row.bookId])">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <el-pagination
+                    @current-change="handleCurrentChange"
+                    @size-change="handlePageSizeChange"
+                    :current-page.sync="currentPage"
+                    background
+                    :page-sizes="[5, 10, 20, 50]"
+                    :page-size="pageSize"
+                    layout="total, sizes,slot,prev, pager, next,jumper"
+                    prev-text="上一页"
+                    next-text="下一页"
+                    :total="total">
+                <span>当前展示{{ totalShow }}条</span>
+            </el-pagination>
+            <el-dialog
+                    title="添加图书"
+                    :visible.sync="dialogAddBook"
+                    width="45%"
+                    :append-to-body="true"
+                    center
+            >
+                <div style="text-align: left;height:auto;width: 100%;float:left;border: 1px solid red;">
+                    <div style="text-align: center;height: auto;width: 350px;float: left;margin-left: 20px;border: 1px solid blue">
+                        <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书名称</label>
+                        <el-input v-model="bookData.bookName"   style="width: 250px;float: left"></el-input>
+                        <br><br><br>
+                        <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">作者</label>
+                        <el-input v-model="bookData.bookAuthor"  style="width: 250px;float: left"></el-input>
+                        <br><br><br>
+
+
+                        <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书类型</label>
+                        <el-select v-model="bookData.bookType" clearable style="width: 180px;float: left" placeholder="图书类型">
+                            <el-option
+                                    v-for="item in bookTypesAndDesc"
+                                    :key="item.book_type_name"
+                                    :label="item.book_type_name"
+                                    :value="item.book_type_name">
+                            </el-option>
+                        </el-select>
+                        <br><br><br>
+                        <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书介绍</label>
+                        <el-input
+                                type="textarea"
+                                placeholder="请输入内容"
+                                v-model="bookData.bookDesc"
+                                maxlength="300"
+                                show-word-limit
+                                style="width: 250px;float: left"
+                        >
+                        </el-input>
+
+                    </div>
+                    <div style="text-align: center;height: 250px;width: 200px;float: left;margin-left: 20px;border: 1px solid blue">
+                        <h3>点击下方图片上传封面</h3>
+                        <br>
+                        <el-upload
+                                class="upload-demo"
+                                action
+                                :name="bookface"
+                                :http-request="uploadFile"
+                                :on-change="handleBookfaceChange"
+                                :show-file-list="false"
+                                ref="addUpload"
+                                :auto-upload="false"
+                                :headers="headers">
+                            <img v-if="selectBookface" :src="selectBookface" style="width: 150px;height: 200px;">
+                            <!--                                没上传时的图片-->
+                            <img v-else :src="getBookfaceBaseUrl('defaultBookface.jpg')" alt="" style="width: 150px;height: 200px;">
+                        </el-upload>
+                    </div>
+
+                </div>
+                <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">图书标签</label>
+                <el-checkbox border :indeterminate="isIndeterminate" v-model="tags" @change="handleCheckAllChange" style="float: left">全选</el-checkbox>
+                <br><br><br>
+                <div style="border: 1px solid red;margin-left:10px;width: 100%;height: auto;overflow: hidden;">
+                    <el-checkbox-group v-model="checkedTags" @change="handleCheckedTagsChange" >
+                        <el-checkbox style="padding-right: 15px;margin-bottom: 10px;margin-right: 15px" size="small" v-for="tag in tags" :label="tag" :key="tag" border>{{tag}}</el-checkbox>
+                    </el-checkbox-group>
+                </div>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogAddBook = false">取 消</el-button>
+                    <el-button type="primary" @click="addBookOK">确 定</el-button>
+                </div>
+            </el-dialog>
+        </div>
+    </div>
+
+<script>
+    new Vue({
+        el:".libraryInfo",
+        data(){
+            return{
+                tableData:[
+                    {
+                        bookName:"红楼梦",
+                        bookAuthor:"曹雪芹",
+                        bookType:"文学",
+                        bookDesc:"Button 组件提供除了默认值以外的三种尺寸，可以在不同场景下选择合适的按钮尺寸。",
+                        isBorrowed:false,
+                    },
+                ],
+
+                bookNameInput:'',
+                bookAuthorInput:'',
+                bookTypeInput:'',
+
+                // 分页参数
+                currentPage:1,
+                totalShow:4,
+                total:0,
+                pageSize:5, // 每页显示条数
+
+                // 弹框
+                dialogEditBook:false,
+                dialogAddBook:false,
+
+                searchBookType:"",
+                selectedEditBookType:"东方玄幻", // 编辑版当前选中的类型
+                // 多选框属性
+
+                checkAll: false,
+                checkedTags: [], // 选择的tag
+                tags:['兵王', '升级', '扮猪吃虎', '无敌流', '热血', '爽文', '美女', '至尊', '装逼'], // 所有tag  // 你选择的tags
+                isIndeterminate: true,
+
+                bookTypesAndDesc:[{// 所有类型+类型描述
+                    book_type_name:"东方玄幻",
+                    book_type_desc:"东方玄幻",
+                },],
+                oldBookfaceName:"原始图书封面",
+                selectBookface:null, // 选取的图书封面
+                bookfaceName:null, // 图片成功上传后端返回的新的文件名
+                bookfaceUploadState:null, // 上传图片方法是否成功状态
+                headers: { "Content-Type": "multipart/form-data" },
+                defaultBookface:"defaultBookface.jpg",  // 添加图书默认封面
+
+                multipleSelection:[],  //多行选择,用于删除
+
+                bookData:{ // 添加图书表单值
+                    bookName:"",
+                    bookAuthor:"",
+                    bookType:"",
+                    bookDesc:"",
+                    tag:null,
+                    bookfaceName:null,
+                },
+                currentEditRow:null   // 在编辑提交的方法中获取的row永远是最后一行的row，只能设置临时存放，根据触发提交获得当前row
+            }
+        },
+        methods:{
+            // 这个傻逼img标签图片在网页显示不出来，干脆用绝对路径绝杀它！！！
+            getBookfaceBaseUrl(imgName){
+                var protocol = location.protocol;
+                var hostname = location.hostname;
+                var port = location.port; var pathname = location.pathname;
+                var basePath = protocol + "//" + hostname + ":" + port + pathname+"/"+imgName;
+                return basePath.split("backstage")[0] + "images/bookface/" + imgName
+            },
+
+            getData(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/bookInfo",
+                    dataType:"json",
+                    data:{pageNum:this.currentPage,pageSize:this.pageSize,bookName:this.bookNameInput,bookAuthor:this.bookAuthorInput,bookType:this.bookTypeInput}
+                }).then(res=>{
+                    this.tableData=res.data.books;
+                    this.total = res.data.total;
+                    this.totalShow = res.data.books.length;
+                })
+            },
+
+            // 获得所有类型
+            getBookTypes(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/getAllBookType",
+                    dataType:"json",
+                }).then(res=>{
+                  this.bookTypesAndDesc=res.data.bookTypes
+                    console.log(this.bookTypesAndDesc)
+                })
+            },
+            getAllBookTags(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/getAllBookTag",
+                    dataType:"json",
+                }).then(res=>{
+                    this.tags=res.data
+                    console.log(res.data)
+                })
+            },
+            indexMethod(index) {
+                return index+1;
+            },
+            // 搜索
+            clickSearch(){
+
+                this.getData();
+            },
+
+            // 图片上传
+            uploadFile(item){
+
+
+                //上传文件的需要formdata类型;
+                let FormDatas = new FormData()
+                // key一定要和后端@RequestPart("bookface")对应
+                FormDatas.append('bookface',item.file);
+                axios({
+                    method: 'POST',
+                    url: '/backstage/bookfaceUpload',
+                    headers:this.headers,
+                    timeout: 30000,
+                    data:FormDatas
+                }).then(response=>{
+                    if(response.data.msg.indexOf('成功')!==-1){
+                        this.bookfaceName=response.data.newBookface
+                    }
+                    this.bookfaceUploadState=response.data.msg
+
+                })
+            },
+            handleBookfaceChange(file,filelist){
+                // 没上传时图像的展示
+                this.selectBookface=URL.createObjectURL(file.raw);
+            },
+
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+                this.getData();
+
+            }, // 每页显示条数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+                this.getData();
+            },
+
+            // 触发编辑
+            handleEdit(index, row){
+                this.currentEditRow=row
+                // 初始化
+                this.selectBookface=null
+                this.bookfaceName=null
+                this.checkedTags=[]
+
+                // 对tag预选
+                for (var tag of this.tags) {
+                    if(row.tag.indexOf(tag)!==-1){
+                        this.checkedTags.push(tag);
+                    }
+                }
+                this.selectedEditBookType=row.bookType
+                this.oldBookfaceName=row.bookfaceName
+                this.dialogEditBook=true
+            },
+            // 触发添加
+            handleAdd(){
+                // 相关初始化
+                this.selectBookface=null
+                this.bookfaceName=null
+                this.selectedEditBookType=null
+                this.checkedTags=[]
+                this.bookData={ // 添加图书表单值
+                    bookName:"",
+                        bookAuthor:"",
+                        bookType:"",
+                        bookDesc:"",
+                        tag:null,
+                        bookfaceName:null,
+                }
+                this.dialogAddBook=true
+            },
+            // 提交修改图书
+            editBookOK(index,row){
+                // row没用，是最后一行row，从data中取
+                row=this.currentEditRow
+                var id =row.bookId
+                var oldBookType = row.bookType
+                var oldTag = row.tag
+                // 先提交图片并验证
+                // 判断图片是否上传过
+                if(this.selectBookface===null){
+                    this.bookfaceName=null
+                    this.bookfaceUploadState="成功"
+                }else {
+                    this.$refs.editUpload.submit()
+                }
+                // 这里需要等待图片上传
+                const loading = this.$loading({
+                    lock: true,  // 锁定屏幕的滚动
+                    text: '处理中。。。',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+                setTimeout(() => {
+                    loading.close()
+                    if(this.bookfaceUploadState.indexOf('成功')!==-1){
+                        var tagStr="";
+                        // 将选择的tag数组转为特殊格式     ['扮猪吃虎', '美女', '装逼']
+                        for (var tag of this.checkedTags) {
+                            tagStr = tagStr+"'"+tag+"'"+","
+                        }
+                        if(tagStr===""){
+                            tagStr="[]"
+                        }else {
+                            tagStr="["+tagStr.substr(0,tagStr.length-1)+"]"
+                        }
+
+                        // 没有修改数据禁止提交
+                        // 判断tag是否有修改
+                        var tagHasUpdate=false
+                        if(tagStr.length===oldTag.length){
+                            for (var tag2 of this.checkedTags) {
+                                // 在长度一样下，有一个不相等就说明修改了
+                                if(oldTag.indexOf(tag2)===-1){
+                                    tagHasUpdate=true
+                                    tagStr=null
+                                    break
+
+                                }
+                            }
+
+                        }else {
+                            tagHasUpdate=true
+                        }
+
+                        if(this.bookfaceUploadState==="成功" && this.selectedEditBookType===oldBookType && !tagHasUpdate){
+                            this.$message({
+                                dangerouslyUseHTMLString: true,
+                                message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>您没有修改任何数据，无法提交！！！</strong></div>'
+                            });
+                        }else {
+                            this.dialogEditBook=false
+                            axios({
+                                method: 'POST',
+                                url:"/backstage/handleUpdateBookInfo",
+                                dataType:"json",
+                                data:{"bookType":this.selectedEditBookType,"tag":tagStr,"bookfaceName":this.bookfaceName,"bookId":id}
+                            }).then(res=>{
+                                var state1=""
+                                if(res.data){
+                                    state1="书籍信息修改成功"
+                                    this.getData()
+                                }else {
+                                    state1="书籍信息修改失败，请稍后再试"
+                                }
+                                this.$message({
+                                    dangerouslyUseHTMLString: true,
+                                    message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+state1+'</strong></div>'
+                                });
+                            })
+                        }
+
+                    }else {
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+this.bookfaceUploadState+'</strong></div>'
+                        });
+                    }
+                },3000)
+            },
+            // 提交添加书籍
+            addBookOK(){
+                var verifyMsg=null
+                if(this.bookData.bookName===''){
+                    verifyMsg="书籍名不能为空"
+                }else
+                if(this.bookData.bookAuthor===""){
+                    verifyMsg="作者不能为空"
+                }else
+                if(this.bookData.bookType===""){
+                    verifyMsg="书籍类型不能为空"
+                }else
+                if(this.bookData.bookDesc===""){
+                    verifyMsg="书籍介绍不能为空"
+                }
+                if(verifyMsg!==null){
+                    this.$alert(verifyMsg, '警告', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                        }
+                    });
+                }else{
+                    // 校验完成，开始上传
+                    this.dialogAddBook=false
+                    // 将tag转化
+                    var tagStr="";
+                    // 将选择的tag数组转为特殊格式     ['扮猪吃虎', '美女', '装逼']
+                    for (var tag of this.checkedTags) {
+                        tagStr = tagStr+"'"+tag+"'"+","
+                    }
+                    if(tagStr===""){
+                        tagStr="[]"
+                    }else {
+                        tagStr="["+tagStr.substr(0,tagStr.length-1)+"]"
+                    }
+                    this.bookData.tag=tagStr
+                    // 先提交图片并验证
+                    // 判断图片是否上传过
+                    if(this.selectBookface===null){
+                        this.bookfaceName=null
+                    }else {
+                        // 注意访问该接口不会等待，这会造成bookfaceName来不及赋值，不会用异步，就加个延时吧
+                        this.$refs.addUpload.submit();
+                    }
+                    const loading = this.$loading({
+                        lock: true,  // 锁定屏幕的滚动
+                        text: '处理中。。。',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    setTimeout(()=>{
+                        this.bookData.bookfaceName=this.bookfaceName
+                        axios({
+                            method: 'POST',
+                            url:"/backstage/addBook",
+                            dataType: 'json',
+                            data:this.bookData
+                        }).then(response=>{
+                            loading.close();
+                            var msg2=null
+                            if(response.data){
+                                msg2="图书添加成功！！"
+
+                            }else{
+                                msg2="图书添加失败，请稍后再试。。。"
+                            }
+                            this.$message({
+                                dangerouslyUseHTMLString: true,
+                                message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+msg2+'</strong></div>'
+                            });
+                            this.getData();
+                        })
+                    },3000)
+                }
+
+            },
+
+            // 删除书籍 参数是数组类型
+            handleDelete(bookIds){
+                this.$confirm('确定执行删除操作嘛?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method:"POST",
+                        url:"/backstage/deleteBook",
+                        dataType:"json",
+                        data:bookIds
+                    }).then(response=>{
+                        if(response.data){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                            this.getData();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: "系统繁忙，请稍后再试。。。"
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+
+
+            // 多行选择，val是数组对象组
+            handleSelectionChange(val) {
+              // window.alert(val[0].bookId)
+                this.multipleSelection = val;
+            },
+            // 批量删除
+            multipleDelete(){
+                if(this.multipleSelection.length===0){
+                    this.$alert('请选择要删除的行', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                        }
+                    });
+                }else {
+                    // 将ids解析出来
+                    var delIds=[]
+                    for (var row of this.multipleSelection) {
+                        delIds.push(row.bookId)
+                    }
+                    this.handleDelete(delIds)
+                }
+            },
+
+
+            // tags的多选框
+            handleCheckAllChange(val) {
+                this.checkedTags = val ? this.tags : [];
+                this.isIndeterminate = false;
+            },
+            handleCheckedTagsChange(value) {
+                let checkedCount = value.length;
+                this.checkAll = checkedCount === this.tags.length;
+                this.isIndeterminate = checkedCount > 0 && checkedCount < this.tags.length;
+            },
+
+
+        },
+        created(){
+            this.getData();
+            // 获得所有类型
+            this.getBookTypes();
+            // 获得所有tag
+            this.getAllBookTags();
+        },
+        watch:{
+            bookNameInput:{
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.getData();
+                    }
+                }
+            },
+            bookAuthorInput:{
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.getData();
+                    }
+                }
+            },
+            bookTypeInput:{
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.getData();
+                    }
+                }
+            },
+            deep:false,
+            immediate:false
+        }
+    })
+</script>
+
+
+
+
+    <div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

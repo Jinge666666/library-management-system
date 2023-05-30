@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--当我们传递一个 List 实例或者数组作为参数对象传给 MyBatis。当你这么做的时 候,MyBatis
+会自动将它包装在一个 Map 中,用名称在作为键。List 实例将会以“list” 作为键,而数组实例将会以“array”作为键。
+所以，当我们传递的是一个List集合时，mybatis会自动把我们的list集合包装成以list为Key值的map。
+可以将list包装成map，其所在键名就是引用处，比如在foreach的collection引用。
+若把list放入bean，或者有多个参数时，这时不能指定parameterType属性，而应该在接口mapper的方法参数上使用@Param注解。
+-->
+<mapper namespace="com.jing.librarymanagementsystem.mappers.PersonalInfoMapper">
+<!--    关于update的逗号问题，你可以使用trim标签，或把更新条件<if>标签内的内容，放在<set></set>标签中
+set标签作用：替代set关键词，剔除追加到条件末尾的任何不相关的逗号
+-->
+    <update id="saveEditInfo">
+        update user
+        <set>
+            <if test="name!=null">
+                user_name=#{name},is_update_name=1,
+            </if>
+            <if test="textarea!=null">
+                motto=#{textarea},
+            </if>
+            <if test="bgImgName!=null">
+                background_image_url=#{bgImgName}
+            </if>
+        </set>
+        where user_id=#{userId}
+    </update>
+
+
+    <select id="selectComments" resultType="java.util.Map">
+        select a.content,a.publish_time,a.book_id,a.comments_id,b.book_name
+        from comments a inner join book_info b on a.book_id=b.book_id where
+        a.user_id=#{userId} and b.book_name like #{searchBookName}
+        <if test="startTime!='' and endTime!=''">
+            and a.publish_time &gt;= #{startTime}  and a.publish_time &lt;= #{endTime}
+        </if>
+    </select>
+</mapper>

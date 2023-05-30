@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>缓存监控</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <!--    <script src="../../static/js/echarts.js" ></script>-->
+    <!--    <script type="text/javascript" href="js/echarts.js" th:href="@{/js/echarts.js}"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+    <!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/common2.css}">
+
+    <style>
+        #content{
+            width: 1200px;
+            height: 100%;
+            margin-top: 20px;
+            /*margin-top: 90px;*/
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        .redisConfigInfo{
+            width: 100%;
+            height: 210px;
+            float: left;
+            margin-left: 30px;
+            font-size: 12px;
+        }
+        .redisConfigInfo h3{
+            height: 40px;
+            line-height: 40px;
+            width: 94%;
+            border-bottom: 1px solid #dcdfe6;;
+        }
+        .redisConfigInfo ul{
+            list-style: none;
+            width: 96%;
+            height: 160px;
+            padding-left: 10px;
+        }
+        .redisConfigInfo ul li{
+            width: 48%;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #dcdfe6;;
+
+            float: left;
+        }
+        #redisCommand{
+            width: 450px;
+            height: 400px;
+            border: 1px solid red;
+            float: left;
+            margin-left: 30px;
+        }
+        #redisBuffer{
+            width: 650px;
+            height: 400px;
+            float: left;
+            border: 1px solid red;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body onload="init()">
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+
+<div id="content">
+    <div class="redisConfigInfo">
+        <h3>服务器信息</h3>
+        <ul>
+            <li><span>redis版本</span><span style="margin-left: 195px">{{redisInfo.redisVersion}}</span></li>
+            <li><span>redis宿主操作系统</span><span style="margin-left: 140px">{{redisInfo.osName}}</span></li>
+            <li><span>运行模式</span><span style="margin-left: 200px">{{redisInfo.redisMode}}</span></li>
+            <li><span>架构</span><span style="margin-left: 220px">{{redisInfo.arch}}</span></li>
+            <li><span>客户端口</span><span style="margin-left: 200px;">{{redisInfo.port}}</span></li>
+            <li><span>运行时长</span><span style="margin-left: 195px;">{{redisInfo.uptime}}</span></li>
+            <li><span>AOF是否开启</span><span style="margin-left: 178px;">{{redisInfo.aofState==0?"否":"已开启"}}</span></li>
+            <li><span>ROB是否成功</span><span style="margin-left: 170px;">{{redisInfo.rdbState}}</span></li>
+            <li><span>网络入口/出口</span><span style="margin-left: 170px;">{{redisInfo.instantaneousInput+"/"+redisInfo.instantaneousOutput}}</span></li>
+            <li><span>客户端数</span><span style="margin-left: 200px;">{{redisInfo.customsNum}}</span></li>
+
+        </ul>
+    </div>
+    <div id="redisCommand">
+
+    </div>
+    <div id="redisBuffer">
+
+    </div>
+</div>
+
+
+
+
+
+<script>
+    function init() {
+        commandsStats()
+        redisBuffer()
+    }
+
+    function commandsStats() {
+        var chartDom = document.getElementById('redisCommand');
+        var myChart = echarts.init(chartDom);
+        var option;
+        // // 解析数据
+        // data=[]
+        // console.log(vueDemo.redisInfo.commands)
+        // for (var command of Object.keys(vueDemo.redisInfo.commands)) {
+        //     data.push({name:command,value:vueDemo.redisInfo.commands[command]})
+        // }
+        // console.log(Object.keys(vueDemo.redisInfo.commands))
+        // console.log(data)
+        option = {
+            title:{
+                text:"redis命令统计",
+                left:"left"
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    mark: { show: true },
+                    dataView: { show: true, readOnly: false },
+                    restore: { show: true },
+                    saveAsImage: { show: true }
+                }
+            },
+            series: [
+                {
+                    name: '命令统计',
+                    type: 'pie',
+                    radius: [30, 150],
+                    center: ['50%', '60%'],
+                    roseType: 'area',
+                    itemStyle: {
+                        borderRadius: 8
+                    },
+
+                    data:vueDemo.redisInfo.commands
+                }
+            ]
+        };
+        // setInterval(function(){
+        //
+        // },2000)
+        option && myChart.setOption(option);
+    }
+
+    // redis消耗相对于峰值的百分比
+    function redisBuffer() {
+        var chartDom = document.getElementById('redisBuffer');
+        var myChart = echarts.init(chartDom, 'dark');
+        var option;
+
+        var s =parseInt(vueDemo.redisInfo.rssMemory)/1024/1024
+        var l = parseFloat(vueDemo.redisInfo.peakMemory)/1024
+        l=l.toFixed(0)
+        var k = parseFloat(vueDemo.redisInfo.peakPercMemory.split("%")[0])/100
+        option = {
+            tooltip: {
+                formatter: '{a} <br/>{b} {c}kb'
+            },
+            backgroundColor: '#2c343c', // 改变背景色
+            title: {  // 标题
+                text: 'redis内存总量：'+s.toFixed(2)+"MB",
+                left: 'left',
+                top: 10,
+                textStyle: {
+                    color: '#ccc'
+                }
+            },
+            series: [
+                {
+                    name: '内存消耗',
+                    type: 'gauge',
+                    max:l,
+                    progress: {
+                        show: true
+                    },
+                    detail: {
+                        valueAnimation: true,
+                        formatter: '{value}kb'
+                    },
+                    data: [
+                        {
+                            value:k.toFixed(2)*l
+                        }
+                    ]
+                }
+            ]
+        };
+
+        option && myChart.setOption(option);
+        setInterval(function () {
+            axios({
+                method:"POST",
+                url:"/backstage/redisInfo",
+                dataType:"json",
+            }).then(res=>{
+                vueDemo.redisInfo=res.data
+                var g =parseFloat(res.data.peakPercMemory.split("%")[0]).toFixed(0)/100
+                g=g.toFixed(2)
+                var b =g*l
+                b=b.toFixed(2)
+                // 更新配置
+                myChart.setOption({
+                    series: [
+                        {
+                            data: [
+                                {
+                                    value:b,
+                                    name: '内存消耗：'
+                                }
+                            ]
+                        }
+                    ]
+                });
+            });
+        }, 2000)
+        option &&  myChart.setOption(option);
+    }
+
+
+    var vueDemo=new Vue({
+        el:"#content",
+        data(){
+            return{
+
+                redisInfo:{
+                    rssMemory:"",   //系统分配redis内存
+                    peakMemory:"",   //redis内存消耗峰值
+                    peakPercMemory:"",  //使用内存达到峰值内存的百分比
+                    sysMemory:""    //整个系统内存
+                }
+            }
+        },
+        methods: {
+
+
+            getData(){
+                axios({
+                    method:"POST",
+                    url:"/backstage/redisInfo",
+                    dataType:"json",
+                }).then(res=>{
+                    this.redisInfo=res.data
+
+                })
+            }
+        },
+        created(){
+            this.getData();
+        }
+    })
+</script>
+
+
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

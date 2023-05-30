@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="forefront/common::commonHeader"></div>
+
+    <style>
+        .mainContent {
+            width: 1175px;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+
+        }
+
+        #bookDetail {
+            width: 100%;
+            height: 420px;
+        }
+
+        #bookDetail .left {
+            width: 280px;
+            height: 400px;
+            float: left;
+
+        }
+
+        #bookDetail .left .bookImg {
+            width: 250px;
+            height: 330px;
+            margin-left: 15px;
+            margin-top: 30px;
+        }
+
+        #bookDetail .left .bookImg img {
+            width: 100%;
+            height: 100%;
+        }
+
+        #bookDetail .right {
+            width: 850px;
+            height: 400px;
+            float: left;
+            margin-left: 30px;
+        }
+        .book-info{
+            width: 100%;
+            height: 100%;
+        }
+        .book-info a{
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+        .book-info .book-name{
+            font-size: 26px;
+            color: #333;
+            letter-spacing: 1.33px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            height: 40px;
+            width:100% ;
+            margin-top: 30px;
+        }
+        .book-info .book-name span {
+            margin-left: 30px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .book-info .book-label{
+            max-height: 64px;
+            width: 100%;
+            border-top: 20px;
+            line-height: 32px;
+        }
+        .book-info .book-label a{
+            color: #999;
+            display: inline-block;
+            font-size: 14px;
+            border: 1px solid #cdd0d6;
+            border-radius: 2px;
+            letter-spacing: 2px;
+            padding: 0 5px;
+            height: 25px;
+            line-height: 25px;
+            margin-right: 8px;
+        }
+        .book-info .nums{
+            width: 100%;
+            height: 50px;
+            line-height: 50px;
+
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+        .book-info .nums span{
+            margin-right: 30px;
+        }
+        .book-info .book-desc{
+            width: 100%;
+            height: 150px;
+            font-size: 15px;
+            letter-spacing: 2px;
+            color: #333;
+            line-height: 25px;
+            /* 每个p标签首行缩进*/
+            text-indent: 2em;
+            overflow: hidden;
+
+        }
+        .book-info .btn-group{
+            width: 400px;
+            height: 40px;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        .book-info .btn-group .borrowed{
+            width: 180px;
+            height: 36px;
+            float: left;
+            background-color: #d32f2f;
+            color: #fff;
+            line-height: 36px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .book-info .btn-group .bookmark{
+            width: 180px;
+            height: 36px;
+            float: left;
+            background-color: #0086b3;
+            color: #fff;
+            margin-left: 20px;
+            line-height: 36px;
+            text-align: center;
+            cursor: pointer;
+
+
+        }
+        #comment-box{
+            width: 900px;
+            height: auto;
+            margin-top: 2px;
+
+        }
+
+        .edit-comment{
+            width: 800px;
+            height: 150px;
+            margin-left: 10px;
+            margin-top: 25px;
+            color: #666666;
+            /*font-size: 18px;*/
+            border: 1px solid #dddddd;
+            background: #f4f4f4;
+            border-radius: 4px;
+            /*border-bottom:1px solid #999999;;*/
+
+
+        }
+        .edit-comment .el-textarea__inner{
+            color: #222226;
+            font-weight: 600;
+            background: #f4f4f4;
+        }
+        .edit-comment .comment-operate-box{
+            width: 100%;
+            height: 30px;
+        }
+        .edit-comment .comment-operate-box .comment-operate-l{
+            height: 30px;
+            width: 300px;
+            padding-left: 20px;
+            line-height: 30px;
+            font-size: 13px;
+            color: #999aaa;
+            float: left;
+        }
+
+        .edit-comment .comment-operate-box .comment-operate-l span em{
+            padding-left: 10px;
+            padding-right: 10px;
+            color: #222226;
+            font-style: normal;
+        }
+        .edit-comment .comment-operate-box .comment-operate-r{
+            height: 30px;
+            width: 150px;
+            margin-left: 320px;
+            float: left;
+        }
+
+        .edit-comment .comment-operate-box .comment-operate-r .face{
+            width: 30px;
+            height: 30px;
+            display: block;
+            float: left;
+        }
+        .edit-comment .comment-operate-box .comment-operate-r .comment{
+            display: block;
+            width: 80px;
+            height: 30px;
+            background: #fc5531;
+            color: #fff;
+            border-radius: 16px;
+            font-size: 14px;
+            text-align: center;
+            line-height: 30px;
+            border: none;
+            float: left;
+            margin-left: 20px;
+        }
+        #detail-comment-content{
+            width: 900px;
+            height: auto;
+            border-top: 1px solid #EEEEEE;
+            margin-top: 40px;
+            margin-left: 10px;
+        }
+
+        #detail-comment-content .detail-all-comment-title{
+            width: 200px;
+            height: 40px;
+            text-align: left;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 40px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        #detail-comment-content .commentContent{
+            width: 900px;
+            height: auto;
+            border: 1px solid red;
+            position: relative
+
+
+        }
+
+        #detail-comment-content .commentContent .comment-line-box{
+            width: 800px;
+            height: auto;
+            /*margin-left: 70px;*/
+
+        }
+        #detail-comment-content .commentContent .comment-line-box .comment-list-href{
+            width: 50px;
+            height: 100%;
+            float: left;
+
+            padding: 1px;
+        }
+        #detail-comment-content .commentContent .comment-line-box .comment-list-href img{
+            width: 48px;
+            height: 48px;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box{
+            width: 700px;
+            height: 100%;
+            margin-bottom: 40px;
+            float: left;
+            margin-left: 15px;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top{
+            width: 100%;
+            height: 24px;
+
+            text-align: left;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top .author{
+            width: auto;
+            height: 100%;
+            margin-right: 20px;
+            color: #777888;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            float: left;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top .replayAuthorName{
+            width: auto;
+            height: 100%;
+            margin-right: 20px;
+            color: #777888;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-block;
+            float: left;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top .createTime{
+            color: #bbbbbb;
+            width: auto;
+            height: 100%;
+            text-align: left;
+            display: inline-block;
+            float: left;
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top .replay{
+            margin-left: 250px;
+            /*margin-left: 180px;*/
+            float: left;
+            display: inline-block;
+            width: 80px;
+            cursor: pointer;
+        }
+
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-top .like{
+            width: auto;
+            height: 100%;
+            display: inline-block;
+            float: left;
+            margin-left: 30px;
+            position: absolute;
+            right: 100px;
+
+        }
+        #detail-comment-content .commentContent .comment-line-box .right-box .comment-center{
+            width: 100%;
+            height: auto;
+            font-size: 14px;
+            color: #222226;
+            line-height: 22px;
+            word-break: break-word;
+            margin-top: 5px;
+
+        }
+
+        .replayHidden{
+            opacity: 0;
+        }
+        .replayShow:hover .replayHidden{
+            opacity: 1;
+        }
+        .comment{
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+<div class="mainContent">
+    <div id="bookDetail">
+        <div class="left">
+<!--            路径第一个一定是/,且必须使用th:-->
+            <div class="bookImg"><img th:src="${bookfaceUrl}"></div>
+        </div>
+        <div class="right">
+            <div class="book-info">
+                <div class="book-name">
+                    [[${book.bookName}]]<span style="cursor: pointer;" @click="searchAuthor" ref="toAuthor">[[${book.bookAuthor}]]</span><span>著</span>
+                </div>
+                <div class="book-label">
+                    <a href="javascript:void(0);" class="state" style="background-color: #02b389;color: #FFFFFF;cursor: text"
+                       target="_blank">[[${book.finish}]]</a>
+                    <a th:href="${bookTypeUrl}" class="label" style="background-color: #d32f2f;color: #FFFFFF"
+                       target="_blank">[[${book.bookType}]]</a>
+                    <span>
+                        <a th:href="${tagUrlPre+item}" target="_blank" th:text="${item}" th:each="item,iterState:${tags}"></a>
+                    </span>
+                </div>
+                <div class="nums">
+                    <span>字数 <i>[[${book.wordCount}]]万 </i> </span>
+                    <span>总点击 <i>[[${book.clicks}]]次</i> </span>
+                    <span>借阅次数 <i>[[${book.borrowedTimes}]]</i> </span></div>
+                <div class="book-desc" th:utext="${book.bookDesc}">
+<!--                    <p>冲击境界失败的苏方，全身经脉扭曲变形，沦为废人，永远无法再修行，却意外得到一面神奇的古镜，而在古镜的深处，他遇到一个来自神秘世界的强大存在，开始走上逆天双修之路。<br></p>-->
+<!--                    <p>修肉身，逆天改命！<br></p>-->
+<!--                    <p>摸天门，誓为修士！<br></p>-->
+<!--                    <p>看少年万里寻父，一步步在万千天才之中脱颖而出，斗苍穹、逆星辰成为盖世巨神！请加公共微信号：杜灿。在微信点公共号搜索添加即可。<br></p>-->
+                </div>
+                <div class="btn-group">
+                    <div class="borrowed" @click="borrowBook($event)" ref="borrowBook">
+                       {{borrow}}
+                    </div>
+                    <div class="bookmark" @click="addBookMark($event)" ref="bookMark">
+                        {{bookMark}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="comment-box">
+        <div class="edit-comment">
+            <el-input
+                    type="textarea"
+                    rows="4"
+                    placeholder="说点什么..."
+                    v-model="textarea01"
+                    maxlength="200"
+                    minlength="1"
+                    style="font-size: 17px;color:  #222226;font-weight: 700"
+            >
+            </el-input>
+            <div class="comment-operate-box">
+                <div class="comment-operate-l">
+                    <span class="tip">还能输入<em>{{200-wordCount01}}</em>个字符</span>
+                </div>
+                <div class="comment-operate-r">
+                    <span class="face"><img style="width: 30px;height: 30px" th:src="@{/images/mixImg/笑脸.svg}"></span>
+                    <span class="comment" @click="submitComments01()">评论</span>
+
+                </div>
+            </div>
+        </div>
+        <div id="detail-comment-content">
+            <div class="detail-all-comment-title">
+                <p>全部评论<span class="commentnum">{{commentsSize}}</span></p>
+            </div>
+            <ul class="commentContent" style="list-style: none">
+                <li class="comment-line-box" v-for="data,index in commentsInfos" :key="data.superComments.commentsId">
+                    <a class="comment-list-href" target="_blank" href="#">
+                        <img :src="data.superComments.avatarUrl==null ? '/images/mixImg/头像.gif':'/images/avatar/'+data.superComments.avatarUrl">
+                    </a>
+                    <div class="right-box">
+                        <div class="comment-top replayShow" >
+                            <span class="author">{{data.superComments.userName}}</span>
+                            <span class="createTime">{{data.superComments.publishTime}}</span>
+                            <span class="replay replayHidden" @click="replay($event)" style="position: relative;">
+                                <img th:src="@{/images/mixImg/消息.svg}" style="margin-right: 10px">
+                                <span class="editState" style="position: absolute;top: 0;right: 18px">回复</span>
+<!--                                <span style="position: absolute;top: 0;right: 18px;display: none" onclick="this.style.display='none';this.previousElementSibling.style.display='inline';this.parentNode.parentNode.parentNode.children[2].style.display='none'">收起</span>-->
+                            </span>
+                            <span class="like"><img th:src="@{/images/mixImg/like.svg}" title="点赞" @click="clickLick($event)"> </span>
+                        </div>
+                        <div class="comment-center replayShow" style="width: 510px;">
+                            <P v-html="data.superComments.content"></P>
+                        </div>
+                        <div class="edit-comment closeEditComment" style="margin-left: 0;width: 500px;display: none">
+                            <el-input
+                                    type="textarea"
+                                    rows="4"
+                                    :placeholder="'回复:'+data.superComments.userName"
+                                    v-model="textarea02"
+                                    maxlength="200"
+                                    style="font-size: 17px;color:  #222226;font-weight: 700"
+
+                            >
+                            </el-input>
+                            <div class="comment-operate-box">
+                                <div class="comment-operate-l">
+                                    <span class="tip">还能输入<em>{{200-wordCount02}}</em>个字符</span>
+                                </div>
+                                <div class="comment-operate-r" style="margin-left: 15px">
+                                    <span class="face"><img style="width: 30px;height: 30px" th:src="@{/images/mixImg/笑脸.svg}"></span>
+                                    <span class="comment" @click="submitComments02(data.superComments.commentsId)">评论</span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                     子li-->
+                    <div class="comment-line-box" style="margin-left: 70px;float: left" v-for="child,index in data.childComments" :key="child.commentsId">
+                        <a class="comment-list-href" target="_blank" href="#">
+                            <img :src="child.avatarUrl==null ? '/images/mixImg/头像.gif':'/images/avatar/'+child.avatarUrl">
+                        </a>
+                        <div class="right-box">
+                            <div class="comment-top replayShow" >
+                                <span class="author">{{child.userName}}</span>
+                                <span class="replayAuthorName">回复&nbsp;&nbsp;&nbsp;{{child.replayUserName}}</span>
+                                <span class="createTime">{{child.publishTime}}</span>
+                                <span class="replay replayHidden" @click="replay($event)"  style="position: relative;margin-left: 180px">
+                                    <img th:src="@{/images/mixImg/消息.svg}" style="margin-right: 10px">
+                                    <span class="editState" style="position: absolute;top: 0;right: 18px">回复</span>
+<!--                                    <span style="position: absolute;top: 0;right: 18px;display: none"  @click="collapse($event)">收起</span>-->
+                                </span>
+                                <span class="like"><img th:src="@{/images/mixImg/like.svg}" title="点赞" @click="clickLick($event)"> </span>
+                            </div>
+                            <div class="comment-center replayShow" style="width: 510px;">
+                                <P v-html="child.content"></P>
+                            </div>
+                            <div class="edit-comment closeEditComment" style="margin-left: 0;width: 500px;display: none">
+                                <el-input
+                                        type="textarea"
+                                        rows="4"
+                                        :placeholder="'回复:'+child.userName"
+                                        v-model="textarea02"
+                                        maxlength="200"
+                                        style="font-size: 17px;color:  #222226;font-weight: 700"
+
+                                >
+                                </el-input>
+                                <div class="comment-operate-box">
+                                    <div class="comment-operate-l">
+                                        <span class="tip">还能输入<em>{{200-wordCount02}}</em>个字符</span>
+                                    </div>
+                                    <div class="comment-operate-r" style="margin-left: 15px">
+                                        <span class="face"><img style="width: 30px;height: 30px" th:src="@{/images/mixImg/笑脸.svg}"></span>
+                                        <span class="comment" @click="submitComments02(child.commentsId)">评论</span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+<script  th:inline="javascript">
+    new Vue({
+        el: "#bookDetail",
+        data() {
+            return {
+                borrow:"借阅此书",
+                isBorrowMessage:"",
+                alBorrowedTime:"",
+                isBorrowState:"",
+                bookMark:"",
+            }
+        },
+        methods: {
+            searchAuthor(){ // 搜书基于作者名
+                authorName = this.$refs.toAuthor.innerText.trim();
+                window.location.href="/bookstore?author="+authorName
+            },
+            borrowBook(event){  // 借阅
+
+                if(this.borrow==="借阅此书"){
+                    // 还需调用下面函数判断，因为若重复点击借阅，若黑客突破这个if，后台下面这接口是没有做是否判断借阅的，还会默认是
+                    // 没借阅状态，这时可无限借阅该书。
+                    this.isBorrowedBook()
+                    axios({
+                        method:"POST",
+                        url:"/borrow/borrowBook",
+                        dataType:"json",
+                    }).then(response=>{
+                        // ui组件内容
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data+'</strong></div>'
+                        });
+                        if(response.data.indexOf("借书成功，可在我的借阅中查看借书详情")!==-1){
+                            this.borrow="已借阅"
+                            this.$refs.borrowBook.style.background="green"
+                            this.isBorrowMessage="您已借用此书，请不要重复点击！！！"
+                        }
+
+                    })
+                }else { // 凡是已经借阅，点击时只给出消息提醒
+                    // ui组件内容
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 400px;height: 50px;line-height: 50px;text-align: center;"><strong>'+this.isBorrowMessage+'</strong></div>'
+                    });
+                }
+
+
+            },
+            addBookMark(event){  // 加入书架
+                if(this.bookMark==="已收藏"){
+                    // ui组件内容
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>您已收藏此书，请勿重复操作！！！</strong></div>'
+                    });
+
+                }else {
+                    axios({
+                        method:"POST",
+                        url:"/bookmark/bookmarkAddBook",
+                        dataType:"json"
+                    }).then(response=>{
+                        if(response.data.indexOf("书籍收藏成功，快去书架中看看吧")!==-1){
+                            this.bookMark="已收藏"
+                            this.$refs.bookMark.style.background="#007aff"
+                        }
+                        // ui组件内容
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data+'</strong></div>'
+                        });
+                    });
+                }
+
+
+            },
+            isBorrowedBook(){ // 判断书籍借阅状态
+                axios({
+                    method:"POST",
+                    url:"/borrow/showBorrowReturnTime",
+                    dataType:"json",
+                }).then(response=>{
+                    this.isBorrowState=response.data.state
+                    if(this.isBorrowState==="1"){
+                        this.borrow="无法借阅"
+                        this.$refs.borrowBook.style.background="gray"
+                        this.isBorrowMessage="该书籍已被其他用户借出，预估"+response.data.borrow_time+"前归还";
+                    }
+                    if(this.isBorrowState==="2"){
+                        this.borrow="已借阅"
+                        this.$refs.borrowBook.style.background="green"
+                        this.isBorrowMessage="您已借此书，请于"+response.data.borrow_time+"前归还图书"
+                    }
+                    if(this.isBorrowState==="3"){
+                        this.borrow="借阅此书"
+
+                    }
+                })
+            },
+            isAddBookMark(){ // 判断是否加入书架，并初始化
+                axios({
+                    method:"POST",
+                    url:"/bookmark/isCollect",
+                    dataType:"json",
+                }).then(response => {
+                    if(response.data===true){
+                        this.bookMark="已收藏"
+                        this.$refs.bookMark.style.background="#007aff"
+                    }else{
+                        this.bookMark="加入书架"
+                    }
+                })
+            }
+        },
+        created() {
+            this.isBorrowedBook();
+            this.isAddBookMark();
+        }
+    })
+
+    new Vue({
+        el:"#comment-box",
+        data() {
+            return{
+                textarea01:'',
+                textarea02:'',
+                commentsInfos:[],
+                commentsSize:'24', //总评论数
+                editState:"回复",
+            }
+        },
+        methods: {
+            replay(event){ // 回复触发编辑版
+                // 先把所有编辑版关闭
+                for (var editArea of document.getElementsByClassName("closeEditComment")) {
+                    editArea.style.display="none";
+                }
+                var e = event.currentTarget
+                if(e.children[1].innerHTML.trim()==="回复"){
+                    // 把所有“收起" 变成回复
+                    for (var editState of document.getElementsByClassName("editState")) {
+                        editState.innerHTML="回复";
+                    }
+                    e.children[1].innerHTML="收起"
+                    e.parentNode.parentNode.children[2].style.display='block'
+                    this.textarea02="";
+                }else {
+                    if(e.children[1].innerHTML.trim()==="收起"){
+                        // 把所有“收起" 变成回复
+                        for (var editState2 of document.getElementsByClassName("editState")) {
+                            editState2.innerHTML="回复";
+                        }
+                        // e.children[1].innerHTML="回复"
+                        e.parentNode.parentNode.children[2].style.display='none'
+                    }
+                }
+
+
+            },
+            clickLick(event){ // 点赞
+                if(event.currentTarget.src.indexOf("alLike")===-1){
+                    event.currentTarget.src="/images/mixImg/alLike.svg"
+                }else{
+                    event.currentTarget.src="/images/mixImg/like.svg"
+                }
+            },
+            submitComments01(){ // 提交评论
+                this.submitComments(this.textarea01,null);
+            },
+            submitComments02(superCommentsId){  // 提交回复类评论
+                this.submitComments(this.textarea02,superCommentsId);
+            },
+            submitComments(comment,superCommentsId){
+                // 如果没有填写文字就提交，提示警告
+                if(comment.length===0){
+                    // ui组件内容
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 200px;height: 50px;line-height: 50px;text-align: center;"><strong>请填写评论内容</strong></div>'
+                    });
+                    return
+                }
+                axios({ // 提交评论
+                    method:"POST",
+                    url:"/submitComments",
+                    dataType:"application/x-www-form-urlencoded",  // userId和bookId后端拿
+                    data:{"commentsId":null,"bookId":null,"userId":null,"content":comment,"publishTime":this.getCurrentData(),"superCommentsId":superCommentsId}
+                }).then(response =>{
+                    if((typeof response.data)==="string"){
+                        // ui组件内容
+                        this.$message({
+                            dangerouslyUseHTMLString: true,
+                            message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+response.data+'</strong></div>'
+                        });
+                    }else{
+                        // 去除数组最后一个元素并返回
+                        this.commentsSize = response.data.pop().size;
+                        this.commentsInfos=response.data
+                        this.textarea01=""
+                        this.textarea02=""
+                        // 把所有“收起" 变成回复
+                        for (var editState2 of document.getElementsByClassName("editState")) {
+                            editState2.innerHTML="回复";
+                        }
+                        // 把所有编辑版关闭
+                        for (var editArea of document.getElementsByClassName("closeEditComment")) {
+                            editArea.style.display="none";
+                        }
+                    }
+
+                })
+            },
+            getCurrentData(){
+                var myDate = new Date;
+                var year = myDate.getFullYear(); //获取当前年
+                var mon = myDate.getMonth() + 1; //获取当前月
+                var date = myDate.getDate(); //获取当前日
+                var hours = myDate.getHours(); //获取当前小时
+                var minutes = myDate.getMinutes(); //获取当前分钟
+                var seconds = myDate.getSeconds(); //获取当前秒
+                return year + "-" + mon + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
+            }
+        },
+        computed:{
+            // 使用计算属性实时统计输入字数
+            wordCount01() {
+                return this.textarea01.length
+            },
+            wordCount02() {
+                return this.textarea02.length
+            }
+        },
+        created(){
+
+            axios({
+                method:"POST",
+                url:"/selectComments",
+                dataType:"application/x-www-form-urlencoded"
+            }).then(response =>{
+              // pop能去除数组最后一个元素并返回去除的元素
+                this.commentsSize = response.data.pop().size;
+                this.commentsInfos=response.data
+            });
+            // mounted只在生命周期执行一次，无法获取更新后的dom元素，使用nextTick，可以每次渲染完后获得dom元素
+            this.$nextTick(() => {
+                // 页面渲染后，计算节点数来统计评论数
+                this.commentsSize=document.getElementsByClassName("createTime").length
+            })
+
+            // // 或promise写法
+            // this.$nextTick().then(() => {
+            //     this.commentsSize=document.getElementsByClassName("right-box").length
+            //     window.alert(this.commentsSize)
+            // })
+
+        },
+        mounted() { // 控制ui组件消息提示的位置
+            this.$Message.config({
+                duration: 3,		// 持续时间
+                center:true,
+                offset:500  // 距离顶部
+            });
+        },
+    })
+</script>
+<div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

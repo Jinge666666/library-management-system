@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <style>
+        #content{
+            width: 1200px;
+            height: 600px;
+            margin-top: 20px;
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        .adminHeader{
+            width:100%;
+            height: 40px;
+
+        }
+        .super{
+            background-color:lightseagreen;
+            color: #FFFFFF;
+            border: none;
+        }
+        .superStyle{
+            background-color: lightslategray;
+            pointer-events: none;
+            color: #FFFFFF;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+<div id="content">
+    <div class="adminInfo">
+        <div class="adminHeader">
+            <label style="float: left;height: 30px;line-height: 30px;width: 80px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">管理员名称</label>
+            <el-input v-model="filterUser.userName" placeholder="请输入名称"  @keyup.enter.native="userShow" style="width: 200px;float: left;margin-left: 10px"></el-input>
+            <label style="float: left;height: 30px;line-height: 30px;width: 50px;text-align: center;font-weight:bolder;margin-right: 1px;margin-top: 5px">邮箱</label>
+            <el-input v-model="filterUser.email" placeholder="请输入邮箱" @keyup.enter.native="userShow"  style="width: 250px;float: left"></el-input>
+            <el-button type="primary" size="midium" icon="el-icon-search" @click="userShow" style="float: left;margin-right: 50px">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" style="float: left;margin-left: 30px" @click="handleAddAdmin">添加管理员</el-button>
+        </div>
+        <el-table
+                :data="tableData"
+                border
+                style="width: 100%;margin-top: 20px">
+            <el-table-column
+                    type="index"
+                    label="序号"
+                    width="50">
+            </el-table-column>
+            <el-table-column
+                    label="账号"
+                    prop="userId"
+                    width="120">
+            </el-table-column>
+            <el-table-column
+                    label="用户名"
+                    prop="userName"
+                    width="150">
+            </el-table-column>
+            <el-table-column
+                    label="邮箱"
+                    prop="email"
+                    width="200">
+            </el-table-column>
+            <el-table-column
+                    label="ip属地"
+                    width="150"
+                    prop="adress">
+            </el-table-column>
+
+            <el-table-column label="操作" width="300">
+                <template slot-scope="scope">
+                    <el-button
+                            size="small"
+                            type="danger"
+                            class="super"
+                            :class="{superStyle:scope.row.role=='超级管理员'}"
+                            @click="upSuper(scope.$index, scope.row)">晋升超级管理员</el-button>
+                    <el-button
+                            size="small"
+                            type="danger"
+                            :class="{superStyle:scope.row.isLock}"
+                            @click="handleLock(scope.$index, scope.row)">{{scope.row.isLock?'已锁定':'锁定'}}</el-button>
+                    <el-button
+                            size="small"
+                            type="danger"
+                            @click="handleDelete(scope.row.userId)">删除</el-button>
+                </template>
+            </el-table-column>
+
+        </el-table>
+        <el-pagination
+                @current-change="handleCurrentChange"
+                @size-change="handlePageSizeChange"
+                :current-page.sync="currentPage"
+                background
+                :page-sizes="[5, 10, 20, 50]"
+                :page-size="pageSize"
+                layout="total, sizes,slot,prev, pager, next,jumper"
+                prev-text="上一页"
+                next-text="下一页"
+                :total="total">
+            <span>当前展示{{ totalShow }}条</span>
+        </el-pagination>
+        <el-dialog
+                title="添加管理员"
+                :visible.sync="dialogAddAdmin"
+                width="40%"
+                :append-to-body="true"
+                center
+        >
+            <el-form label-position="left" label-width="130px" :model="formData" :rules="rules" ref="ruleForm">
+                <el-form-item label="用户名" style="width: 400px" prop="userName">
+                    <el-input v-model="formData.userName" placeholder="请输入用户名"  style="width: 250px;float: left"></el-input>
+                </el-form-item>
+                <br>
+                <el-form-item label="密码" style="width: 400px" prop="password">
+                    <el-input v-model="formData.password"
+                              prefix-icon="el-icon-lock" type="password"
+                              autocomplete="off" placeholder="请输入密码"
+                    ></el-input>
+                </el-form-item>
+                <br>
+                <el-form-item label="确认新密码" style="width: 400px" prop="confirmPsd">
+                    <el-input v-model="formData.confirmPsd"
+                              prefix-icon="el-icon-lock" type="password"
+                              autocomplete="off" placeholder="请输入确认密码"
+                    ></el-input>
+                </el-form-item>
+                <br>
+                <el-form-item label="邮箱" style="width: 400px" prop="email">
+                    <el-input v-model="formData.email"  placeholder="请输入邮箱" style="width: 250px;float: left"></el-input>
+                </el-form-item>
+                <br>
+                <el-form-item label="管理员类型" style="width: 400px" prop="role">
+                    <el-select v-model="formData.role" style="width: 180px;float: left" placeholder="请选择类型">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="dialogAddUser = false">取 消</el-button>
+                <el-button type="primary" @click="addAdminOK">提交</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el:".adminInfo",
+        data(){
+            // 自定义密码校验
+            var isPsd = (s) =>{
+                return /^(?![a-zA-Z]+$)(?!\d+$)(?![^\da-zA-Z\s]+$).{6,10}$/.test(s)
+            };
+            let validatePsd = (rule,value,callback) =>{
+                if(value===""){
+                    callback(new Error("请输入密码"));
+                }else
+                if (!isPsd(value)) {
+                    callback(new Error(
+                        '密码格式要求长度在6到10字符间，且由字母、数字、特殊字符任意2种组成'
+                    ))
+                } else {
+                    callback()
+                }
+            };
+            // 确认密码校验
+            var validatePass = (rule, value, callback) => {
+                if (value === "") {
+                    callback(new Error("请输入确认密码"));
+                } else if (value !== this.formData.password) {
+                    callback(new Error("两次输入密码不一致！"));
+                } else {
+                    callback();
+                }
+            };
+
+            // 自定义邮箱校验
+            var isEmail = (s) =>{
+                return /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((.[a-zA-Z0-9_-]{2,3}){1,2})$/.test(s)
+            };
+            let validateEmail = (rule, value, callback) => {
+                if(value===""){
+                    callback(new Error("邮箱不能为空"))
+                }
+                if (!isEmail(value)) {
+                    callback(new Error('邮箱格式错误'))
+                } else {
+                    callback()
+                }
+            };
+
+
+            return{
+                tableData:[
+                    {userId:"24434322",userName:"王真",email:"2443343232@qq.com",adress:"湖南省岳阳市"},
+                ],
+
+
+                // 控制添加用户弹框开关
+                dialogAddUser:false,
+
+                // 分页参数
+                currentPage:1,
+                totalShow:4,
+                total:0,
+                pageSize:5, // 每页显示条数
+
+                // 搜索用户条件
+                filterUser:{
+                    userName:"",
+                    email:"",
+                    isActive:false,
+                    isLock:false,
+                    isAdmin:true
+                },
+
+                options: [{
+                    value: '普通管理员',
+                    label: '普通管理员'
+                }, {
+                    value: '超级管理员',
+                    label: '超级管理员'
+                },],
+
+                // 添加用户表单
+                formData:{
+                    userName:"",
+                    password:"",
+                    email:"",
+                    role:"",
+                    isAdmin:true
+                },
+                rules:{
+                    userName: [
+                        { required: true, message: "请输入用户名", trigger: "blur" },
+                        {
+                            min: 2,
+                            max: 10,
+                            message: "长度在 2 到 10 个字符",
+                            trigger: "blur",
+                        },
+                    ],
+                    password: [{validator:validatePsd, trigger: 'blur'}],
+                    confirmPsd:[{validator:validatePass,trigger: 'blur'}],
+                    email:[{validator:validateEmail,trigger: 'blur'}],
+                    role:[{required: true, message: "角色不能为空", trigger: "blur"}]
+                },
+
+                dialogAddAdmin:false,
+
+            }
+        },
+        methods:{
+
+            // 搜索用户
+            userShow(){
+                this.filterUser.pageNum=this.currentPage
+                this.filterUser.pageSize=this.pageSize
+                axios({
+                    method:"POST",
+                    url:"/backstage/showUser",
+                    dataType:"json",
+                    data:this.filterUser
+                }).then(response=>{
+                    this.tableData=response.data.users
+                    this.total=response.data.total
+                    this.totalShow=response.data.users.length
+                })
+            },
+
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+                this.userShow()
+
+            }, // 每页显示条数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+                this.userShow();
+            },
+            // 添加用户
+            handleAddAdmin(){
+                // 刷新
+                this.formData={
+                    userName:"",
+                    password:"",
+                    email:"",
+                    role:"",
+                    isAdmin:true
+                };
+                this.dialogAddAdmin=true
+            },
+            addAdminOK() {
+                this.$refs.ruleForm.validate((valid)=>{
+                    if(valid){
+                        this.dialogAddAdmin=false
+                        const loading = this.$loading({
+                            lock: true,  // 锁定屏幕的滚动
+                            text: '处理中。。。',
+                            spinner: 'el-icon-loading',
+                            background: 'rgba(0, 0, 0, 0.7)'
+                        });
+                        setTimeout(() => {
+                            axios({
+                                method: "POST",
+                                url: "/backstage/addUser",
+                                dataType: "json",
+                                data: this.formData
+                            }).then(res => {
+                                loading.close();
+                                if (res.data) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: '添加成功!'
+                                    });
+                                    this.userShow()
+                                } else {
+                                    this.$message({
+                                        type: 'error',
+                                        message: '系统繁忙，请稍后再试'
+                                    });
+                                }
+
+                            })
+                        }, 3000)
+
+                    }else {
+                        return false
+                    }
+                })
+            },
+
+            // this.$confirm('此操作将永久删除该用户账号, 是否继续?', '提示', {
+            //     confirmButtonText: '确定',
+            //     cancelButtonText: '取消',
+            //     type: 'warning'
+            // }).then(() => {
+            //
+            // }).catch(() => {
+            //     this.$message({
+            //         type: 'info',
+            //         message: '已取消删除'
+            //     });
+            // });
+
+            // 删除用户
+            handleDelete(Id){
+                this.$confirm('此操作将永久删除该用户账号, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method:"POST",
+                        url:"/backstage/deleteOneUser",
+                        dataType:"json",
+                        data:Id
+                    }).then(response=>{
+                        if(response.data){
+                            this.$message({
+                                type: 'success',
+                                message: '删除成功!'
+                            });
+                        this.userShow();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: "系统繁忙，请稍后再试。。。"
+                            });
+                        }
+                    })
+                }).catch(() => {
+                this.$message({
+                    type: 'info',
+                    message: '已取消删除'
+                });
+            });
+            },
+
+            // 拉黑
+            handleLock(index,row){
+                this.$confirm('此操作将锁定该管理员, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method:"POST",
+                        url:"/backstage/lockUser",
+                        dataType:"json",
+                        data:row.userId
+                    }).then(response=>{
+                        if(response.data){
+                            this.$message({
+                                type: 'success',
+                                message: '已锁定该管理员账户！'
+                            });
+                            this.userShow();
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: "操作失败，请稍后再试。。。"
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+
+            // 晋级超级管理
+            upSuper(index,row){
+                axios({
+                    method:"POST",
+                    url:"/backstage/toSuper",
+                    dataType:"json",
+                    data:row.userId
+                }).then(response=>{
+                    if(response.data){
+                        this.$message({
+                            type: 'success',
+                            message: '操作成功!'
+                        });
+                        this.userShow();
+                    }else{
+                        this.$message({
+                            type: 'error',
+                            message: "服务器繁忙，请稍后再试。。。"
+                        });
+                    }
+                })
+            }
+
+        },
+        created(){
+            this. userShow();
+        },
+        watch:{
+            'filterUser.userName':{
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.userShow();
+                    }
+                }
+            },
+            'filterUser.email':{
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.userShow();
+                    }
+                }
+            },
+            deep:false,
+            immediate:false
+        }
+
+    })
+</script>
+
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

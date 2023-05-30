@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <div th:include="forefront/common::commonHeader"></div>
+
+    <style>
+        .mainContent{
+
+            width: 1186px;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+            font-family: PingFangSC-Regular,HelveticaNeue-Light,'Helvetica Neue Light','Microsoft YaHei',sans-serif,Simsun;
+
+
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        #BookRoomSign{
+            width: 100%;
+            height: 300px;
+            margin-top: 20px;
+            background-color: #f7f7f7;
+            font-size: 15px;
+            float: left;
+        }
+        #sortType{
+            width: 100%;
+            height: 40px;
+            float: left;
+            margin-top: 10px;
+        }
+        #bookList{
+            width: 100%;
+            height: auto;
+            margin-top: 10px;
+            margin-left: 5px;
+            float: left;
+
+        }
+        #bookList ul{
+            height: auto;
+            list-style: none;
+            /*border-bottom: 1px solid red;*/
+        }
+
+        #bookList ul li {
+            width: 593px;
+            height: 188px;
+            line-height: 188px;
+            float: left;
+            border-top: 1px solid #e6e6e6;
+            box-sizing: border-box;
+        }
+
+        #bookList ul li .bookInfo{
+            width: 480px;
+            height: 100%;
+            float: left;
+
+
+        }
+        #bookList ul li .bookBtn{
+            width: 100px;
+            height: 188px;
+            line-height: 90px;
+            text-align: center;
+            float: left;
+            overflow: hidden;
+
+        }
+
+
+
+        #BookRoomSign .searchconditions_unit{
+            height: 36px;
+            width: 100%;
+            line-height: 36px;
+            margin-bottom: 4px;
+            color: #151515;
+            font-size: 14px;
+        }
+
+        #BookRoomSign .searchconditions_unit  .tagstit{
+            width: 120px;
+            color: #999;
+
+            text-align: left;
+            height: 30px;
+            line-height: 30px;
+            float: left;
+        }
+
+        #BookRoomSign .searchconditions_unit ul{
+            width: 1000px;
+            float: left;
+            height: 36px;
+            list-style: none;
+        }
+        #BookRoomSign .searchconditions_unit ul li{
+            float: left;
+            height: 20px;
+            line-height: 20px;
+            margin-right: 15px;
+            padding-right: 7px;
+            padding-left: 7px;
+            margin-top: 5px;
+            cursor: pointer;
+
+        }
+        .clickActive{
+            background-color: #d32f2f;
+            color: white;
+            /*color: #151515;*/
+            /*background-color: #f7f7f7;*/
+        }
+        #BookRoomSign #selectedParams{
+            width: 1020px;
+            color: #888;
+            height: 40px;
+            line-height: 40px;
+        }
+        #BookRoomSign #selectedParams .tagstit{
+            width: 120px;
+            color: #999;
+            text-align: left;
+            height: 36px;
+            line-height: 36px;
+            margin-top: 5px;
+            float: left;
+        }
+
+        #BookRoomSign #selectedParams .selected{
+            line-height: 20px;
+            width: auto;
+            font-size: 13px;
+            color: #fff;
+            float: left;
+            display: inline-block;
+            margin-right: 20px;
+            margin-top: 10px;
+            /*border: 1px solid red;*/
+
+        }
+        #BookRoomSign #selectedParams .selected .store{
+            color: #fffdef;
+            padding: 2px 8px;
+            background-color: #d32f2f;;
+            z-index: 3;
+            display: inline-block;
+            float: left;
+            border-radius: 10px 0 0 10px;
+            border-right: 0;
+            height: 21px;
+            cursor: text;
+        }
+        #BookRoomSign #selectedParams .selected .delete{
+            border-left: 0;
+            text-align: center;
+            background: #d32f2f url(images/mixImg/little.png) no-repeat -163px -245px;
+            width: 12px;
+            height: 21px;
+            border-radius: 0 10px 10px 0;
+            display: inline-block;
+            float: left;
+            z-index: 3;
+            color: #666;
+            padding: 2px 8px;
+            cursor: pointer;
+        }
+        .tagstit{
+            margin-left: 5px;
+        }
+
+        #sortType .tagstit{
+            width: 120px;
+            color: #999;
+            text-align: left;
+            height: 36px;
+            line-height: 36px;
+            margin-top: 5px;
+            float: left;
+            font-size: 13px;
+        }
+
+        #sortType ul{
+            width: 1000px;
+            height: 40px;
+            list-style: none;
+            float: left;
+        }
+        #sortType ul li{
+            width: auto;
+            height: 40px;
+            line-height: 40px;
+            text-align: left;
+            float: left;
+            font-size: 13px;
+            font-weight: 500;
+            margin-right: 50px;
+            cursor: pointer;
+
+        }
+
+        #pagination{
+            height: 80px;
+            padding-top: 30px;
+            text-align: center;
+            width: 800px;
+            border: 1px solid red;
+            margin-left: 150px;
+            float: left;
+        }
+    </style>
+</head>
+<body onload='init()'>
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+<div class="mainContent">
+<!--    标签栏-->
+    <div id="BookRoomSign">
+        <div class="searchconditions_unit">
+            <div class="tagstit">男生作品分类:</div>
+            <ul>
+                <li class="clickActive">全部</li>
+                <li>奇幻玄幻</li>
+<!--                奇幻修真、古典修真-->
+                <li>武侠仙侠</li>
+                <li>都市娱乐</li>
+                <li>虚拟网游</li>
+                <li>科幻灵异</li>
+                <li>历史军事</li>
+            </ul>
+        </div>
+        <div class="searchconditions_unit">
+            <div class="tagstit">女生作品分类:</div>
+            <ul>
+                <li class="clickActive">全部</li>
+                <li>青春校园</li>
+                <li>穿越时空</li>
+                <li>总裁豪门</li>
+                <li>架空历史</li>
+                <li>悬疑推理</li>
+            </ul>
+        </div>
+        <div class="searchconditions_unit">
+            <div class="tagstit">是否完结:</div>
+            <ul>
+                <li class="clickActive">全部</li>
+                <li>已完结</li>
+                <li>连载中</li>
+            </ul>
+        </div>
+        <div class="searchconditions_unit">
+            <div class="tagstit">作品字数:</div>
+            <ul>
+                <li class="clickActive">全部</li>
+                <li>30万字以下</li>
+                <li>30万-50万</li>
+                <li>50万-100万</li>
+                <li>100万-200万</li>
+                <li>200万以上</li>
+            </ul>
+        </div>
+        <div class="searchconditions_unit">
+            <div class="tagstit">书名首字母:</div>
+            <ul style="width: 880px;">
+               <li :value="index+22" style="margin-right: 5px" :class="char==='全部'?'clickActive':null" :style="{'margin-right':char==='全部'?'15px':'6px','height':char==='全部'?'20px':'23px'}" v-for="(char,index) in ['全部','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']" :key="char">
+                   {{char}}
+               </li>
+            </ul>
+        </div>
+        <div class="searchconditions_unit">
+            <div class="tagstit">是否被借阅:</div>
+            <ul>
+                <li class="clickActive">全部</li>
+                <li>暂未被借阅</li>
+                <li>已被借阅</li>
+            </ul>
+        </div>
+        <div id="selectedParams">
+            <div class="tagstit">已选条件:</div>
+        </div>
+
+    </div>
+
+<!--     排序方式-->
+    <div id="sortType">
+        <div class="tagstit">排序方式:</div>
+        <ul>
+            <li style="color: #d32f2f">总点击</li>
+            <li>总字数</li>
+            <li>总收藏</li>
+            <li>已借次数</li>
+        </ul>
+    </div>
+
+<!--    书籍栏-->
+    <div id="bookList" >
+        <ul>
+            <li v-for="(book,index) in books" :key="book.bookId">
+                <div class="bookInfo">
+                    <second-customcomponent :book-info="book" imgPreUrl="images/bookface/" ></second-customcomponent>
+<!--                    <second-customcomponent></second-customcomponent>-->
+                </div>
+                <div class="bookBtn">
+                    <el-button type="primary" size="medium" style="display:block;background-color:#33B7C5;margin-top: 70px">书籍详情</el-button>
+                    <el-button type="primary" size="medium" style="display:block;background-color: #e0e0e0;margin-top: 20px;margin-left: 1px;border: 1px solid #e0e0e0">放入书架</el-button>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="pagination">
+        <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page.sync="pageNum"
+                background
+                :page-size="pageSize"
+                layout="total,slot,prev, pager, next,jumper"
+                prev-text="上一页"
+                next-text="下一页"
+                :total="total">
+            <span>当前展示{{ totalShow }}条</span>
+        </el-pagination>
+    </div>
+
+</div>
+
+
+
+
+<script>
+
+    var liType = '';  // 搜索标签的value属性
+    var liText = '';  // 搜索标签的text值
+    var sortType = ''
+    // 分页参数开始默认第一页，每页20条
+    var condition = {"bookName":localStorage.getItem("input").trim(),"bookAuthor":localStorage.getItem("input").trim(),"bookType":null,"finish":null,"tag":null,"isBorrowed":null,"initial":null,"minWordCount":null,"maxWordCount":null,"pageNum":0,"pageSize":20}
+    // 初始函数
+    function init() {
+
+        // 为所有li绑定click事件
+        lis = document.getElementById("BookRoomSign").getElementsByTagName("li")
+        for (var i = 0; i < lis.length; i++) {
+            lis[i].onclick = change; /* 绑定事件，这里函数不能加括号，否则绑定失败*/
+        }
+        // 为排序方式绑定点击事件
+        lis2 = document.getElementById("sortType").getElementsByTagName("li")
+        for (var j = 0; j < lis2.length; j++) {
+            lis2[j].onclick = selectSortType; /* 绑定事件，这里函数不能加括号，否则绑定失败*/
+        }
+
+        // 输入关键词也是搜索条件:（搜索时由于页面初始化，condition的标签会全刷新）搜索时触发该页面刷新走if，普通刷新走else 注意：localStorage会把任何类型转字符串，如布尔型。
+        if(localStorage.getItem("input")!==null && localStorage.getItem("input")!=="" && localStorage.getItem("isSearch")==="true"){
+            localStorage.removeItem("isSearch");
+            localStorage.setItem("isSearch",false) // 设为false，防止搜索后刷新时没走搜索但还是通过了
+            // // 先删除上一个input条件节点
+            // for (var conditionTag of document.getElementById("selectedParams").children) {
+            //     if (conditionTag.value==="inputValue"){
+            //         conditionTag.remove();
+            //         break
+            //     }
+            // }
+
+            // 创建一个span节点和两个子a节点、文本节点
+            var a21 = createTagSpan(localStorage.getItem("input"))
+            // 为a2绑定点击事件
+            a21.onclick=function deleteInputSpanNode(){
+                localStorage.removeItem("input");//清除
+                localStorage.setItem("input","");
+                this.parentNode.remove();
+                document.getElementsByClassName("el-input__inner")[0].value=""
+                // 更新数据，从第一页开始展示
+                condition["pageNum"] = 1
+                condition["bookName"]=null
+                condition["bookAuthor"]=null
+
+                // 访问后端
+                selectBookBySearchWord()
+
+            }
+        }else {
+            // ajax不会触发init，当页面刷新时，且没有搜索条件时，查找所有数据显示 上次没清除的input搜索词允许继承，其余条件tag由于condition初始化全清除
+
+                condition["pageNum"] = 1
+                condition["bookName"]=null
+                condition["bookAuthor"]=null
+                // 清除不必要的搜索框值
+                document.getElementsByClassName("el-input__inner")[0].value=""
+
+                // 先通过当前url地址判断是哪种类型搜索来的，若都不是，则普通刷新书库即可
+                var localUrl = window.location.href
+
+                if(localUrl.indexOf("/bookstore?bookType=")!==-1){
+                    condition["bookType"] =[decodeURI(localUrl.split("=")[1])]
+                    // 创建一个span节点和两个子a节点、文本节点
+                    var a22 = createTagSpan(decodeURI(localUrl.split("=")[1]));
+                    // 为了区分出此书籍类型节点和此页面的类型tag，设置一个value
+                    a22.value="newBookType"
+                    // 为a2绑定点击事件
+                    a22.onclick=function deleteInputSpanNode() {
+                        this.parentNode.remove();
+                        // 更新数据，从第一页开始展示
+                        condition["bookType"] = null;  // bookList的vue对象中作了删除此bookType对应的tag节点
+
+                        selectBookBySearchWord()
+                    }
+                }
+                if(localUrl.indexOf("/bookstore?author=")!==-1 ){
+                    condition["bookAuthor"] = decodeURI(localUrl.split("=")[1])
+                    // 创建一个span节点和两个子a节点、文本节点
+                    var a23 = createTagSpan(decodeURI(localUrl.split("=")[1]));
+                    // 为a2绑定点击事件
+                    a23.onclick=function deleteInputSpanNode() {
+                        this.parentNode.remove();
+                        condition["bookAuthor"]=null;
+
+                        selectBookBySearchWord()
+                    }
+                }
+                if(localUrl.indexOf("/bookstore?bookTag=")!==-1){
+                    condition["tag"] = decodeURI(localUrl.split("=")[1])
+                    // 创建一个span节点和两个子a节点、文本节点
+                    var a24 = createTagSpan(decodeURI(localUrl.split("=")[1]));
+                    // 为a2绑定点击事件
+                    a24.onclick=function deleteInputSpanNode() {
+                        this.parentNode.remove();
+                        // 更新数据，从第一页开始展示
+                        condition["tag"] = null;
+
+                        selectBookBySearchWord()
+                    }
+                }
+            // 不管是普通刷新，还是三个类型搜索，最后都是根据condition从数据库拿值
+            selectBookBySearchWord()
+
+            }
+    }
+
+    // 纯创建选择条件span节点方法
+    function createTagSpan(value) {
+        // 创建一个span节点和两个子a节点、文本节点
+        var span = document.createElement("span");
+        var a1 = document.createElement("a");
+        var a2 = document.createElement("a");
+        var text = document.createTextNode(value);
+        // 将文本节点插入a1节点，
+        a1.appendChild(text);
+        // 将a1和a2插入span节点
+        span.appendChild(a1)
+        span.appendChild(a2)
+        // 绑定类
+        span.classList.add("selected")
+        a1.classList.add("store")
+        a2.classList.add("delete")
+        // 将span插入父节点
+        document.getElementById("selectedParams").appendChild(span)
+        return a2;
+    }
+
+    // 纯创建访问selectBookBySearchWord接口并对返回books设置分页参数的方法
+    function selectBookBySearchWord() {
+        axios({
+            method: "POST",
+            url:'/selectBookBySearchWord',
+            dataType:"application/x-www-form-urlencoded",
+            data:condition
+        }).then(response=>{
+
+            bookList.books=response.data.books;
+            // 想要同步分页，还是得亲自赋值，不能靠localStorage，因为localStorage无法修改属性，只能读
+            pagination.pageNum=parseInt(response.data.pageNum)
+            pagination.totalShow=parseInt(response.data.books.length)
+            pagination.total=parseInt(response.data.total)
+            pagination.pageSize=parseInt(response.data.pageSize)
+        })
+    }
+
+
+    // 切换搜索标签的样式，并得到该对象文本值和value属性
+    function change(){
+        var borthersForLi = this.parentNode.children
+        for (var i = 0; i < borthersForLi.length;i++) {
+            borthersForLi[i].classList.remove("clickActive")
+        }
+        this.classList.add("clickActive");
+        // 获取条件名
+        liText = this.textContent.trim();
+        // 获取条件所属类别
+        liType = this.parentNode.previousElementSibling.textContent
+        // 交给方法进一步处理
+        bookRomeSign.searchBookHandle(liType,liText)
+    }
+
+    // 排序方式
+    function selectSortType() {
+        // 点击变色
+        var sortLi = this.parentNode.children
+        for (var i = 0; i < sortLi.length;i++) {
+            sortLi[i].style.color="#151515"
+        }
+        this.style.color="#d32f2f"
+        sortType = this.textContent.trim()
+        bookRomeSign.sortType=sortType
+
+    }
+
+
+
+    var bookRomeSign = new Vue({
+        el:"#BookRoomSign,#sortType",
+        data(){
+            return{
+                // 条件标签初始值
+                tagIndex:{
+                    "男生作品分类:":"全部",
+                    "女生作品分类:":"全部",
+                    "是否完结:":"全部",
+                    "作品字数:":"全部",
+                    "书名首字母:":"全部",
+                    "是否被借阅:":"全部"
+                },
+                sortType:'总点击',  // 排序方式
+
+            }
+        },
+        methods:{
+            searchBookHandle(liType,liText){
+                var selecteds =document.getElementById("selectedParams").getElementsByClassName("selected")
+                // 加两个if判断，目的使男女作品分类只能有其一
+                if(liType === "男生作品分类:" && this.tagIndex["女生作品分类:"]!=="全部"){
+                    for(var i=0;i<selecteds.length;i++){ // 目的去除女生原有已选条件tag
+                        if(selecteds[i].children[0].textContent.trim()===this.tagIndex["女生作品分类:"]){
+                            selecteds[i].remove()
+                            break
+                        }
+                    }
+                    // 下面两步改变女生作品分类样式
+                    for (var child of document.getElementsByClassName("tagstit")[1].nextElementSibling.children) {
+                        child.classList.remove("clickActive")
+                    }
+                    document.getElementsByClassName("tagstit")[1].nextElementSibling.children[0].classList.add("clickActive")
+
+                    this.tagIndex["女生作品分类:"]="全部" //使搜索排除以前女生分类
+                }
+                if(liType === "女生作品分类:" && this.tagIndex["男生作品分类:"]!=="全部"){
+                    for(var j=0;j<selecteds.length;j++){
+                        if(selecteds[j].children[0].textContent.trim()===this.tagIndex["男生作品分类:"]){
+                            selecteds[j].remove()
+                            break
+                        }
+                    }
+                    // 下面两步改变男生作品分类样式
+                    for (var child2 of document.getElementsByClassName("tagstit")[0].nextElementSibling.children) {
+                        child2.classList.remove("clickActive")
+                    }
+                    document.getElementsByClassName("tagstit")[0].nextElementSibling.children[0].classList.add("clickActive")
+
+                    this.tagIndex["男生作品分类:"]="全部"
+                }
+
+                // 已选条件节点增减替换逻辑 liType是给添加的span节点的属性,方便删除时找到类型
+                this.replaceConditionTag(this.tagIndex[liType],liText,liType)
+                // 更新 且重复点击一个对象不会更新
+                if(this.tagIndex[liType].indexOf(liText)===-1){
+                    this.tagIndex[liType]=liText
+                    // 去数据库查值
+                    bookList.getBookList(this.tagIndex,this.sortType)
+                }
+            },
+            // 改变已选条件状态
+            replaceConditionTag(oldCondition,newCondition,liType){
+
+                    if(oldCondition === "全部"){ // 若旧的不是全部，那么selectedParams节点下肯定有该类型
+                        if(newCondition!=="全部"){
+                            this.addSpanNode(newCondition,liType)
+                        }
+                    }else {
+                        var selecteds =document.getElementById("selectedParams").getElementsByClassName("selected")
+
+                        for(var i=0;i<selecteds.length;i++){
+                            // 一定找得到
+                            if(selecteds[i].children[0].textContent.trim().indexOf(oldCondition)!==-1){
+                                if(newCondition.indexOf("全部")===-1){
+                                        selecteds[i].children[0].innerHTML=newCondition
+                                    break
+                                    }else {
+                                    selecteds[i].remove()
+                                    break
+                                }
+
+                            }
+                        }
+                    }
+            },
+            addSpanNode(newCondition,liType){
+                var vm =this
+                // 创建一个span节点和两个子a节点、文本节点
+                var span = document.createElement("span");
+                var a1 = document.createElement("a");
+                var a2 = document.createElement("a");
+                var text = document.createTextNode(newCondition);
+                // 将文本节点插入a1节点，
+                a1.appendChild(text);
+                // 将a1和a2插入span节点
+                span.appendChild(a1)
+                span.appendChild(a2)
+                // 绑定类
+                span.classList.add("selected")
+                a1.classList.add("store")
+                a2.classList.add("delete")
+                // 为span绑定value
+                span.value = liType
+                // 为a2绑定点击事件
+                a2.onclick=function deleteSpanNode(){
+                    // var deleteConditionText = a2.previousSibling.textContent.trim();
+                    // 得到类型
+                    var tagType = this.parentNode.value
+                    // 数据库拿值更新
+                    vm.tagIndex[tagType] = "全部"
+                    this.parentNode.remove();
+                    // 改变样式
+                    for (var tagstit of document.getElementsByClassName("tagstit")) {
+                        if(tagstit.innerHTML.trim()===tagType){
+                            var lis = tagstit.nextElementSibling.getElementsByTagName("li")
+                            for (var li of lis) {
+                                li.classList.remove("clickActive")
+                            }
+                            lis[0].classList.add("clickActive")
+                            break;
+                        }
+                    }
+                    bookList.getBookList(vm.tagIndex,vm.sortType)
+                }
+                // 最后将span插入父节点
+                document.getElementById("selectedParams").appendChild(span)
+            }
+
+        },
+        watch:{
+            // 根据监听对象去后台拿值 对象监听不太行，这是vue2的缺陷
+            // tagIndex:{
+            //     handler(newValue, oldValue) {
+            //         window.alert('dfsffds')
+            //         // 将变化值保存
+            //
+            //     }
+            //
+            // },
+            sortType:{
+                handler(newValue, oldValue) {
+
+                    bookList.getBookList(this.tagIndex,newValue)
+                }
+            }
+            },
+            // 监听深度，数组和字符串不需要，而对象：{}是监听不到的，需要开启深度监测，且数组中若含有{}，也需开启。
+            deep: true,
+            // 第一次绑定时不会触发监听，设置后，为true表示无论值是否改变，时刻都会监听，而false表示只有值改变时监听
+            immediate: true
+    })
+
+    var bookList =new Vue({
+        el:"#bookList",
+        data(){
+           return{ // 另一个页面传值到该页面，可利用localStorage
+               books:JSON.parse(localStorage.getItem("bookStoreShow"))
+           }
+        },
+        methods:{
+            // 根据所有条件，包括tagIndex的条件和sortType条件去后台拿数据
+            getBookList(tagIndex,sortType){
+                // 得到对象所有key
+                var conditionTypes = Object.keys(tagIndex)
+
+                var bookType = []
+                for (var conditionTag of conditionTypes) {
+                         if(conditionTag=== "男生作品分类:"){
+                             switch(tagIndex[conditionTag]){
+                                 case "全部":
+                                     // bookType.push("转世重生","异界大陆","东方玄幻","奇幻修真","古典仙侠","现实百态","爱情婚姻","商战风云","都市异能","现代修真","虚拟网游","科幻灵异","架空历史")
+                                     break
+                                 case "奇幻玄幻":
+                                     bookType.push("转世重生","异界大陆","东方玄幻")
+                                     break
+                                 case "武侠仙侠":
+                                     bookType.push("奇幻修真","古典仙侠")
+                                     break
+                                 case "都市娱乐":
+                                     bookType.push("现实百态","爱情婚姻","商战风云","都市异能","现代修真")
+                                     break
+                                 case "虚拟网游":
+                                     bookType.push("虚拟网游")
+                                     break
+                                 case "科幻灵异":
+                                     bookType.push("科幻灵异")
+                                     break
+                                 case "历史军事":
+                                     bookType.push("架空历史")
+                                     break
+                             }
+                         }
+                         if(conditionTag=== "女生作品分类:"){
+                             switch(tagIndex[conditionTag]){
+                                 case "全部":
+                                     // bookType.push("青春校园","穿越时空","总裁豪门","悬疑推理","架空历史")
+                                     break
+                                 case "青春校园":
+                                     bookType.push("青春校园")
+                                     break
+                                 case "穿越时空":
+                                     bookType.push("穿越时空")
+                                     break
+                                 case "总裁豪门":
+                                     bookType.push("总裁豪门")
+                                     break
+                                 case "架空历史":
+                                     bookType.push("架空历史")
+                                     break
+                                 case "悬疑推理":
+                                     bookType.push("悬疑推理")
+                                     break
+                             }
+                         }
+                         // 先判断是否有其他页面点击书籍类型转来的tag
+
+                        var spans =  document.getElementById("selectedParams").getElementsByTagName("span")
+                        if(bookType.length !== 0){
+                            for (var i = 0; i < spans.length; i++) {
+                                if (spans[i].children[1].value==="newBookType"){
+                                    spans[i].remove();
+                                    break
+                                }
+                            }
+                            condition["bookType"]=bookType
+                        }else {
+                            var deleteNewBookType=true
+                            for (var j = 0; j < spans.length; j++) {
+                                if (spans[j].children[1].value==="newBookType"){
+                                    // 找到了，表名存在newBookType，就不设为null，保持源来值
+                                 deleteNewBookType=false
+                                    break
+                                }
+                            }
+                           if(deleteNewBookType){
+                               condition["bookType"]=null;
+                           }
+                        }
+                         if(conditionTag=== "是否完结:"){
+                             switch(tagIndex[conditionTag]){
+                                 case "全部":
+                                     condition["finish"]=null
+                                     break;
+                                 case "已完结":
+                                     condition["finish"]="已完结"
+                                     break;
+                                 case "连载中":
+                                     condition["finish"]="连载中"
+                                     break;
+                             }
+                         }
+                         if(conditionTag=== "作品字数:"){
+                             switch(tagIndex[conditionTag]){
+                                 case "全部":
+                                     condition["minWordCount"]=null
+                                     condition["maxWordCount"]=null
+                                     break
+                                 case "30万字以下":
+                                     condition["minWordCount"]="0"
+                                     condition["maxWordCount"]="30"
+                                     break;
+                                 case "30万-50万":
+                                     condition["minWordCount"]="30"
+                                     condition["maxWordCount"]="50"
+                                     break;
+                                 case "50万-100万":
+                                     condition["minWordCount"]="50"
+                                     condition["maxWordCount"]="100"
+                                     break;
+                                 case "100万-200万":
+                                     condition["minWordCount"]="100"
+                                     condition["maxWordCount"]="200"
+                                     break;
+                                 case "200万以上":
+                                     condition["minWordCount"]="200"
+                                     condition["maxWordCount"]=Number.MAX_SAFE_INTEGER+""
+                                     break;
+                             }
+                         }
+                         if(conditionTag=== "书名首字母:"){
+                             if(tagIndex[conditionTag]!=="全部"){
+                                 condition["initial"] = tagIndex[conditionTag]
+                             }else {
+                                 condition["initial"]=null
+                             }
+
+                         }
+                         if(conditionTag=== "是否被借阅:"){
+                            switch(tagIndex[conditionTag]){
+                                case "全部":
+                                    condition["isBorrowed"]=null
+                                    break;
+                                case "暂未被借阅":
+                                    condition["isBorrowed"]="0"
+                                    break;
+                                case "已被借阅":
+                                    condition["isBorrowed"]="1"
+                                    break;
+                            }
+                     }
+
+                }
+
+                // 排序方式
+                // 本地还是使用的selecBookBySearchWord接口，则判断只好放在前端，这样的话后端定义的排序方式枚举类就作用不大了。
+                switch (sortType) {
+                    case "总点击":
+                        condition["sortType"]="clicks";
+                        break;
+                    case "总字数":
+                        condition["sortType"]="word_count";
+                        break
+                    case "总收藏":
+                        condition["sortType"]="favorites";
+                        break;
+                    case "已借次数":
+                        condition["sortType"]="borrowed_times";
+                        break;
+                }
+
+                // condition的pageNum须重置
+                condition["pageNum"]=1
+                axios({
+                    method: "POST",
+                    url:'/selectBookBySearchWord',
+                    dataType:"application/x-www-form-urlencoded",
+                    data:condition
+                }).then(response=>{
+
+                    this.books=response.data.books;
+                    // 同步分页
+                    // 想要同步分页，还是得亲自赋值，不能靠localStorage，因为localStorage不能修改属性，只读
+                    pagination.pageNum=parseInt(response.data.pageNum)
+                    pagination.totalShow=parseInt(response.data.books.length)
+                    pagination.total=parseInt(response.data.total)
+                    pagination.pageSize=parseInt(response.data.pageSize)
+
+                })
+            },
+        }
+    })
+
+    var pagination = new Vue({
+        el:"#pagination",
+        data(){
+            return{ // 注意ui分页组件，参数类型是Number，字符串不会显示
+                pageNum:parseInt(localStorage.getItem("pageNum")), // 当前页，
+                totalShow:parseInt(localStorage.getItem("totalShow")), // 当前页实际展示条数
+                total:parseInt(localStorage.getItem("total")),  // 一共多少条数据
+                pageSize:parseInt(localStorage.getItem("pageSize")),  // 每页显示个数
+            }
+        },
+        methods:{
+            // 当前页改变触发
+            handleCurrentChange(val){
+                // 当点击分页时，可以完全继承condition，只要改变分页偏移量即可
+                condition["pageNum"] = val
+                axios({
+                    method: "POST",
+                    url:'/selectBookBySearchWord',
+                    dataType:"application/x-www-form-urlencoded",
+                    data:condition
+                }).then(response=>{
+                    bookList.books=response.data.books;
+                    this.totalShow=response.data.books.length;
+                    // 触发该函数不需要拿后端传来的分页参数，也不建议拿（不能用localStrong）
+                    // this.pageNum = parseInt(response.data.pageNum);
+                    // this.total=parseInt(response.data.total)
+                    // this.pageSize=parseInt(response.data.pageSize)
+                    // this.totalShow = response.data.books.length
+                })
+            },
+        }
+    })
+</script>
+
+
+<!--&lt;!&ndash;vue的js引用必须在最后面&ndash;&gt;-->
+<!--<div id="commonScripts">-->
+<!--    &lt;!&ndash;    <script src="js/common.js"></script>&ndash;&gt;-->
+<!--    <script src="../../static/js/common.js"></script>-->
+<!--</div>-->
+<div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

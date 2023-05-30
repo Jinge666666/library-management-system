@@ -1,0 +1,140 @@
+server:
+  port: 8888
+    # 设置session的过期时间
+  servlet:
+    session:
+      timeout: 3600 # 0表示永不过期，单位秒，可以做判断用户是否在线，只需将sessionid存redis，设置过期时间和这个一样，因为session过期后就得重新登录吗，相应的redis内session也得清除，必须redis超时时间至少大于这里
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true   #开启页面表单的Rest功
+  # springboot-admin的客户端配置
+  boot:
+    admin:
+      client:
+        url: http://localhost:8081 # adminserver服务的地址
+        instance:
+          service-host-type: ip # 如果计算机名不能当adminserver服务器域名解析到，加上这句，表示使用完整ip方式注册
+          name: boot-admin  # ui界面微服务显示的默认名字是spring-boot-application
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 2MB  # 单个文件不超过2兆
+      max-request-size: 10MB  # 总共不超过10兆
+
+  #把thymeleaf 缓存关闭 图片显示有关
+  thymeleaf:
+    cache: false
+  datasource:
+    # #?serverTimezone=UTC解决时区的报错
+    url: jdbc:mysql://localhost:3306/library_management_system?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+    druid:
+      #Spring Boot 默认是不注入这些属性值的，需要自己绑定
+      #druid 数据源专有配置
+      initialSize: 5
+      minIdle: 5  # 连接池中非运行的一类连接数限制
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000 #控制空闲连接数的回收周期
+      minEvictableIdleTimeMillis: 300000  # 最小空闲时间，若某类空闲连接数大于minidle，且时间大于该值，就断开连接
+#      validationQuery: SELECT 1 FROM DUAL # 测试连接
+      testWhileIdle: true # testwhileidle和testonborrow都是在获取连接的时候测试连接的有效性
+      testOnBorrow: false
+      testOnReturn: false # 当应用使用完连接，连接池回收连接的时候会判断该连接是否还可用。这里不开启
+      poolPreparedStatements: true  # 开启预编译的statement，防sql注入，提高效率
+
+      aop-patterns: com.jinge.librarymanagementsystem.*  #监控SpringBean
+      filters: stat,wall     # 底层开启功能，stat（sql监控），wall（防火墙）
+
+      stat-view-servlet:   # 配置监控页功能
+        enabled: true
+#        login-username: wwj  # 不设置密码，方便取数据
+#        login-password: 123456
+        resetEnable: false
+
+      web-stat-filter:  # 监控web
+        enabled: true
+        urlPattern: /*
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+
+
+      filter:
+        stat:    # 对上面filters里面的stat的详细配置
+          slow-sql-millis: 1000 #慢查询sql统计，超过1000毫秒就为慢查询。
+          logSlowSql: true # 是否记录慢查询
+          enabled: true
+        wall:
+          enabled: true
+          config: # 防火墙的所有配置
+            drop-table-allow: false # 不允许删表，所有的删表sql都会拦截
+
+  redis:
+    host: 192.168.126.101
+    port: 6379
+    client-type: jedis
+    # 使用的哪一个数据库
+    database: 1
+    lettuce:
+      shutdown-timeout: 100 # 关闭超时时间
+    jedis:
+      pool:
+        max-active: 20 # 连接池最大连接数（使用负值表示没有限制）
+        max-idle: 10 # 连接池中的最大空闲连接
+        max-wait: 10 # 连接池最大阻塞等待时间（使用负值表示没有限制）
+        min-idle: 0 # 连接池中的最小空闲连接
+
+# mybatis设置，可替代mybatis-config文件
+mybatis:
+  #  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mappers/*.xml
+  # 若配置信息在yml中配置，那么不能和config-location一起使用，也就是要么全在config中配置，要么全在yml配置，因为若都可以配置会造成听谁的冲突。
+  configuration:
+    map-underscore-to-camel-case: true  # 驼峰命名
+
+#pagehelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+# shiro相关配置
+
+
+
+
+
+
+
+# 自定义的配置类，验证码基本配置
+captcha:
+  captchaImgWidth: 150
+  captchaImgHeight: 40  # 注意yml文件写路径要双"//"
+  captchaImgPath: "D:\\编程代码\\毕业设计-图书管理系统\\library-management-system\\src\\main\\resources\\static\\images\\captcha\\line.png"
+
+
+
+# 服务监控
+management:
+  endpoints:
+    enabled-by-default: true #暴露所有端点信息
+    web:
+      exposure:
+        include: '*'  #以web方式暴露
+  endpoint: # endpoints是配置全部端点，endpoint是配置单个端点
+    health:
+      enabled: true
+      show-details: always  # 默认是never，从不显示详细信息，要么down或up。
+
+
+
+
+
+
+

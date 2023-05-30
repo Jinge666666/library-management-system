@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="forefront/common::commonHeader"></div>
+    <style>
+        /* 以后放在公共css中去*/
+        .mainContent {
+            width: 1175px;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+
+        }
+        .mainContent .bookmark{
+            width: 770px;
+            height: auto;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        .mainContent .searchByName{
+            width: 400px;
+            height: 50px;
+        }
+        .mainContent .searchByName .search{
+            width: 300px;
+            height: 50px;
+            float: left;
+        }
+        .mainContent .bookmark .title{
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            border-bottom: 1px solid #ccc;
+            margin-top: 30px;
+            margin-bottom: 20px;
+
+
+        }
+        .mainContent .bookmark .title .el-input__inner{
+            height: 30px;
+            line-height: 30px;
+        }
+        .mainContent .bookmark .left{
+            width: 200px;
+            height: 100%;
+            float: left;
+        }
+        .mainContent .bookmark .right{
+            width: 165px;
+            height: 100%;
+            float: left;
+            margin-left: 385px;
+        }
+        .mainContent .bookmark .bookList{
+            width: 100%;
+            height: auto;
+        }
+        .mainContent .bookmark .bookList ul{
+            list-style: none;
+        }
+        .mainContent .bookmark .bookList ul li{
+            width: 100%;
+            height: 200px;
+            border-bottom: 1px solid #ccc;
+        }
+        .mainContent .bookmark .bookList ul li .bookface{
+            width: 160px;
+            height: 190px;
+            float: left;
+
+        }
+        .mainContent .bookmark .bookList ul li .bookInfo{
+            width: 600px;
+            height: 190px;
+            float: left;
+            margin-left: 5px;
+            position: relative;
+
+        }
+        .mainContent .bookmark .bookList ul li .bookInfo p{
+            height: 15px;
+            width: 100%;
+            font: 14px/15px Tahoma,Helvetica,Arial,"\5b8b\4f53",sans-serif;
+            margin-top: 10px;
+        }
+        .mainContent .bookmark .bookList ul li .bookInfo .getBook{
+            position:absolute;
+            right: 180px;
+            bottom: 20px;
+            background-color: #0097A7;
+            border: 1px solid #0097A7;
+            color: #fff
+
+        }
+        .mainContent .bookmark .bookList ul li .bookInfo .forbidBorrowBook{
+            position:absolute;
+            right: 180px;
+            bottom: 20px;
+            background-color: dimgray;
+            border: 1px solid dimgray;
+            color: #fff;
+            cursor: initial;
+
+        }
+        .mainContent .bookmark .bookList ul li .bookInfo .cancelBookmark{
+            position:absolute;
+            right: 50px;
+            bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+    <div class="mainContent">
+        <div class="bookmark">
+            <div class="searchByName">
+                <el-input class="search" type="text" v-model="input" placeholder="书籍名"
+                          maxlength="30" show-word-limit="true"
+                          prefix-icon="el-icon-search" @keyup.enter.native="searchBook" clearable></el-input>
+                <el-button type="primary" icon="el-icon-search" @click="searchBook">搜索</el-button>
+            </div>
+            <div class="title">
+                <div class="left">
+                    <P>我的书架上共有{{total}}本书</P>
+                </div>
+                <div class="right">
+                    <el-select v-model="value">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
+            <div class="bookList">
+                <ul>
+                    <li v-for="item in bookList" :key="item.bookId">
+                        <div class="bookface">
+                            <a :href="'/book/'+item.bookId"><img :src="'/images/bookface/'+item.bookfaceName" style="margin-left: 20px;margin-top: 20px"></a>
+                        </div>
+                        <div class="bookInfo">
+                            <a :href="'/book/'+item.bookId" style="text-decoration: none;color: #1a1a1a"><h3 style="margin-top: 25px;font-size: 22px;letter-spacing: 0.2em">{{item.bookName}}</h3></a>
+                            <p>作者：{{item.bookAuthor}}</p>
+                            <p>类型：{{item.bookType}}</p>
+                            <p>{{item.finish}}</p>
+                            <p>字数：{{item.wordCount}}万字</p>
+                            <el-button :class="item.isBorrowed?'forbidBorrowBook':'getBook'"
+                                    size="medium"
+                                    @click="borrowMessage($event,item.bookId)"
+                            >{{item.isBorrowed?'已被借阅':'可借阅'}}</el-button>
+                            <el-button class="cancelBookmark"
+                                    size="medium"
+                                    type="primary"
+                                    @click="cancelCollect(item.bookId)"
+                            >取消收藏</el-button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <el-pagination
+                    @current-change="handleCurrentChange"
+                    @size-change="handlePageSizeChange"
+                    :current-page.sync="currentPage"
+                    background
+                    :page-sizes="[5, 10, 20, 50]"
+                    :page-size="pageSize"
+                    layout="total, sizes,slot,prev, pager, next,jumper"
+                    prev-text="上一页"
+                    next-text="下一页"
+                    :total="total">
+                <span>当前展示{{ totalShow }}条</span>
+            </el-pagination>
+        </div>
+    </div>
+
+
+<script>
+    new Vue({
+        el:".bookmark",
+        data(){
+            return{
+                currentPage:1,
+                totalShow:4,
+                total:0,
+                pageSize:5, // 每页显示条数
+                options: [{
+                    value: '选项1',
+                    label: '按收藏时间排序'
+                }, {
+                    value: '选项2',
+                    label: '按字数排序'
+                }, {
+                    value: '选项3',
+                    label: '只列出可借阅书籍'
+                }],
+                value: '选项1',
+                orderType:"",
+                bookList: [{
+                    bookName:"逆天邪神",
+                    author: "火星引力",
+                    bookType:"东方玄幻",
+                    state:"连载中",
+                    wordCount: "687.5",
+                }],
+
+                input:"", // 搜索条件
+
+
+            }
+        },
+        methods:{
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+                this.getBookList(this.value,this.input)
+
+            }, // 每页显示条数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+                this.getBookList(this.value,"")
+            },
+            // 获得书籍
+            getBookList(condition,searchValue){
+                switch (condition) {
+                    case "选项1":
+                        this.orderType="create_time";
+                        break;
+                    case "选项2":
+                        this.orderType="word_count";
+                        break;
+                    case "选项3":
+                        this.orderType="is_borrowed"
+                        break;
+                }
+                axios({
+                    method:"POST",
+                    url:"/bookmark/bookMarkShow",
+                    dataType:"json",
+                    data:{"orderType":this.orderType,"pageNum":this.currentPage,"pageSize":this.pageSize,"searchValue":searchValue.trim()}
+                }).then(response=>{
+                    this.bookList=response.data.books;
+                    this.totalShow = response.data.books.length;
+                    this.total = response.data.total;
+                })
+            },
+            searchBook(){
+                this.getBookList(this.value,this.input)
+            },
+
+            // 取消收藏
+            cancelCollect(bookId){
+                axios({
+                    method:"POST",
+                    url:"/bookmark/cancelCollect",
+                    dataType:"json",
+                    data:bookId
+                }).then(response=>{
+                    var msg="取消收藏失败，请稍后再试。"
+                    if(response.data){
+                        msg = "取消收藏成功！"
+                    }
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>'+msg+'</strong></div>'
+                    });
+                    if(response.data){
+                        this.getBookList(this.value,this.input);
+                    }
+                })
+            },
+            borrowMessage(event,bookId){
+                var e = event.currentTarget
+                if(e.innerText.trim().indexOf("已被")===-1){
+                   window.location.href="/book/"+bookId
+                }else {
+                    this.$message({
+                        dangerouslyUseHTMLString: true,
+                        message: '<div style="color: #FFFFFF;background: #000000;width: 300px;height: 50px;line-height: 50px;text-align: center;"><strong>该书籍已被借，不可再次借阅！！</strong></div>'
+                    });
+                }
+            }
+        },
+        created() {
+            this.getBookList(this.value,"");
+        },
+        watch:{
+            value:{  // 监听排序条件
+                handler(newValue,oldValue) {
+                    this.getBookList(newValue,this.input);
+                }
+            } ,
+            input:{  // 监听清空搜索词，触发搜书
+                handler(newValue,oldValue) {
+                    if(newValue===""){
+                        this.getBookList(newValue,"");
+                    }
+                }
+            },
+            deep: true,
+            immediate: true
+        }
+    })
+</script>
+
+<div th:replace="forefront/common::#commonScripts"></div>
+</body>
+</html>

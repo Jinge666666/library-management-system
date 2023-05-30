@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jing.librarymanagementsystem.mappers.BookFrequencyMapper">
+
+    <select id="newBookRecommend" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select  book_id,book_name,book_author, book_type ,bookface_name from book_info where book_type in
+        <if test="sex=='male'">
+            ("转世重生","异界大陆","东方玄幻","奇幻修真","古典仙侠","现实百态","爱情婚姻","商战风云","都市异能","现代修真","虚拟网游","科幻灵异","架空历史")
+        </if>
+        <if test="sex=='female'">
+            ("青春校园","穿越时空","总裁豪门","悬疑推理","架空历史")
+        </if>
+        order by word_count limit #{start},#{bookNum}
+    </select>
+    <select id="bookEditRecommend" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select  book_id,book_name,book_author, book_type ,bookface_name,favorites,book_desc from book_info where book_type in
+        <if test="sex=='male'">
+            ("转世重生","异界大陆","东方玄幻","奇幻修真","古典仙侠","现实百态","爱情婚姻","商战风云","都市异能","现代修真","虚拟网游","科幻灵异","架空历史")
+        </if>
+        <if test="sex=='female'">
+            ("青春校园","穿越时空","总裁豪门","悬疑推理","架空历史")
+        </if>
+         limit #{start},#{bookNum}
+    </select>
+    <select id="clicksRank" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select  book_id,book_name,book_author, book_type ,bookface_name,clicks from book_info where book_type in
+        <if test="sex=='male'">
+            ("转世重生","异界大陆","东方玄幻","奇幻修真","古典仙侠","现实百态","爱情婚姻","商战风云","都市异能","现代修真","虚拟网游","科幻灵异","架空历史")
+        </if>
+        <if test="sex=='female'">
+            ("青春校园","穿越时空","总裁豪门","悬疑推理","架空历史")
+        </if>
+        order by clicks desc limit #{start},#{bookNum}
+    </select>
+    <select id="qianliRank" resultType="com.jing.librarymanagementsystem.bean.Book">
+        select  book_id,book_name,book_author, book_type ,bookface_name from book_info where book_type in
+        <if test="sex=='male'">
+            ("转世重生","异界大陆","东方玄幻","奇幻修真","古典仙侠","现实百态","爱情婚姻","商战风云","都市异能","现代修真","虚拟网游","科幻灵异","架空历史")
+        </if>
+        <if test="sex=='female'">
+            ("青春校园","穿越时空","总裁豪门","悬疑推理","架空历史")
+        </if>
+        order by clicks limit #{start},#{bookNum}
+    </select>
+    <!--    <select id=""-->
+</mapper>

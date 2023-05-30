@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="forefront/common::commonHeader"></div>
+
+
+    <!--    轮播图相应依赖-->
+    <script type="text/javascript" th:src="@{/js/modernizr.min.js}"></script>
+    <link rel="stylesheet"  th:href="@{/css/carouselSlider.css}">
+
+
+    <style>
+        .mainContent{
+            width: 80%;
+            height: auto;
+            float: left;
+            margin-left: 1%;
+            border: 1px solid blue;
+
+        }
+
+        #mainContent-part1{
+            width: 1175px;
+            height: 390px;
+            border: 1px solid green;
+
+        }
+        /*三维滑动形轮播图*/
+        .carouselMap-slider{
+            width: 880px;
+            height: 380px;
+            margin-top: 0;
+            margin-left: 0;
+            /*border: 1px solid blue;*/
+            text-align: left;
+            float: left;
+        }
+        #carouselMap-slider{
+            width: 800px;
+            height: 360px;
+            margin-left: 10px;
+            /*注意大图的所有父节点不要设置overflow：hidden，否则第一次刷新页面图片不会显示出来，直到达到3s循环后才会出现，因为可能你overflow了，
+            所以我们若想用hidden，试试在刷新时就立马执行interval任务看看
+            */
+            overflow: hidden;
+            text-align: left;
+            float: left;
+            margin-top: 10px;
+            /*两边按钮相对此定位*/
+            position: relative;
+        }
+
+        #carouselMapIndex{
+            width: 53px;
+            height: 100%;
+            padding-top: 0;
+            text-align: center;
+            margin-left: 7px;
+            margin-top: 10px;
+            float: left;
+        }
+        #carouselMapIndex ul{
+            width: 100%;
+            height: 100%;
+
+        }
+        #carouselMapIndex ul li{
+            width: 53px;
+            height: 67px;
+            text-align: center;
+            margin-bottom: 5px;
+            list-style: none;
+
+
+
+
+        }
+        #carouselMapIndex ul li img{
+            padding: 3px;
+            width: 52px;
+            height: 65px;
+            /*border: 1px solid blue;*/
+            opacity: .5;
+
+        }
+        /*第一部分右侧容器*/
+        .newBookRecommend{
+            width: 270px;
+            height: 380px;
+            float: left;
+            margin-top: 0;
+            margin-left: 10px;
+        }
+        #Customization-bookShow-type01 {
+            width: 270px;
+            /* 自定义组件，高度最好继承父类*/
+            height: 100%;
+            /*border: 1px solid blue;*/
+            overflow: hidden;
+        }
+
+        #Customization-bookShow-type01 a {
+            text-decoration: none;
+        }
+
+        #Customization-bookShow-type01 .title {
+            width: 100%;
+            height: 50px;
+            text-align: left;
+            line-height: 30px;
+            /*border: 1px solid red;*/
+            border-bottom: 1px solid #666;
+            color: #262626;
+            outline: none;
+            background-color: #e6e6e6;
+        }
+
+        #Customization-bookShow-type01 .title span {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            margin-left: 0;
+            display: block;
+            float: left;
+            /*border: 1px solid red;*/
+        }
+
+        #Customization-bookShow-type01 .title span i {
+            font-size: 25px;
+
+        }
+
+        #Customization-bookShow-type01 .title h3 {
+            width: 180px;
+            height: 50px;
+            line-height: 50px;
+            display: block;
+            float: left;
+            text-align: left;
+            /*border: 1px solid red;*/
+
+        }
+
+        /*    第二部分*/
+        #mainContent-part2{
+            width: 1175px;
+            height: 630px;
+            margin-top: 10px;
+            margin-left: 0;
+
+        }
+
+        #mainContent-part2>.left{
+            width: 915px;
+            height: 100%;
+            float: left;
+
+
+        }
+
+        #mainContent-part2>.left .title{
+            height: 50px;
+            line-height: 50px;
+            font-size: 20px;
+            font-family: FZZCYSK,fantasy;
+            font-weight: 400;
+            text-align: left;
+            width: 890px;
+            border-bottom: 1px solid #1a1a1a;;
+            margin-top: 10px;
+        }
+        #mainContent-part2>.left .top{
+            height: 250px;
+            width: 100%;
+        }
+        /*跑马灯*/
+        #mainContent-part2>.left .top .carouselMap{
+            /*width: 430px;*/
+            width: 450px;
+            height: 100%;
+            float: left;
+
+        }
+        /*三维轮播图--------------------------------------*/
+
+        #mainContent-part2>.left .top .carouselMap .slider-wrap{
+            height: 210px;
+            position: relative;
+            width: 450px;
+        }
+
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel{
+            /*此边距控制内边距，其实控制中间图片的左边距，从而改变整体图片的位置*/
+            /*padding-left: 150px;*/
+            padding-left: 160px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+
+
+        }
+
+
+        /*中间图片区域，其他图片相对它定位*/
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .slides{
+            position: relative;
+            /*宽高要和中间图片对应，这相当于中间图片模子*/
+            width:133px;
+            height:178px;
+
+        }
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .slides .slideItem{
+            cursor: pointer;
+            overflow: visible;
+            position: absolute;
+        }
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .slides .slideItem .shadow{
+            width: 133px;
+            z-index: -1;
+            position: absolute;
+            margin: 0;
+            padding: 0;
+            border: none;
+            overflow: hidden;
+            left: 0; bottom: 0;
+
+        }
+
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .prevButton{
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            opacity: 0;
+            position: absolute;
+            transition: all 1s;
+            z-index: 10;
+            left: 5px;
+            top:80px;
+
+
+        }
+
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .nextButton{
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            opacity: 0;
+            position: absolute;
+            transition: all 1s;
+            z-index: 10;
+            right: 5px;
+            top:80px;
+        }
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel:hover .prevButton{
+            opacity: 1;
+        }
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel:hover .nextButton{
+            opacity: 1;
+        }
+
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .buttonNav{
+            /*left: 98px;*/
+            left: 130px;
+            position: absolute;
+            /*top: 142px;*/
+            /*只有这个属性不是等比例扩大*/
+            top: 192px;
+            z-index: 10;
+            width: 200px;
+            height: 15px;
+            line-height: 15px;
+            text-align: center;
+        }
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .buttonNav .bullet{
+            background: #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            float: left;
+            height: 15px;
+            margin: 0 10px 0 0;
+            width: 15px;
+        }
+
+        /*为轮播图设置过度动画*/
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .slideItem{
+            /*排除z-index的动画，使点击时图片遮挡部分马上显示出来*/
+            transition: width .5s linear,height .5s linear,top .5s linear,right .5s linear,opacity .5s linear;
+            /*transition: all .4s cubic-bezier(0,0,.1,1);*/
+        }
+        /*图片大小改变也设置*/
+        #mainContent-part2>.left .top .carouselMap .slider-wrap .carousel .slides>.slideItem>a img{
+            transition: all .5s linear;
+        }
+
+        /* 书籍描述部分*/
+        #mainContent-part2>.left .top .carouselMapDesc{
+            width: 450px;
+            height: 100%;
+            float: left;
+            margin-left: 10px;
+        }
+        #mainContent-part2>.left .top .carouselMapDesc h3{
+            display: block;
+            width: 400px;
+            height: 40px;
+            line-height: 35px;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 30px;
+            font-size: 25px;
+
+        }
+        #mainContent-part2>.left .top .carouselMapDesc h3 a{
+            text-decoration: none;
+            color: #1a1a1a;
+        }
+        #mainContent-part2>.left .top .carouselMapDesc p{
+            width: 430px;
+            height: 90px;
+            text-align: left;
+            margin-top: 0;
+            color: #666;
+            font: 15px/30px PingFangSC-Regular,-apple-system,Simsun;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* 限制三行内*/
+            -webkit-box-orient: vertical;
+        }
+        #mainContent-part2>.left .top .carouselMapDesc>a{
+            text-decoration: none;
+            height: 50px;
+            width: 100px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        #mainContent-part2>.left .bottom{
+            height: 320px;
+            width: 100%;
+            border-top: 1px solid gray;
+            margin-top: 5px;
+        }
+
+        /* 自定义组件*/
+        #Customization-bookShow-type05{
+            height: 100%;
+            width: 100%;
+        }
+        #Customization-bookShow-type05 ul{
+            height: 100%;
+            width: 100%;
+            list-style: none;
+
+        }
+
+        #Customization-bookShow-type05 ul li{
+            width: 304px;
+            height: 150px;
+            margin-top: 10px;
+            margin-right: 0;
+            float: left;
+            box-sizing: border-box;
+            border-bottom: 1px solid gray;
+        }
+        #Customization-bookShow-type05 ul li h3{
+            height: 30px;
+            line-height: 30px;
+            max-width: 270px;
+            overflow: hidden;
+            cursor: pointer;
+            display: block;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-top: 15px;
+        }
+        #Customization-bookShow-type05 ul li h3 a:hover{
+            color: orangered;
+            transition: color .2s linear;
+        }
+        #Customization-bookShow-type05 ul li h3 a{
+            color: #1a1a1a;
+            font: 18px/30px PingFangSC-Regular,HelveticaNeue-Light,Helvetica Neue Light,Microsoft YaHei,"sans-serif";
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        #Customization-bookShow-type05 ul li em{
+            display: block;
+
+            font-size: 13px;
+            font-weight: 600;
+            color: #bf2c24;
+            height: 21px;
+            line-height: 21px;
+            overflow: hidden;
+            padding: 2px 0 4px;
+            width: 270px;
+            margin-top: 5px;
+            font-style: normal;
+        }
+
+        #Customization-bookShow-type05 ul li>p{
+            color: #666;
+            font-family: PingFangSC-Regular,-apple-system,Simsun,serif;
+            font-size: 12px;
+            height: 60px;
+            line-height: 20px;
+            word-wrap: break-word; /* 允许长单词换行*/
+            word-break: break-all; /* 允许单词内换行*/
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3; /* 限制三行内*/
+            -webkit-box-orient: vertical;
+            width: 270px;
+            margin-top: 5px;
+        }
+
+        /*    第二部分右边*/
+        .rank{
+            width: 245px;
+            height: 100%;
+            float: left;
+            background: #FFF;
+        }
+        .rank .right {
+            width: 225px;
+            height: 100%;
+            float: left;
+            margin-left: 20px;
+            background-color: #fff;
+        }
+        .genduo{
+            opacity: 0;
+        }
+        .rank .right:hover .genduo{
+            color: orangered;
+            opacity: 1;
+            transition:all .5s linear;
+        }
+
+        .rank .right a {
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .rank .right .title {
+            height: 45px;
+            line-height: 45px;
+            width: 100%;
+            color: #1a1a1a;
+            text-align: left;
+            border-bottom: 1px solid black;
+            font-size: 20px;
+            font-weight: bolder;
+
+        }
+
+        /*    第三部分*/
+        #mainContent-part3 {
+            width: 1175px;
+            height: 620px;
+            border: 1px solid red;
+            margin-top: 20px;
+            margin-left: 0;
+        }
+
+        #mainContent-part3 a {
+            text-decoration: none;
+        }
+
+        #mainContent-part3 .left {
+            width: 915px;
+            height: 100%;
+            float: left;
+            background-color: #fffdef;
+
+        }
+
+        #mainContent-part3 .left > div {
+            height: 46px;
+            line-height: 46px;
+            width: 100%;
+            text-align: left;
+            border-bottom: 2px solid red;
+        }
+
+        #mainContent-part3 .left > div span {
+            width: 46px;
+            height: 46px;
+            line-height: 46px;
+            text-align: center;
+            display: inline-block;
+
+        }
+
+        #mainContent-part3 .left > div span i {
+            font-size: 25px;
+        }
+
+        #mainContent-part3 .left ul {
+            width: 100%;
+            height: 570px;
+            list-style: none;
+        }
+
+        #mainContent-part3 .left ul li {
+            width: 452px;
+            height: 188px;
+            line-height: 188px;
+            float: left;
+            border-top: 1px solid #e6e6e6;
+            /*border-bottom: 1px solid saddlebrown;*/
+        }
+
+        /*    右边部分*/
+
+        /*    中间长条*/
+        .longImg {
+            width: 1175px;
+            height: 90px;
+            line-height: 90px;
+            margin-top: 20px;
+            margin-left: 0;
+            overflow: hidden;
+        }
+
+        .longImg a {
+            text-decoration: none;
+        }
+
+        .longImg img {
+            width: 1175px;
+            height: 90px;
+
+        }
+
+
+
+
+
+
+    </style>
+</head>
+<body onload='init()'>
+<div th:replace="forefront/common::#commonLeftNavMenu"></div>
+<div th:replace="forefront/common::#commonMainHead"></div>
+
+
+<div class="mainContent">
+    <div id="mainContent-part1">
+        <!--    三维滑动型轮播图-->
+        <div class="carouselMap-slider">
+            <div id="carouselMap-slider">
+                <ul id="sb-slider" class="sb-slider">
+                    <li th:if="${session.sex=='male'}" v-for="(item,index) in items.slice(0,5)" :key="item.id">
+                        <a :href="'/book/'+item.bookId" target="_blank"><img :src="item.url" alt="image1" /></a>
+                        <div class="sb-description">
+                            <h3>{{item.desc}}</h3>
+                        </div>
+                    </li>
+                    <li th:if="${session.sex=='female'}" v-for="(item,index) in items.slice(5,10)" :key="item.id">
+                        <a :href="'/book/'+item.bookId" target="_blank"><img :src="item.url" alt="image1" /></a>
+                        <div class="sb-description">
+                            <h3>{{item.desc}}</h3>
+                        </div>
+                    </li>
+
+                </ul>
+                <!--            由于vue会将绑定的html重新渲染一遍，导致jquery绑定的事件全部消失，因此，下面这些代码不能和vue绑定。
+                            那么shadow"节点就作为jquery绑定事件，目的是指定跳到某一个轮播图
+                -->
+                <div id="shadow" class="shadow"></div>
+<!--                隐藏该按钮不会影响js的点击，为不让用户点击，因为不好做点击后右边小图形的边框同步改变，因此干脆隐藏取消该功能-->
+                <div id="nav-arrows" class="nav-arrows" style="visibility: hidden">
+                    <!--                这两个和jquery绑定的事件只能往上或下跳，-->
+                    <a href="#">Next</a>
+                    <a href="#">Previous</a>
+                </div>
+            </div>
+            <div id="carouselMapIndex">
+                <ul class="mainContent-part1-carousel">
+                    <li th:if="${session.sex=='male'}" v-for="(item,index) in items.slice(0,5)" :key="item.id">
+                        <img :src="item.url" @click="handOffCarouselMapByIndex(index)">
+                    </li>
+                    <li th:if="${session.sex=='female'}" v-for="(item,index) in items.slice(5,10)" :key="item.id">
+                        <img :src="item.url" @click="handOffCarouselMapByIndex(index)">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="newBookRecommend">
+            <div id="Customization-bookShow-type01">
+                <div class="title">
+                    <span><i class="iconfont icon-shucheng1"></i></span>
+                    <h3>新书推荐</h3>
+                </div>
+                <first-customcomponent :new-book-recommend="newBookRecommend"></first-customcomponent>
+            </div>
+        </div>
+
+    </div>
+    <div class="longImg">
+        <a><img th:src="@{/images/mixImg/女频横条1.jpg}"></a>
+    </div>
+
+
+    <div id="mainContent-part2">
+        <div class="left">
+            <div class="title">
+                <h3>编辑推荐</h3>
+            </div>
+            <div class="top">
+                <div class="carouselMap">
+                    <div id="Customization-bookShow-type02" class="slider-wrap">
+                        <div id="carousel" class="carousel">
+                            <div class="slides" >
+                                <div class="slideItem" v-for="(item,index) in carouselMapStyle" :key="item.id" :style="item.item">
+                                    <a :href="item.toUrl" @click="clickCarouselMap(item,$event)"
+                                       @mouseover="stopCarouselMap" @mouseleave="resCarouselMap"
+                                       target="_blank">
+                                        <img :src="item.imgUrl" :title="item.alt"
+                                             :alt="item.alt" :style="item.img">
+                                    </a>
+                                    <div class="shadow">
+                                        <div class="shadowLeft" style="position: relative; float: left;"></div>
+                                        <div class="shadowMiddle"
+                                             style="position: relative; float: left;" :style="item.shadowMiddle"></div>
+                                        <div class="shadowRight" style="position: relative; float: left;"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="nextButton" @click="moveLeftCarouselMap(1)" @mouseover="stopCarouselMap" @mouseleave="resCarouselMap"><el-image th:src="@{/images/mixImg/向右.svg}" fit="fill"></el-image></div>
+                            <div class="prevButton" @click="moveRightCarouselMap(1)"  @mouseover="stopCarouselMap" @mouseleave="resCarouselMap"><el-image th:src="@{/images/mixImg/向左.svg}" fit="fill"></el-image></div>
+                            <div class="buttonNav">
+                                <div class="bullet" style="text-align: center;" v-for="item in 7" :key="item"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carouselMapDesc">
+                    <h3><a :href="toUrl" target="_blank">{{bookTitle}}</a></h3>
+                    <p v-html="desc"></p>
+                    <a :href="toUrl" target="_blank">
+                        <el-button round style="background: #bf2c24;color: white">书籍详情</el-button>
+                    </a>
+                </div>
+
+            </div>
+            <div class="bottom">
+                <div id="Customization-bookShow-type05">
+                    <ul>
+                        <li v-for="item in books" :key="item.bookId">
+                            <h3><a :href="'/book/'+item.bookId" target="_blank">{{item.bookName}}</a></h3>
+                            <em class="total">
+                                <cite style="font-size: 16px">{{item.favorites}}</cite>
+                                人在追
+                            </em>
+                            <p v-html="item.bookDesc"></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+        <div class="rank">
+            <div class="right">
+                <div class="title">
+                <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                    点击榜
+                </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left;">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                </span>
+                </div>
+                <third-customcomponent :infos="infos" total-desc="点击量"></third-customcomponent>
+            </div>
+        </div>
+    </div>
+    <div class="longImg">
+        <a><img th:src="@{/images/mixImg/女频横条2.jpg}"></a>
+    </div>
+    <div id="mainContent-part3">
+        <div class="left">
+            <div>
+                <span><i class="iconfont icon-shucheng1"></i></span>
+                热门推荐
+            </div>
+            <ul>
+                <li v-for="(book,index) in bookInfo" :key="book.bookId">
+                    <!--                        自定义组件-->
+                    <second-customcomponent :book-info="book" imgPreUrl="images/bookface/"></second-customcomponent>
+                </li>
+            </ul>
+        </div>
+        <div class="rank">
+            <div class="right">
+                <div class="title">
+                <span style="float: left;max-width: 100px;height: 45px;line-height: 45px;text-align: left;">
+                    潜力榜
+                </span>
+                    <span class="more"
+                          style="float: left;width: 60px;height: 45px;text-align: left;margin-left: 20px;color: #3f5a93;font: 12px/45px Arail,PingFangSC-Regular,-apple-system,Simsun;">
+                        <a class="genduo"><p style="display: block;margin-top:8px;width: 25px;height: 30px;line-height:30px;float: left;">更多</p><img
+                                style="display: block;margin-top:8px;width:16px;height: 30px;line-height: 30px;float: left"
+                                th:src="@{/images/mixImg/更多.svg}"> </a>
+                </span>
+                </div>
+                <third-customcomponent :infos="infos" :is-em-total-show="false" total-desc="本周最强" :is-show-book-info="false" :is-total-show="false"></third-customcomponent>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+
+    // 页面初始化相关内容，如轮播图相关初始化
+    function init() {
+        var firstCarouselImg=document.getElementsByClassName('mainContent-part1-carousel')[0].getElementsByTagName("img")[0]
+        firstCarouselImg.style.opacity="1";
+        firstCarouselImg.style.backgroundColor="red";
+        navButtons[0].style.border="2px solid red";
+        navButtons[0].style.backgroundColor="#fff"
+    }
+
+    // // 轮播图部分初始化
+    // Caroursel.init($('.caroursel'));
+
+    var navArrows = document.getElementById("nav-arrows");
+    // 注意第一个按钮是Next，表示往后面跳一个图，第二个按钮是Pervious，往前跳
+    var carouselMapBack = navArrows.children[0]
+    // 往前面跳一个图
+    var carouselMapMove = navArrows.children[0]
+    // var carouselMapJump = document.getElementById('shadow')
+    // jquery定义的事件，若需传参，须使用trigger方法，原生js没有trigger方法，因此使用jquery创建shadow对象
+    var carouselMapJump = $('#shadow')
+    // 当前轮播图坐标
+    var currentCarouselMapIndex = 0
+
+    // 第二个轮播图需用到的index
+    var carouselMapStyleIndex = 0
+    var tempItemStyle = null
+    var tempImgStryle = null
+    var tempShadowStyle = null
+    // 轮播图二对应所有按钮对象
+    var navButtons = document.getElementsByClassName("bullet")
+    // 当前触发按钮的全局变量
+    var currButtonIndex = 0;
+
+    var moveCarouselMap = function(){
+        currentCarouselMapIndex++;
+        // window.alert(currentCarouselMapIndex)
+        var carouselImgs = document.getElementsByClassName('mainContent-part1-carousel')[0].getElementsByTagName("img")
+
+        if (currentCarouselMapIndex === 5){
+            currentCarouselMapIndex = 0
+        }
+        carouselImgs[currentCarouselMapIndex].style.opacity="1";
+        carouselImgs[currentCarouselMapIndex].style.backgroundColor="red";
+        if (currentCarouselMapIndex === 0){
+            carouselImgs[4].style.opacity=".5";
+            carouselImgs[4].style.backgroundColor="transparent";
+        }else {
+            carouselImgs[currentCarouselMapIndex-1].style.opacity=".5";
+            carouselImgs[currentCarouselMapIndex-1].style.backgroundColor="transparent";
+        }
+        // click是事件名称，可以自定义事件名，后面是要携带到事件触发函数的参数
+        // carouselMapJump.trigger('click','2')
+        carouselMapMove.click();
+    }
+
+    // 定会器若想立即执行一次函数，moveCarouselMap后须加括号，所以会立即执行 target 函数，执行完后，返回 target 本身（函数名），这个 target （函数名）才是 setInterval 需要接收的真正参数，接下来定时器才算是正常的运行。
+    // moveCarouselMap()
+    var interval1 = setInterval(moveCarouselMap,3000)
+    // 想要真正等页面渲染后再执行一次该方法，那种vue的方法都没用，还的是window.onload管用
+    window.onload=function () {
+        moveCarouselMap()
+    }
+
+    // 轮播图部分
+    new Vue({
+        el:"#sb-slider",
+        data(){
+            return{
+                items:[
+                    {id:"1",desc:'点击图片查看书籍详情',url:"images/临时素材/诡秘之主.jpg",bookId: "28837080"},
+                    {id:"2",desc:'点击图片查看书籍详情',url:"images/临时素材/圣墟.jpg",bookId:"08866835"},
+                    {id:"3",desc:'点击图片查看书籍详情',url:"images/临时素材/一念永恒.jpg",bookId: "39368291"},
+                    {id:"4",desc:'点击图片查看书籍详情',url:"images/临时素材/你真是个天才.jpg",bookId: "67232357"},
+                    {id:"5",desc:'点击图片查看书籍详情',url:"images/临时素材/剑圣就该出肉装.jpg",bookId: "88853738"},
+                    {id:"6",desc:'点击图片查看书籍详情',url:"images/临时素材/阿禅.jpg",bookId: "82447192"},
+                    {id:"7",desc:'点击图片查看书籍详情',url:"images/临时素材/快穿世界吃瓜第一线.jpg",bookId: "04032395"},
+                    {id:"8",desc:'点击图片查看书籍详情',url:"images/临时素材/大臣们求着我登基.jpg",bookId: "51922897"},
+                    {id:"9",desc:'点击图片查看书籍详情',url:"images/临时素材/被渣重生后我在修仙界内卷成第一.jpg",bookId: "86450866"},
+                    {id:"10",desc:'点击图片查看书籍详情',url:"images/临时素材/吃瓜贵妃.jpg",bookId: "11383898"},
+
+                ],
+            }
+        },
+
+        methods:{
+
+        },
+        mounted:function () {
+
+        }
+
+    })
+
+
+    // 轮播图对应控制按钮
+    new Vue({
+        el:"#carouselMapIndex",
+        data(){
+            return{
+                items:[
+                    {id:"1",url:"images/bookface/3b1174f7d7f24758b20e3e84f827aa9d.jpg"},
+                    {id:"2",url:"images/bookface/6e5f673437d54f269842c6c9075f9c12.jpg"},
+                    {id:"3",url:"images/bookface/4ed7136455e34ea7bde493a633363733.jpg"},
+                    {id:"4",url:"images/bookface/50b3c774227244019d016bc87a375391.jpg"},
+                    {id:"5",url:"images/bookface/1bd65ea6986e4b1ebc92442359a2ed01.jpg"},
+                    {id:"6",url:"images/bookface/a02be894932945a3aa5a062ee2e7ea49.jpg"},
+                    {id:"7",url:"images/bookface/52826dbac25a40efb8c63056a112c8a3.jpg"},
+                    {id:"8",url:"images/bookface/053d2e8f3716479d86b2a31a2b85ec35.jpg"},
+                    {id:"9",url:"images/bookface/dcc70a235e6b438697b099d6cf926524.jpg"},
+                    {id:"10",url:"images/bookface/cddd3411b9e0438496b7b546127421f4.jpg"},
+                ],
+            }
+        },
+        methods:{
+            // 点击右边小图片手动轮播图切换
+            handOffCarouselMapByIndex(index) {
+                clearInterval(interval1)
+                var carouselImgs = document.getElementsByClassName('mainContent-part1-carousel')[0].getElementsByTagName("img")
+                clearInterval (interval1)
+                // 让以前的按钮失去颜色
+                // window.alert(currentCarouselMapIndex)
+                carouselImgs[currentCarouselMapIndex].style.opacity=".5";
+                carouselImgs[currentCarouselMapIndex].style.backgroundColor="transparent";
+                // 让现在的按钮加色
+                carouselImgs[index].style.opacity="1";
+                carouselImgs[index].style.backgroundColor="red";
+                // 切换轮播图
+                carouselMapJump.trigger('click',(index+1).toString())
+                currentCarouselMapIndex = index
+                interval1 = setInterval(moveCarouselMap,3000)
+
+            },
+        },
+
+    })
+
+    // 新书推荐
+    new Vue({
+        el:".newBookRecommend",
+        data() {
+            return {
+                newBookRecommend:[
+                    {
+                        searchByType:"", // 类型搜索url
+                        bookType:"",  // 书籍类型
+                        bookDetail:"",  // 书籍详情url
+                        bookName:"",  // 书名
+                        searchByAuthor:"",  // 作者名搜索url
+                        bookAuthor:""   // 作者
+                    }
+                ],
+            }
+        },
+        methods: {},
+        created(){ // html渲染前初始化数据钩子
+            axios({
+                method:'POST',
+                url:'/frequency/newBookCommend',
+                dataType:"application/x-www-form-urlencoded",
+                // 书籍名和作者名都传，表示全都搜索
+                data:{}
+            }).then(response=>{
+                this.newBookRecommend = response.data
+
+            })
+        },
+        mounted(){
+
+        }
+    })
+
+
+    //    第二部分轮播图
+
+
+    var carouselMapToMove = new Vue({
+        el:"#Customization-bookShow-type02",
+        data(){
+            return{
+                carouselMapStyle: [],
+                books:[]
+
+
+            }
+        },
+        methods: {
+            // 实现点击中间图片，超链接才可跳转，点击旁边图片不跳转，只移到中间
+            clickCarouselMap:function (obj,event) {
+
+                // 根据item的z-index判断该点击图片是否在中间位置
+                if (obj.item["z-index"] !==6){
+                    // 禁止跳转
+                    event.currentTarget.href="javascript:;"
+                    event.currentTarget.target="";
+                    // 移到中间 根据width的正负判断点击的图片在左在右
+                    if(obj.item["right"].indexOf("-")===-1){  // 点击左侧
+                        // 小技巧判断中间图片几个位置
+                        if(obj.item["right"].indexOf("90px")===-1){
+                            // 想模拟点击两次click，能够感觉图片滚动一次再滚动一次，而不是一次性滚动到目的，
+                            // 可惜this.$forceUpdate()在这好像不起作用。
+                            this.moveRightCarouselMap(1)
+                            this.$forceUpdate()
+                            this.moveRightCarouselMap(1)
+                        }else {
+                            this.moveRightCarouselMap(1)
+                        }
+
+                    }
+                    else {  // 点击右侧
+                        if(obj.item["right"].indexOf("-63px")===-1){
+                            this.moveLeftCarouselMap(2)
+                        }else {
+                            this.moveLeftCarouselMap(1)
+                        }
+                    }
+                }else{ // 由于双向数据绑定，你修改的值也就修改了carouselMapStyle，超链接失效，需要那份备份
+                    event.currentTarget.href=obj.toUrlBackup
+                    event.currentTarget.target="_blank";
+
+
+                }
+
+            },
+            // 利用双向数据绑定实现轮播图移动 step表示移动步数
+            moveLeftCarouselMap:function (step) {
+                currButtonIndex++
+                if(currButtonIndex===7){
+                    currButtonIndex = 0
+                }
+
+                tempItemStyle = this.carouselMapStyle[6].item
+                tempImgStryle = this.carouselMapStyle[6].img
+                tempShadowStyle = this.carouselMapStyle[6].shadowMiddle
+                for(var i= this.carouselMapStyle.length-1;i>-1;i--){
+                    if (i ===0){
+                        // 第一个要继承最后一个
+                        this.carouselMapStyle[i].item =tempItemStyle
+                        this.carouselMapStyle[i].img =tempImgStryle
+                        this.carouselMapStyle[i].shadowMiddle =tempShadowStyle
+                    }else {
+                        // +往右移，-往左移
+                        this.carouselMapStyle[i].item =this.carouselMapStyle[i-1].item
+                        this.carouselMapStyle[i].img =this.carouselMapStyle[i-1].img
+                        this.carouselMapStyle[i].shadowMiddle =this.carouselMapStyle[i-1].shadowMiddle
+                    }
+                    // 同步按钮
+                    navButtons[currButtonIndex].style.border="2px solid red";
+                    navButtons[currButtonIndex].style.backgroundColor="#fff"
+                    if(currButtonIndex === 0) {
+                        navButtons[6].style.border="none";
+                        navButtons[6].style.backgroundColor="#ddd"
+                    }else {
+                        navButtons[currButtonIndex-1].style.border="none";
+                        navButtons[currButtonIndex-1].style.backgroundColor="#ddd"
+                    }
+                    // 同步右侧书籍信息 根据当前按钮index和item的id之间关系，找到中间图片对应信息
+                    for (var j=0;j<this.carouselMapStyle.length;j++){
+                        if(this.carouselMapStyle[j].id === currButtonIndex+1){
+                            carouselMapDesc.bookTitle=this.carouselMapStyle[j].alt
+                            carouselMapDesc.desc=this.carouselMapStyle[j].desc
+                            carouselMapDesc.toUrl =this.carouselMapStyle[j].toUrl
+                            break;
+                        }
+                    }
+
+
+                }// 执行两次
+                if (step === 2){
+                    this.moveLeftCarouselMap(1)
+                }
+
+            },
+            moveRightCarouselMap:function (step) {
+                currButtonIndex--
+                if(currButtonIndex===-1){
+                    currButtonIndex = 6
+                }
+                tempItemStyle = this.carouselMapStyle[0].item
+                tempImgStryle = this.carouselMapStyle[0].img
+                tempShadowStyle = this.carouselMapStyle[0].shadowMiddle
+                for(var i=0;i<this.carouselMapStyle.length;i++){
+                    if (i ===6){
+                        // 最后一个要继承第一个
+                        this.carouselMapStyle[i].item =tempItemStyle
+                        this.carouselMapStyle[i].img =tempImgStryle
+                        this.carouselMapStyle[i].shadowMiddle =tempShadowStyle
+                    }else {
+                        // +往右移，-往左移
+                        this.carouselMapStyle[i].item =this.carouselMapStyle[i+1].item
+                        this.carouselMapStyle[i].img =this.carouselMapStyle[i+1].img
+                        this.carouselMapStyle[i].shadowMiddle =this.carouselMapStyle[i+1].shadowMiddle
+                    }
+
+                    // 同步按钮
+                    navButtons[currButtonIndex].style.border="2px solid red";
+                    navButtons[currButtonIndex].style.backgroundColor="#fff"
+                    if(currButtonIndex === 6) {
+                        navButtons[0].style.border="none";
+                        navButtons[0].style.backgroundColor="#ddd"
+                    }else {
+                        navButtons[currButtonIndex+1].style.border="none";
+                        navButtons[currButtonIndex+1].style.backgroundColor="#ddd"
+                    }
+                    // 同步右侧书籍信息
+                    for (var j=0;j<this.carouselMapStyle.length;j++){
+                        if(this.carouselMapStyle[j].id === currButtonIndex+1){
+                            carouselMapDesc.bookTitle=this.carouselMapStyle[j].alt
+                            carouselMapDesc.desc=this.carouselMapStyle[j].desc
+                            carouselMapDesc.toUrl =this.carouselMapStyle[j].toUrl
+                            break;
+                        }
+                    }
+                }
+
+                if (step === 2){
+                    this.moveRightCarouselMap(1)
+                }
+
+            },
+
+            // 停止转动
+            stopCarouselMap:function () {
+                clearInterval(interval2)
+            },
+            resCarouselMap:function () {
+                interval2 = setInterval(carouselMapToMove.moveLeftCarouselMap,2000,1)
+            },
+        },
+        created(){
+            axios({
+                method:"POST",
+                url:"/frequency/editRecommend",
+                dataType:"json"
+            }).then(response=>{
+                // created内无法对该实例的参数修改，只会返回undifind，只好拿到这里赋值
+                this.books=response.data
+                var result = [
+                        {
+                            id:6,
+                            item: {
+                                // "width": 59.52+"px",
+                                "width": 86+"px",
+                                // "height": 87.296+"px",
+                                "height": 125+"px",
+                                // "top": 22.32+"px",
+                                "top": 31+"px",
+                                // "right": 113.832+"px",
+                                "right": 162+"px",
+                                "opacity": 1,
+                                "z-index": 4
+                            },
+                            img:{
+                                "width":86+"px",
+                                // "height":79.36+"px",
+                                "height":113+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:86+"px",
+                            alt:this.books[0].bookName,
+                            toUrl:"/book/"+this.books[0].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[0].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[0].bookId, // 备份
+                            desc:this.books[0].bookDesc
+
+                        },
+                        {
+                            id:7,
+                            item: {
+                                // "width": 74.4+"px",
+                                "width": 106+"px",
+                                // "height": 109.12+"px",
+                                "height": 156+"px",
+                                // "top": 12.4+"px",
+                                "top": 17+"px",
+                                // "right": 63.24+"px",
+                                "right": 90+"px",
+                                "opacity": 1,
+                                "z-index": 5,
+
+                            },
+                            img:{
+                                "width":106+"px",
+                                // "height":99.2+"px",
+                                "height":142+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:106+"px",
+                            alt:this.books[1].bookName,
+                            toUrl:"/book/"+this.books[1].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[1].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[1].bookId, // 备份
+                            desc:this.books[1].bookDesc
+
+                        },
+                        { //
+                            id:1,
+                            item: {
+                                // "width": 93+"px",
+                                "width": 133+"px",
+                                // "height": 136.4+"px",
+                                "height": 195+"px",
+                                "top": 0,
+                                "right":0,
+                                "opacity": 1,
+                                "z-index": 6,
+
+                            },
+                            img:{
+                                "width":133+"px",
+                                // "height":124+"px",
+                                "height":178+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:133+"px",
+                            alt:this.books[2].bookName,
+                            toUrl:"/book/"+this.books[2].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[2].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[2].bookId, // 备份
+                            desc:this.books[2].bookDesc
+                        },
+                        {
+                            id:2,
+                            item:{
+                                "width":  106+"px",
+                                "height": 156+"px",
+                                "top": 17+"px",
+                                // "right": -44.64+"px",
+                                "right": -63+"px",
+                                "opacity": 1,
+                                "z-index": 5,
+                                "display": "block",
+
+                            },
+                            img:{
+                                "width":106+"px",
+                                // "height":99.2+"px",
+                                "height":142+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:106+"px",
+                            alt:this.books[3].bookName,
+                            toUrl:"/book/"+this.books[3].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[3].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[3].bookId, // 备份
+                            desc:this.books[3].bookDesc
+                        },
+                        {
+                            id:3,
+                            item:{
+                                // "width": 59.52+"px",
+                                "width": 84+"px",
+                                // "height": 87.296+"px",
+                                "height": 125+"px",
+                                // "top": 22.32+"px",
+                                "top": 31+"px",
+                                // "right": -80.352+"px",
+                                "right": -115+"px",
+                                "opacity": 1,
+                                "z-index": 4,
+                                "display": "block",
+
+                            },
+                            img:{
+                                "width":84+"px",
+                                // "height":79.36+"px",
+                                "height":113+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:84+"px",
+                            alt:this.books[4].bookName,
+                            toUrl:"/book/"+this.books[4].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[4].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[4].bookId, // 备份
+                            desc:this.books[4].bookDesc
+                        },
+                        {
+                            id:4,
+                            item:{
+                                // "width": 47.616+"px",
+                                "width": 67+"px",
+                                // "height": 69.8368+"px",
+                                "height": 99+"px",
+                                // "top": 30.256+"px",
+                                "top": 43+"px",
+                                // "right": -108.922+"px",
+                                "right": -155+"px",
+                                "opacity": 0,
+                                "z-index": 3,
+                                "display": "block",
+                            },
+                            img:{
+                                "width": 67+"px",
+                                // "height":63.488+"px",
+                                "height":90+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:67+"px",
+                            alt:this.books[5].bookName,
+                            toUrl:"/book/"+this.books[5].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[5].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[5].bookId, // 备份
+                            desc:this.books[5].bookDesc
+                        },
+                        {
+                            id:5,
+                            item:{
+                                // "width": 47.616+"px",
+                                "width": 67+"px",
+                                // "height": 69.8368+"px",
+                                "height": 99+"px",
+                                // "top": 30.256+"px",
+                                "top": 43+"px",
+                                // "right": 154.306+"px",
+                                "right": 221+"px",
+                                "opacity": 0,
+                                "z-index": 3,
+                                "display": "block",
+                            },
+                            img:{
+                                "width":67+"px",
+                                // "height":63.488+"px",
+                                "height":90+"px",
+                                "display": "inline-block"
+                            },
+                            shadowMiddle:67+"px",
+                            alt:this.books[6].bookName,
+                            toUrl:"/book/"+this.books[6].bookId, // 跳转的地址
+                            imgUrl:"images/bookface/"+this.books[6].bookfaceName, //图片路径
+                            toUrlBackup:"/book/"+this.books[6].bookId, // 备份
+                            desc:this.books[6].bookDesc
+                        }
+                    ]
+                this.carouselMapStyle=result
+                // carouselMapDesc的参数初始化第一次必须在这里定义
+                carouselMapDesc.bookTitle=result[2].alt
+                carouselMapDesc.desc=result[2].desc
+                carouselMapDesc.toUrl=result[2].toUrlBackup
+            })
+        }
+        //
+        // computed:{
+        //
+        // },
+        // watch:{
+        //     //
+        //     carouselMapStyle:{
+        //         handler(newValue, oldValue) {
+        //             window.alert('dfsffds')
+        //             // 将变化值保存
+        //             this.carouselMapStyle  = newValue
+        //         }
+        //
+        //     },
+        //     // 监听深度，数组和字符串不需要，而对象：{}是监听不到的，需要开启深度监测，且数组中若含有{}，也需开启。
+        //     deep: true,
+        //     // 第一次绑定时不会触发监听，设置后，为true表示无论值是否改变，时刻都会监听，而false表示只有值改变时监听
+        //     immediate: true
+        // }
+    })
+
+    // 转动轮播图 // 默认向左移动，移动一单位
+    var interval2 = setInterval(carouselMapToMove.moveLeftCarouselMap,2000,1)
+
+    //    第二个轮播图右边描述部分
+    var carouselMapDesc = new Vue({
+        el:".carouselMapDesc",
+        data() {
+            return { // 坐标2是轮播图中间图
+                // bookTitle:carouselMapToMove.carouselMapStyle[3].alt,
+                // desc:carouselMapToMove.carouselMapStyle[3].desc,
+                // toUrl:carouselMapToMove.carouselMapStyle[3].toUrlBackup,
+                bookTitle:'',
+                desc:'',
+                toUrl:'',
+            }
+        },
+        methods:{
+
+        },
+        created(){ // 初始化时第一次还不会有值，转动后才会有，上面参数必须给定初始值
+            this.bookTitle=carouselMapToMove.carouselMapStyle[2].alt
+            this.desc=carouselMapToMove.carouselMapStyle[2].desc
+            this.toUrl=carouselMapToMove.carouselMapStyle[2].toUrlBackup
+
+        }
+    })
+
+    //    Customization-bookShow-type05
+    new Vue({
+        el:"#Customization-bookShow-type05",
+        data() {
+            return{
+                books:[]
+            }
+        },
+        methods:{
+
+        },
+        created(){
+            axios({
+                method:"POST",
+                url:"/frequency/editBottomRecommend",
+                dataType:"json"
+            }).then(response=>{
+                this.books = response.data
+            })
+        }
+    })
+
+
+    new Vue({
+        el:"#mainContent-part2 .right",
+        data() {
+            return {
+                infos:[]
+            }
+        },
+        methods: {
+
+        },
+        created() {
+            axios({
+                method: "POST",
+                url: "/frequency/frequencyPageClickRank",
+                dataType: "application/x-www-form-urlencoded",
+            }).then(response => {
+                this.infos = response.data
+            })
+        }
+    })
+
+
+
+    //    第三部分
+    var mainContent= new Vue({
+        el:"#mainContent-part3",
+        data() {
+            return {
+                infos:[],
+                bookInfo:[],
+            }
+        },
+        methods: {
+
+        },
+        created() {
+            // 热门推荐axios
+            axios({
+                method:"POST",
+                url:"/frequency/frequencyPageRecommend",
+                dataType:"application/x-www-form-urlencoded",
+            }).then(response=>{
+                this.bookInfo=response.data
+            })
+
+            // 潜力榜axios
+            axios({
+                method: "POST",
+                url: "/frequency/frequencyPageQianliRank",
+                dataType: "application/x-www-form-urlencoded",
+            }).then(response => {
+                this.infos = response.data
+            })
+        },
+    })
+</script>
+
+
+
+
+
+
+
+<!--这里也是第一个轮播图需要的资源，不能定义在头部-->
+<!--<script src='../../static/js/jquery.slicebox.js'></script>-->
+<!--<script src="../../static/js/slider.js"></script>-->
+<script  th:src="@{/js/jquery.slicebox.js}"></script>
+<script th:src="@{/js/slider.js}"></script>
+
+
+
+<div th:replace="forefront/common::#commonScripts"></div>
+
+</body>
+</html>

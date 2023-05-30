@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <div th:include="backstage/common::commonHeader"></div>
+    <style>
+        #content{
+            width: 1200px;
+            height: 600px;
+            margin-top: 20px;
+            margin-left: 300px;
+            border: 1px solid blue;
+            float: left;
+
+        }
+        .libraryborrowHeader{
+            width:100%;
+            height: 40px;
+
+        }
+    </style>
+</head>
+<body>
+<div th:replace="backstage/common::#commonSideBar"></div>
+<div th:replace="backstage/common::#commonHeader"></div>
+<div id="content">
+    <div class="libraryborrowInfo">
+        <div class="libraryborrowHeader">
+            <el-input v-model="searchCondition.userName" placeholder="用户名" @keyup.enter.native="searchButton" style="width: 180px;float: left"></el-input>
+            <el-input v-model="searchCondition.bookName" placeholder="图书名" @keyup.enter.native="searchButton" style="width: 180px;float: left"></el-input>
+            <el-button type="primary" size="midium" icon="el-icon-search" @click="searchButton">搜索</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="batchReturnBook">批量还书</el-button>
+            <el-checkbox v-model="searchCondition.isOverdue" @change="searchBorrowRecord" border size="medium">只展示逾期记录</el-checkbox>
+        </div>
+        <el-table
+                :data="tableData"
+                border
+                :fit="false"
+                @selection-change="handleSelectionChange"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    width="40">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    label="序号"
+                    width="50"
+                    :index="indexMethod">
+            </el-table-column>
+            <el-table-column
+                    prop="bookName"
+                    width="180"
+                    label="图书名称">
+            </el-table-column>
+            <el-table-column
+                    prop="userName"
+                    label="图书借阅者"
+                    width="150">
+            </el-table-column>
+            <el-table-column
+                    width="250"
+                    label="借阅日期">
+                <template slot-scope="scope">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 10px">{{ scope.row.borrowTime }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    width="250"
+                    label="应还日期">
+                <template slot-scope="scope">
+                    <i class="el-icon-time"></i>
+                    <span style="margin-left: 10px">{{ scope.row.returnTime }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    width="100"
+                    label="是否逾期">
+                <template slot-scope="scope">
+                    <span v-text="scope.row.isOverdue?'已逾期':'暂未逾期'"></span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="180">
+                <template slot-scope="scope">
+                    <el-button
+                            size="small"
+                            type="danger"
+                            @click="handleReturnBook([{'bookId':scope.row.bookId,'borrowId':scope.row.borrowId}])">强制归还</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination
+                @current-change="handleCurrentChange"
+                @size-change="handlePageSizeChange"
+                :current-page.sync="currentPage"
+                background
+                :page-sizes="[5, 10, 20, 50]"
+                :page-size="pageSize"
+                layout="total, sizes,slot,prev, pager, next,jumper"
+                prev-text="上一页"
+                next-text="下一页"
+                :total="total">
+            <span>当前展示{{ totalShow }}条</span>
+        </el-pagination>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el:".libraryborrowInfo",
+        data(){
+            return{
+                tableData:[
+                    {bookName:"小红帽",userName:"星空",borrowTime:"2022-01-12 23:35:43",returnTime:"2022-01-15 23:35:43"},
+
+                ],
+
+                // 过滤条件
+                searchCondition:{
+                  userName:"",
+                  bookName:"",
+                  isOverdue:false // 是否只展示逾期记录
+                },
+
+                multipleSelection:[],  // 多行选择,row对象集
+
+                // 分页参数
+                currentPage:1,
+                totalShow:4,
+                total:0,
+                pageSize:5, // 每页显示条数
+            }
+        },
+        methods:{
+            indexMethod(index) {
+                return index+1;
+            },
+            // 当前页改变触发
+            handleCurrentChange(val){
+                this.currentPage = val;
+
+            }, // 每页显示条数改变时触发，有:page-sizes属性才使用
+            handlePageSizeChange(val){
+                this.pageSize=val;
+            },
+
+
+            // 搜索借阅记录
+            searchBorrowRecord(){
+                // 将分页参数添加进来
+                this.searchCondition.pageNum=this.currentPage
+                this.searchCondition.pageSize=this.pageSize
+                axios({
+                    method:"POST",
+                    url:"/backstage/borrowInfo",
+                    dataType:"json",
+                    data:this.searchCondition
+                }).then(response=>{
+                    this.tableData=response.data.borrows
+                    this.total=response.data.total
+                    this.totalShow=response.data.borrows.length
+                })
+            },
+
+            // 搜索
+            searchButton(){
+                this.searchBorrowRecord();
+            },
+
+
+
+            // 还书 接受列表，元素对象
+            handleReturnBook(datas){
+                this.$confirm('确定帮其归还嘛？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method:"POST",
+                        url:"/backstage/returnBook",
+                        dataType:"json",
+                        data:datas
+                    }).then(response=>{
+                        if(response.data){
+                            this.$message({
+                                type: 'success',
+                                message: '还书成功!'
+                            });
+                            this.searchBorrowRecord()
+                        }else{
+                            this.$message({
+                                type: 'error',
+                                message: "还书失败，请稍后再试。。。"
+                            });
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+
+
+            // 批量还书
+            batchReturnBook(){
+                if(this.multipleSelection.length===0){
+                    this.$alert('请选择要归还的书籍', '提示', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                        }
+                    });
+                }else {
+
+                    var datas=[]
+                    for (var row of this.multipleSelection) {
+                        datas.push({"bookId": row.bookId,"borrowId": row.borrowId})
+                    }
+
+                    // 归还
+                    this.handleReturnBook(datas)
+                }
+            },
+
+            // 多行选择
+            handleSelectionChange(val) {
+                // 解析出选择的所有用户id
+                this.multipleSelection=val
+            },
+
+
+        },
+        created(){
+            this.searchBorrowRecord();
+        },
+        watch: {
+            'searchCondition.userName': {
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.searchBorrowRecord()
+                    }
+                }
+            },
+            'searchCondition.bookName': {
+                handler(newValue,oldValue){
+                    if(newValue===''){
+                        this.searchBorrowRecord()
+                    }
+                }
+            },
+            deep:false, // 不初始执行
+            immediate:false
+        }
+    })
+</script>
+
+
+<div th:replace="backstage/common::#commonScripts"></div>
+</body>
+</html>

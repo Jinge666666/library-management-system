@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="commonHeader">
+    <meta charset="UTF-8">
+    <title>监控</title>
+    <!--    头部url链接不要加th:,否则element-ui可能会显示不出来！！！-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- import element-ui CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.12/lib/theme-chalk/index.css">
+    <!-- import element-ui JavaScript -->
+    <script src="https://unpkg.com/element-ui@2.15.12/lib/index.js"></script>
+
+    <!--axios引入-->
+    <script crossorigin="anonymous" src="https://cdn.bootcdn.net/ajax/libs/axios/1.0.0-alpha.1/axios.js"></script>
+
+    <!--    引入vue的ajax-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <!--    阿里巴巴图标库引入-->
+    <!--    <link rel="stylesheet" href="../static/font/albb/iconfont.css">-->
+    <!--    <script href="../static/font/albb/iconfont.js"></script>-->
+    <link rel="stylesheet" href="font/albb/iconfont.css" th:href="@{/font/albb/iconfont.css}">
+    <script href="font/albb/iconfont.js" th:href="@{/font/albb/iconfont.js}"></script>
+
+    <!--    jquery引入-->
+    <script src="https://s1.pstatp.com/cdn/expire-1-M/jquery/1.10.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" th:href="@{/css/common2.css}">
+    <style>
+
+
+    </style>
+</head>
+<body>
+<div id="commonSideBar">
+    <div id="sideBar">
+<!--        若想默认展开侧边栏指定submenu，请使用default-openeds属性-->
+        <el-menu
+                :default-active="activeIndex"
+                class="el-menu-vertical-demo"
+                @open="handleOpen"
+                @close="handleClose"
+                @select="sideBarMenuClick"
+                ref="sideBarMenu"
+                :default-openeds="['1','2']"
+                background-color="#545c64"
+                text-color="#fff"
+                active-text-color="#ffd04b">
+            <el-menu-item index="1-1">
+                <i class="iconfont icon-shouye sideBarIcon"></i>
+                <span slot="title">首页</span>
+            </el-menu-item>
+            <el-submenu index="1">
+                <template slot="title">
+                    <i class="iconfont icon-shucheng1 sideBarIcon"></i>
+                    <span>监控</span>
+                </template>
+                <el-menu-item index="1-2">
+                    <i class="iconfont icon-nan sideBarIcon"></i>
+                    <span slot="title">mysql监控</span>
+                </el-menu-item>
+                <el-menu-item index="1-3">
+                    <i class="iconfont icon-girl-fill sideBarIcon"></i>
+                    <span slot="title">缓存监控</span>
+                </el-menu-item>
+                <el-menu-item index="1-4">
+                    <i class="iconfont icon-paihangbang1 sideBarIcon"></i>
+                    <span slot="title">服务监控</span>
+                </el-menu-item>
+                <el-menu-item index="1-5">
+                    <i class="iconfont icon-kucun sideBarIcon"></i>
+                    <span slot="title">定时任务</span>
+                </el-menu-item>
+            </el-submenu>
+            <el-submenu index="2">
+                <template slot="title">
+                    <i class="iconfont icon-shucheng1 sideBarIcon"></i>
+                    <span>图书管理</span>
+                </template>
+                <el-menu-item index="2-1">
+                    <i class="iconfont icon-file-management-borrowed-record sideBarIcon"></i>
+                    <span slot="title">图书信息</span>
+                </el-menu-item>
+                <el-menu-item index="2-2">
+                    <i class="iconfont icon-wodeshujia sideBarIcon"></i>
+                    <span slot="title">图书类型</span>
+                </el-menu-item>
+                <el-menu-item index="2-3">
+                    <i class="iconfont icon-gerenxinxi sideBarIcon"></i>
+                    <span slot="title">借阅信息</span>
+                </el-menu-item>
+            </el-submenu>
+            <el-menu-item index="3">
+                <i class="iconfont icon-file-management-borrowed-record sideBarIcon"></i>
+                <span slot="title">读者信息管理</span>
+            </el-menu-item>
+            <el-menu-item index="4">
+                <i class="iconfont icon-wodeshujia sideBarIcon"></i>
+                <span slot="title">管理员信息管理</span>
+            </el-menu-item>
+            <el-menu-item index="5">
+                <i class="iconfont icon-gerenxinxi sideBarIcon"></i>
+                <span slot="title">权限管理</span>
+            </el-menu-item>
+            <el-menu-item index="6">
+                <i class="iconfont icon-gerenxinxi sideBarIcon"></i>
+                <span slot="title">修改密码</span>
+            </el-menu-item>
+        </el-menu>
+    </div>
+</div>
+<div id="commonHeader">
+    <div style="width: 30px;height: 30px;position: absolute;left: 20px;top: 10px"><img th:src="@{/images/svg/工具栏.svg}"> </div>
+    <div style="width: 400px;height: 30px;position: absolute;left: 70px;top: 15px;">
+        <el-breadcrumb separator-class="el-icon-arrow-right">
+            <el-breadcrumb-item><a th:src="@{/backstage/main}">首页</a></el-breadcrumb-item>
+            <el-breadcrumb-item v-if="activeMenuFather">{{activeMenuFather}}</el-breadcrumb-item>
+            <el-breadcrumb-item>{{activeMenu}}</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+    <div class="avatar" style="position: absolute;right: 220px;top: 0;width: 50px;height: 50px">
+        <img th:src="${session.user.avatarUrl}==null?'/font/svg/男头像.svg':'/images/avatar/'+${session.user.avatarUrl}" style="width: 50px;height: 50px" alt="头像">
+    </div>
+    <div style="position: absolute;width: 100px;text-align:center;height: 50px;line-height: 50px;top: 0;right: 90px">[[${session.user.userName}]]</div>
+    <div style="position: absolute;width: 50px;height: 50px;line-height: 50px;top: 0;right: 30px"><a  title="退出登录" th:href="@{/backstage/logout}"><img src="/images/svg/退出登录.svg"></a></div>
+</div>
+<div id="content">
+
+</div>
+
+<script>
+
+
+
+
+</script>
+
+<div id="commonScripts">
+    <!--// 放最后面-->
+    <script src="js/common2.js" th:src="@{/js/common2.js}"></script>
+</div>
+</body>
+</html>
